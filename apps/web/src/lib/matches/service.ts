@@ -3,8 +3,10 @@ import {
   bookingParticipants,
   bookings,
   courts,
+  matchDisputes,
   matches,
   userRatings,
+  users,
 } from '@feera/db';
 import type { db as Db } from '@feera/db';
 import {
@@ -148,6 +150,11 @@ export type MatchScoreError =
   | { kind: 'forbidden' }
   | { kind: 'tie_not_allowed' };
 
+export interface PoolRatingChanges {
+  open: Record<string, RatingDelta>;
+  women?: Record<string, RatingDelta>;
+}
+
 export async function submitMatchScore(
   tx: typeof Db,
   matchId: string,
@@ -157,7 +164,7 @@ export async function submitMatchScore(
 ): Promise<
   | {
       match: typeof matches.$inferSelect;
-      ratingChanges: Record<string, RatingDelta>;
+      ratingChanges: PoolRatingChanges;
     }
   | MatchScoreError
 > {
@@ -209,17 +216,18 @@ export async function submitMatchScore(
   };
   const update = applyDoublesMatch(matchResult);
 
-  const ratingChanges: Record<string, RatingDelta> = {};
   const after = {
     [match.teamAPlayer1]: update.teamA[0],
     [match.teamAPlayer2]: update.teamA[1],
     [match.teamBPlayer1]: update.teamB[0],
     [match.teamBPlayer2]: update.teamB[1],
   };
+
+  const openChanges: Record<string, RatingDelta> = {};
   for (const id of players) {
     const b = before[id]!;
     const a = after[id]!;
-    ratingChanges[id] = {
+    openChanges[id] = {
       ratingBefore: b.rating,
       ratingAfter: a.rating,
       rdBefore: b.rd,
@@ -229,6 +237,65 @@ export async function submitMatchScore(
       reliabilityAfter: reliabilityPct(a.rd),
     };
   }
+
+  // Parallel women-only pool. Only updated when ALL FOUR players have gender = 'f'.
+  // The women pool uses a separate Glicko state per player; falls back to the
+  // open rating only when the player has no women-pool history yet.
+  const genderRows = await tx
+    .select({ id: users.id, gender: users.gender })
+    .from(users)
+    .where(inArray(users.id, players));
+  const allFemale =
+    genderRows.length === 4 && genderRows.every((g) => g.gender === 'f');
+
+  let womenChanges: Record<string, RatingDelta> | undefined;
+  if (allFemale) {
+    const womenPlayerOf = (id: string): Player => {
+      const r = byId.get(id);
+      // First match in the pool: seed from defaults (NOT from the open rating, so
+      // the women pool stays mathematically independent).
+      return {
+        rating: r?.womenOnlyPoolRating ?? 1500,
+        rd: 350,
+        volatility: 0.06,
+      };
+    };
+    const wBefore: Record<string, Player> = {
+      [match.teamAPlayer1]: womenPlayerOf(match.teamAPlayer1),
+      [match.teamAPlayer2]: womenPlayerOf(match.teamAPlayer2),
+      [match.teamBPlayer1]: womenPlayerOf(match.teamBPlayer1),
+      [match.teamBPlayer2]: womenPlayerOf(match.teamBPlayer2),
+    };
+    const wUpdate = applyDoublesMatch({
+      teamA: [wBefore[match.teamAPlayer1]!, wBefore[match.teamAPlayer2]!],
+      teamB: [wBefore[match.teamBPlayer1]!, wBefore[match.teamBPlayer2]!],
+      winner,
+    });
+    const wAfter = {
+      [match.teamAPlayer1]: wUpdate.teamA[0],
+      [match.teamAPlayer2]: wUpdate.teamA[1],
+      [match.teamBPlayer1]: wUpdate.teamB[0],
+      [match.teamBPlayer2]: wUpdate.teamB[1],
+    };
+    womenChanges = {};
+    for (const id of players) {
+      const b = wBefore[id]!;
+      const a = wAfter[id]!;
+      womenChanges[id] = {
+        ratingBefore: b.rating,
+        ratingAfter: a.rating,
+        rdBefore: b.rd,
+        rdAfter: a.rd,
+        volatilityBefore: b.volatility,
+        volatilityAfter: a.volatility,
+        reliabilityAfter: reliabilityPct(a.rd),
+      };
+    }
+  }
+
+  const ratingChanges: PoolRatingChanges = womenChanges
+    ? { open: openChanges, women: womenChanges }
+    : { open: openChanges };
 
   // TODO(M3): once the rating-recalculation worker flips to --apply, also write
   // user_ratings rows here (or let the worker fold from this row). Today we
@@ -307,13 +374,23 @@ export async function verifyMatch(
   return { match: updated };
 }
 
+export type MatchDisputeKind =
+  | 'wrong_score'
+  | 'wrong_winner'
+  | 'ineligible_player'
+  | 'other';
+
 export async function disputeMatch(
   tx: typeof Db,
   matchId: string,
   actorUserId: string,
   isAdmin: boolean,
   reason: string,
-): Promise<{ match: typeof matches.$inferSelect } | { kind: 'not_found' | 'forbidden' }> {
+  disputeKind: MatchDisputeKind = 'other',
+): Promise<
+  | { match: typeof matches.$inferSelect; dispute: typeof matchDisputes.$inferSelect }
+  | { kind: 'not_found' | 'forbidden' }
+> {
   const [match] = await tx
     .select()
     .from(matches)
@@ -328,13 +405,34 @@ export async function disputeMatch(
   ];
   if (!isAdmin && !players.includes(actorUserId)) return { kind: 'forbidden' };
 
+  // Persist a structured audit row in match_disputes.
+  const [dispute] = await tx
+    .insert(matchDisputes)
+    .values({
+      matchId,
+      raisedByUserId: actorUserId,
+      kind: disputeKind,
+      note: reason,
+    })
+    .returning();
+  if (!dispute) throw new Error('disputeMatch: insert returned no row');
+
+  // Also stamp the match record so existing consumers see the dispute count
+  // without an extra join. Flip verification back to unverified so the rating
+  // worker treats the result as a candidate, not authoritative.
   const existing = (match.ratingChanges ?? {}) as Record<string, unknown>;
   const disputes = Array.isArray(existing.disputes) ? (existing.disputes as unknown[]) : [];
   const nextChanges = {
     ...existing,
     disputes: [
       ...disputes,
-      { byUserId: actorUserId, reason, at: new Date().toISOString() },
+      {
+        id: dispute.id,
+        byUserId: actorUserId,
+        kind: disputeKind,
+        reason,
+        at: new Date().toISOString(),
+      },
     ],
   };
 
@@ -347,5 +445,71 @@ export async function disputeMatch(
     .where(eq(matches.id, matchId))
     .returning();
   if (!updated) return { kind: 'not_found' };
-  return { match: updated };
+  return { match: updated, dispute };
+}
+
+export interface DisputeResolveInput {
+  status: 'reviewed' | 'upheld' | 'rejected';
+  resolutionNote?: string;
+}
+
+export async function listOpenDisputes(tx: typeof Db, limit = 100) {
+  return tx
+    .select({
+      dispute: matchDisputes,
+      match: matches,
+    })
+    .from(matchDisputes)
+    .innerJoin(matches, eq(matchDisputes.matchId, matches.id))
+    .where(eq(matchDisputes.status, 'open'))
+    .orderBy(desc(matchDisputes.createdAt))
+    .limit(limit);
+}
+
+export async function resolveDispute(
+  tx: typeof Db,
+  disputeId: string,
+  resolverUserId: string,
+  input: DisputeResolveInput,
+): Promise<
+  { dispute: typeof matchDisputes.$inferSelect } | { kind: 'not_found' | 'wrong_status' }
+> {
+  const [existing] = await tx
+    .select()
+    .from(matchDisputes)
+    .where(eq(matchDisputes.id, disputeId))
+    .limit(1);
+  if (!existing) return { kind: 'not_found' };
+  if (existing.status !== 'open' && existing.status !== 'reviewed') {
+    return { kind: 'wrong_status' };
+  }
+
+  const [updated] = await tx
+    .update(matchDisputes)
+    .set({
+      status: input.status,
+      resolvedByUserId: resolverUserId,
+      resolvedAt: new Date(),
+      resolutionNote: input.resolutionNote ?? null,
+    })
+    .where(eq(matchDisputes.id, disputeId))
+    .returning();
+  if (!updated) return { kind: 'not_found' };
+
+  if (input.status === 'upheld') {
+    // M3 worker is the rating source of truth and rolls back from
+    // verificationStatus changes. Mark the match as unverified again and
+    // record the intent in the audit log; the worker re-derives ratings on
+    // its next pass.
+    await tx
+      .update(matches)
+      .set({ verificationStatus: 'unverified' })
+      .where(eq(matches.id, existing.matchId));
+    console.info('[match.dispute.upheld]', {
+      disputeId,
+      matchId: existing.matchId,
+      resolverUserId,
+    });
+  }
+  return { dispute: updated };
 }

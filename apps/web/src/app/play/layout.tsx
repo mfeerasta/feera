@@ -35,6 +35,12 @@ export default function PlayLayout({ children }: { children: ReactNode }) {
               Open matches
             </Link>
             <Link
+              href="/play/coaches"
+              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
+            >
+              Coaches
+            </Link>
+            <Link
               href="/play/bookings"
               className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
             >

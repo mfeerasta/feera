@@ -1,7 +1,15 @@
 -- users + user_ratings + user_social_scores
--- Read own row always. Read other users' public fields when their
--- gender_visibility = 'public' or there is an accepted friendship.
--- Writes restricted to the user themselves or service role.
+-- Read own row always. Read other users' rows for product UX (club rosters,
+-- match participants, open matches) regardless of gender_visibility — the
+-- API serializer (apps/web/src/lib/api/user-serializer.ts) does the
+-- column-level mask on the `gender` field per request. Writes restricted
+-- to the user themselves or service role.
+--
+-- The previous version of this policy also gated row visibility on
+-- friendship; that prevented strangers from seeing booking opponents in
+-- the open-match feed which we need for matchmaking. Column masking via
+-- the serializer is the spec-aligned approach: `gender_visibility`
+-- controls the gender FIELD, not the row.
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users FORCE ROW LEVEL SECURITY;
@@ -12,29 +20,14 @@ CREATE POLICY users_select_self ON users
   USING (id = auth.user_id());
 
 DROP POLICY IF EXISTS users_select_public ON users;
--- Friend-visible branch reads the `friendships` table (M4). We still guard
--- with `to_regclass` so the policy compiles in dev DBs that haven't applied
--- the friendships migration yet.
+-- All signed-in users can read non-deleted user rows. The `gender` column
+-- itself is masked at the API serializer per the user's
+-- `gender_visibility` setting. See `apps/web/src/lib/api/user-serializer.ts`.
 CREATE POLICY users_select_public ON users
   FOR SELECT
   USING (
     deleted_at IS NULL
-    AND (
-      gender_visibility = 'public'
-      OR auth.user_id() = id
-      OR (
-        to_regclass('public.friendships') IS NOT NULL
-        AND auth.user_id() IS NOT NULL
-        AND EXISTS (
-          SELECT 1 FROM friendships f
-          WHERE f.status = 'accepted'
-            AND (
-              (f.requester_user_id = auth.user_id() AND f.addressee_user_id = users.id)
-              OR (f.addressee_user_id = auth.user_id() AND f.requester_user_id = users.id)
-            )
-        )
-      )
-    )
+    AND auth.user_id() IS NOT NULL
   );
 
 DROP POLICY IF EXISTS users_select_service ON users;

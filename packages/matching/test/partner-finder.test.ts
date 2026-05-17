@@ -212,6 +212,108 @@ describe('findPartners — scoring', () => {
   });
 });
 
+describe('findPartners — women-only pool', () => {
+  function femaleParticipant(seed: number, rating = 1500, womenPool: number | null = null) {
+    return {
+      userId: uuid(seed),
+      rating,
+      womenPoolRating: womenPool,
+      gender: 'f' as const,
+      isFriend: false,
+      isPriorOpponent: false,
+      reliability: 0.9,
+    };
+  }
+
+  it('with womenOnly=true, hard-filters out matches whose preference is not women_only', () => {
+    const user = baseUser({ gender: 'f' });
+    const open = baseMatch({ bookingId: uuid(7001), genderPreference: 'open' });
+    const wo = baseMatch({
+      bookingId: uuid(7002),
+      genderPreference: 'women_only',
+      participants: [femaleParticipant(7101), femaleParticipant(7102), femaleParticipant(7103)],
+    });
+    const result = findPartners({
+      user,
+      candidates: [open, wo],
+      filters: { womenOnly: true },
+    });
+    expect(result.length).toBe(1);
+    expect(result[0]?.match.bookingId).toBe(wo.bookingId);
+  });
+
+  it('with womenOnly=true, excludes women_only bookings that have any non-female participant', () => {
+    const user = baseUser({ gender: 'f' });
+    const tainted = baseMatch({
+      bookingId: uuid(7201),
+      genderPreference: 'women_only',
+      participants: [
+        femaleParticipant(7301),
+        { ...femaleParticipant(7302), gender: 'm' as const },
+      ],
+    });
+    const result = findPartners({
+      user,
+      candidates: [tainted],
+      filters: { womenOnly: true },
+    });
+    expect(result.length).toBe(0);
+  });
+
+  it('uses womenPoolRating for level scoring when womenOnly=true', () => {
+    // User has a strong women-pool rating but a weak open rating.
+    const user = baseUser({
+      gender: 'f',
+      rating: fromDisplayRating(2.0),
+      womenPoolRating: fromDisplayRating(4.0),
+    });
+    // Candidate participants sit around display 4.0 in women-pool but display 2.0 in open.
+    const wo = baseMatch({
+      bookingId: uuid(7401),
+      genderPreference: 'women_only',
+      requiredLevelMin: 3.5,
+      requiredLevelMax: 4.5,
+      participants: [
+        femaleParticipant(7501, fromDisplayRating(2.0), fromDisplayRating(4.0)),
+        femaleParticipant(7502, fromDisplayRating(2.0), fromDisplayRating(4.0)),
+        femaleParticipant(7503, fromDisplayRating(2.0), fromDisplayRating(4.0)),
+      ],
+    });
+    const result = findPartners({
+      user,
+      candidates: [wo],
+      filters: { womenOnly: true },
+    });
+    // Must include the candidate and score it highly because both user + participants
+    // align in the women pool.
+    expect(result.length).toBe(1);
+    expect(result[0]!.score).toBeGreaterThan(0.5);
+  });
+
+  it('falls back to open rating in women pool when participant has no womenPoolRating yet', () => {
+    const user = baseUser({
+      gender: 'f',
+      rating: fromDisplayRating(3.5),
+      womenPoolRating: fromDisplayRating(3.5),
+    });
+    const wo = baseMatch({
+      bookingId: uuid(7601),
+      genderPreference: 'women_only',
+      participants: [
+        // No women-pool rating yet, must fall back to open.
+        femaleParticipant(7701, fromDisplayRating(3.5), null),
+      ],
+    });
+    const result = findPartners({
+      user,
+      candidates: [wo],
+      filters: { womenOnly: true },
+    });
+    expect(result.length).toBe(1);
+    expect(result[0]!.score).toBeGreaterThan(0.3);
+  });
+});
+
 describe('findPartners — 500 synthetic users across 5 cities', () => {
   it('produces a sane score distribution', () => {
     // 5 city centres

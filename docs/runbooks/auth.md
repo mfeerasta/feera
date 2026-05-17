@@ -63,6 +63,23 @@ Mitigations once Twilio lands:
 The dev-admin header bypass (`x-feera-dev-admin: 1`) has the same
 property and the same kill switch (`ADMIN_DEV_HEADER`).
 
+## Two factor authentication (M8 scaffold)
+
+CLAUDE.md requires 2FA for the `club_staff` and `platform_admin` roles. The wiring lands in M8 polish via better-auth's `twoFactor` plugin (TOTP). Env vars reserved up front so the box config can be primed without a redeploy:
+
+- `TOTP_ISSUER` — display string shown in authenticator apps. Default `Feera`.
+- `TOTP_BACKUP_CODE_COUNT` — number of recovery codes per enrolment. Default `10`.
+- `TOTP_REQUIRED_ROLES` — comma-separated list of roles that must enrol before they can act. Default `club_staff,platform_admin`.
+
+Implementation plan:
+
+1. Add `better-auth/plugins/two-factor` to the server config in `packages/auth/src/server.ts`.
+2. Mount `/me/security` UI with QR enrolment + backup codes (server component + a small client form).
+3. Add a middleware check in `proxy.ts` that 302s any session whose role is in `TOTP_REQUIRED_ROLES` but has `twoFactorEnrolledAt is null` to `/me/security?enrol=1`.
+4. Update RLS helper to read a `mfa_passed` claim, and gate `auth.is_club_staff()` / admin-only mutations on it.
+
+Not in M8 ship: enrolment recovery via SMS (requires Twilio live).
+
 ## Verification
 
 ```bash

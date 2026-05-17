@@ -1,6 +1,9 @@
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
+import { eq } from 'drizzle-orm';
+import { users } from '@feera/db';
 import {
+  forbidden,
   fromZodError,
   ok,
   serverError,
@@ -23,6 +26,7 @@ const querySchema = z.object({
     .refine((v) => !Number.isNaN(Date.parse(v)), 'ISO datetime expected')
     .optional(),
   genderPreference: z.enum(['open', 'men_only', 'women_only', 'mixed']).optional(),
+  pool: z.enum(['open', 'women']).optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -38,12 +42,28 @@ export async function GET(req: NextRequest) {
     const now = new Date();
     const defaultTo = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
+    // Women-only pool gating: caller MUST be a verified female user who opted in.
+    if (q.pool === 'women') {
+      const callerRows = await withRequestContext(session, (tx) =>
+        tx
+          .select({ gender: users.gender, optIn: users.womenOnlyPoolOptIn })
+          .from(users)
+          .where(eq(users.id, session.userId))
+          .limit(1),
+      );
+      const caller = callerRows[0];
+      if (!caller || caller.gender !== 'f' || !caller.optIn) {
+        return forbidden('The women-only matchmaking pool is restricted to verified female players who have opted in.');
+      }
+    }
+
     const data = await withRequestContext(session, (tx) =>
       discoverOpenMatches(tx, session.userId, {
         radiusKm: q.radiusKm,
         from: q.from ? new Date(q.from) : now,
         to: q.to ? new Date(q.to) : defaultTo,
-        genderPreference: q.genderPreference,
+        genderPreference: q.pool === 'women' ? 'women_only' : q.genderPreference,
+        womenOnly: q.pool === 'women',
       }),
     );
 

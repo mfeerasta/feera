@@ -35,3 +35,6 @@ export * from './federations';
 export * from './edition';
 export * from './audit';
 export * from './friendships';
+export * from './user-deletion-requests';
+export * from './booking-credits';
+export * from './match-disputes';

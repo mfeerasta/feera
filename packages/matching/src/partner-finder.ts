@@ -29,6 +29,12 @@ export type EditionStatus = 'none' | 'applicant' | 'active' | 'lapsed' | 'suspen
 export type FinderParticipant = Readonly<{
   userId: Uuid;
   rating: number;
+  /** Glicko-2 internal rating in the women-only parallel pool. Null when the
+   * player has never been in an all-female match (or is not female). */
+  womenPoolRating?: number | null;
+  /** Reported gender. Used only when the caller invokes the women-only pool
+   * mode; partner-finder otherwise ignores per-participant gender. */
+  gender?: 'm' | 'f' | null;
   isFriend: boolean;
   isPriorOpponent: boolean;
   reliability: number;
@@ -59,6 +65,8 @@ export type ExistingBooking = Readonly<{
 export type FinderUser = Readonly<{
   id: Uuid;
   rating: number;
+  /** Glicko-2 internal rating in the women-only parallel pool. */
+  womenPoolRating?: number | null;
   rd: number;
   lat: number;
   lng: number;
@@ -78,6 +86,15 @@ export type FinderFilters = Readonly<{
   from?: Date;
   to?: Date;
   genderPreference?: OpenMatch['genderPreference'];
+  /**
+   * When true: only return candidate matches with `genderPreference = 'women_only'`
+   * where every existing participant has gender === 'f'. Level-proximity scoring
+   * switches to use `womenPoolRating` instead of the open rating.
+   *
+   * Caller MUST already gate this on the requesting user's gender === 'f' and
+   * `womenOnlyPoolOptIn = true`. partner-finder does not enforce caller gender.
+   */
+  womenOnly?: boolean;
 }>;
 
 export type FinderInput = Readonly<{
@@ -152,7 +169,14 @@ function internalDeltaToDisplay(internalDelta: number): number {
   return internalDelta / 200;
 }
 
-function scoreLevelProximity(userInternal: number, candidate: OpenMatch): number {
+function scoreLevelProximity(
+  userInternal: number,
+  candidate: OpenMatch,
+  useWomenPool = false,
+): number {
+  const ratingOf = (p: FinderParticipant): number =>
+    useWomenPool && p.womenPoolRating != null ? p.womenPoolRating : p.rating;
+
   if (candidate.participants.length === 0) {
     const mid = (candidate.requiredLevelMin + candidate.requiredLevelMax) / 2;
     const userDisplay = toDisplayRating(userInternal);
@@ -160,21 +184,27 @@ function scoreLevelProximity(userInternal: number, candidate: OpenMatch): number
     return Math.max(0, 1 - diff / 1.5);
   }
   const avgInternal =
-    candidate.participants.reduce((acc, p) => acc + p.rating, 0) /
+    candidate.participants.reduce((acc, p) => acc + ratingOf(p), 0) /
     candidate.participants.length;
   const displayDelta = Math.abs(internalDeltaToDisplay(avgInternal - userInternal));
   // 0 delta = 1.0; 1.5 display points away = 0
   return Math.max(0, 1 - displayDelta / 1.5);
 }
 
-function scoreIntraTeamVariance(userInternal: number, candidate: OpenMatch): number {
+function scoreIntraTeamVariance(
+  userInternal: number,
+  candidate: OpenMatch,
+  useWomenPool = false,
+): number {
   // Predict the worst-case intra-team spread once the user joins.
   // Doubles = 4 players; team split that yields smallest gap is best.
   // We approximate by including the user with the existing participants and
   // looking at the spread.
+  const ratingOf = (p: FinderParticipant): number =>
+    useWomenPool && p.womenPoolRating != null ? p.womenPoolRating : p.rating;
   const ratingsDisplay = [
     toDisplayRating(userInternal),
-    ...candidate.participants.map((p) => toDisplayRating(p.rating)),
+    ...candidate.participants.map((p) => toDisplayRating(ratingOf(p))),
   ];
   if (ratingsDisplay.length < 2) return 1;
   const max = Math.max(...ratingsDisplay);
@@ -272,7 +302,13 @@ export function findPartners(input: FinderInput): FinderResult {
   const radiusKm = filters?.radiusKm ?? DEFAULT_RADIUS_KM;
   const from = filters?.from;
   const to = filters?.to;
-  const userDisplay = toDisplayRating(user.rating);
+  const womenOnly = filters?.womenOnly === true;
+  // In women-only mode, use the woman-pool rating for the user's effective
+  // level. Falls back to the open rating when the user has no women-pool
+  // history yet (first match in the pool).
+  const effectiveUserInternal =
+    womenOnly && user.womenPoolRating != null ? user.womenPoolRating : user.rating;
+  const userDisplay = toDisplayRating(effectiveUserInternal);
 
   const filtered: Array<{ match: OpenMatch; distanceKm: number }> = [];
   for (const c of candidates) {
@@ -290,6 +326,14 @@ export function findPartners(input: FinderInput): FinderResult {
     // Gender compatibility
     if (filters?.genderPreference && filters.genderPreference !== c.genderPreference) continue;
     if (!genderCompatible(c.genderPreference, user.gender)) continue;
+
+    // Women-only pool: hard filter, women_only bookings only and every
+    // existing participant must be female.
+    if (womenOnly) {
+      if (c.genderPreference !== 'women_only') continue;
+      const allFemale = c.participants.every((p) => p.gender === 'f');
+      if (!allFemale) continue;
+    }
 
     // Block list
     const blocked = c.participants.some((p) => user.blockedUserIds.has(p.userId));
@@ -314,8 +358,8 @@ export function findPartners(input: FinderInput): FinderResult {
   }
 
   const scored: FinderResultItem[] = filtered.map(({ match, distanceKm }) => {
-    const sLevel = scoreLevelProximity(user.rating, match);
-    const sVariance = scoreIntraTeamVariance(user.rating, match);
+    const sLevel = scoreLevelProximity(effectiveUserInternal, match, womenOnly);
+    const sVariance = scoreIntraTeamVariance(effectiveUserInternal, match, womenOnly);
     const sReliability = scorePartnerReliability(match);
     const sSocial = scoreSocialGraph(match);
     const sDiversity = scoreDiversity(match);

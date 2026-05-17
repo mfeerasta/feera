@@ -36,6 +36,7 @@ export const users = pgTable(
     city: text('city'),
     gender: text('gender'),
     genderVisibility: genderVisibilityEnum('gender_visibility').notNull().default('private'),
+    womenOnlyPoolOptIn: boolean('women_only_pool_opt_in').notNull().default(false),
     dateOfBirth: timestamp('date_of_birth', { mode: 'date', withTimezone: false }),
     profilePhotoUrl: text('profile_photo_url'),
     bio: text('bio'),

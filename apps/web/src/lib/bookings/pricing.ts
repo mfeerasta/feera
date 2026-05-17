@@ -10,9 +10,27 @@ export interface PricingResolveInput {
 }
 
 export interface PricingResult {
+  /** Court total in major units, the historical contract. */
   totalAmount: number;
   currency: string;
   warning?: 'no_pricing_rule_matched';
+}
+
+export interface ComputePricingOptions {
+  /** Optional per-seat split applied to the organizer's upfront charge. */
+  seatsBooked?: number;
+  maxParticipants?: number;
+  /** Credit applied to the organizer's payment, in major units. Never negative; capped at total. */
+  creditsApplied?: number;
+}
+
+export interface ComputedPricing extends PricingResult {
+  /** Per-seat price in major units (court total / maxParticipants), rounded to 2dp. */
+  perSeatAmount: number;
+  /** What the organizer owes upfront, in major units. perSeatAmount * seatsBooked, minus credits. */
+  organizerAmount: number;
+  /** Credit consumed (capped at organizer's pre-credit subtotal). */
+  creditApplied: number;
 }
 
 /**
@@ -74,5 +92,48 @@ export async function resolvePricing(
   return {
     totalAmount: chosen.pricePerSlot,
     currency: chosen.currency,
+  };
+}
+
+/**
+ * Per-seat price split. Rounds to 2 decimal places (major units). The seat
+ * total may be a fraction of a paisa off the court total once you sum across
+ * all participants, which the booking POST handler reconciles by charging
+ * any rounding remainder to the organizer's first seat.
+ */
+export function computePerSeatPrice(
+  courtTotal: number,
+  maxParticipants: number,
+): number {
+  if (maxParticipants <= 0) return courtTotal;
+  return Math.round((courtTotal / maxParticipants) * 100) / 100;
+}
+
+/**
+ * Combine the resolved court price with per-seat split + applied credits.
+ * Caller passes the already-resolved court total so this stays a pure helper.
+ */
+export function computePricing(
+  resolved: PricingResult,
+  opts: ComputePricingOptions = {},
+): ComputedPricing {
+  const max = Math.max(opts.maxParticipants ?? 1, 1);
+  const seats = Math.min(Math.max(opts.seatsBooked ?? max, 1), max);
+  const perSeat = computePerSeatPrice(resolved.totalAmount, max);
+  // Organizer pays for their seats. If they're the only seat, they cover any
+  // rounding gap so the court total still nets out.
+  let organizerPreCredit = Math.round(perSeat * seats * 100) / 100;
+  if (seats === max) {
+    organizerPreCredit = resolved.totalAmount;
+  }
+
+  const credit = Math.max(0, Math.min(opts.creditsApplied ?? 0, organizerPreCredit));
+  const organizerAmount = Math.max(0, Math.round((organizerPreCredit - credit) * 100) / 100);
+
+  return {
+    ...resolved,
+    perSeatAmount: perSeat,
+    organizerAmount,
+    creditApplied: credit,
   };
 }

@@ -3,6 +3,7 @@ import { GLICKO, toDisplayRating } from '@feera/matching';
 import {
   persistSnapshots,
   recompute,
+  recomputeWomenPool,
   summariseSnapshotForDb,
   type DbHandle,
   type MatchRow,
@@ -178,6 +179,84 @@ describe('rating-recalculation/recompute', () => {
     expect(alice.before.rating).toBe(1700);
     expect(alice.after.rating).not.toBe(1700);
     expect(Math.abs(alice.after.rating - 1700)).toBeLessThan(100);
+  });
+});
+
+describe('rating-recalculation/recomputeWomenPool', () => {
+  it('updates the women pool independently from the open pool', () => {
+    // Mixed-gender history: m1 ALL-female, m2 mixed (has a male), m3 ALL-female.
+    // Only m1 and m3 should fold into the women pool.
+    const EVE = '00000000-0000-0000-0000-00000000000e';
+    const MIA = '00000000-0000-0000-0000-00000000000f';
+    const ZOE = '00000000-0000-0000-0000-000000000010';
+    const ANA = '00000000-0000-0000-0000-000000000011';
+    const KEN = '00000000-0000-0000-0000-000000000012';
+
+    const matches: MatchRow[] = [
+      {
+        id: 'w1',
+        teamAPlayer1: EVE,
+        teamAPlayer2: MIA,
+        teamBPlayer1: ZOE,
+        teamBPlayer2: ANA,
+        teamASetsWon: 2,
+        teamBSetsWon: 0,
+        isRanked: true,
+        playedAt: new Date('2026-05-01T10:00:00Z'),
+      },
+      {
+        id: 'w2',
+        teamAPlayer1: EVE,
+        teamAPlayer2: KEN, // male — mixed match, excluded from women pool
+        teamBPlayer1: ZOE,
+        teamBPlayer2: ANA,
+        teamASetsWon: 2,
+        teamBSetsWon: 1,
+        isRanked: true,
+        playedAt: new Date('2026-05-08T10:00:00Z'),
+      },
+      {
+        id: 'w3',
+        teamAPlayer1: EVE,
+        teamAPlayer2: MIA,
+        teamBPlayer1: ZOE,
+        teamBPlayer2: ANA,
+        teamASetsWon: 2,
+        teamBSetsWon: 1,
+        isRanked: true,
+        playedAt: new Date('2026-05-15T10:00:00Z'),
+      },
+    ];
+
+    // Recompute open pool (all 3 matches) and women pool (only 2 matches).
+    const openReport = recompute(new Map(), matches);
+    const genderOf = new Map<string, string | null>([
+      [EVE, 'f'],
+      [MIA, 'f'],
+      [ZOE, 'f'],
+      [ANA, 'f'],
+      [KEN, 'm'],
+    ]);
+    const womenReport = recomputeWomenPool(matches, genderOf);
+
+    // Open pool: all 3 matches processed, KEN appears.
+    expect(openReport.matchesProcessed).toBe(3);
+    expect(openReport.snapshots.some((s) => s.userId === KEN)).toBe(true);
+
+    // Women pool: only 2 matches processed; KEN is absent; EVE/MIA/ZOE/ANA present.
+    expect(womenReport.matchesProcessed).toBe(2);
+    expect(womenReport.playersTouched).toBe(4);
+    expect(womenReport.ratings.has(KEN)).toBe(false);
+    expect(womenReport.ratings.has(EVE)).toBe(true);
+
+    // Eve in the open pool aggregates all 3 matches' impact; in the women pool, only 2.
+    // Hence the magnitudes should differ.
+    const openEve = openReport.snapshots.find((s) => s.userId === EVE)!;
+    const womenEve = womenReport.ratings.get(EVE)!;
+    expect(openEve.after.matchCount).toBe(3);
+    expect(womenEve.matchCount).toBe(2);
+    // Different states, proving independence.
+    expect(openEve.after.rating).not.toBe(womenEve.rating);
   });
 });
 

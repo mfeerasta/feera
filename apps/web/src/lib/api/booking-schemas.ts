@@ -100,6 +100,9 @@ export const matchScoreSchema = z.object({
 });
 
 export const matchDisputeSchema = z.object({
+  kind: z
+    .enum(['wrong_score', 'wrong_winner', 'ineligible_player', 'other'])
+    .default('other'),
   reason: z.string().min(1).max(1000),
 });
 

@@ -5,6 +5,7 @@ import {
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -21,8 +22,22 @@ import {
 } from './common';
 import { users } from './users';
 
+export const coachingSessionTypeEnum = pgEnum('coaching_session_type', [
+  'single',
+  'group',
+  'clinic',
+]);
+
 /**
  * coaches - extends a user with coaching credentials and pricing.
+ *
+ * Pricing model (Phase 1): coaches advertise an hourly band
+ * (`hourlyRate` as the floor, `hourlyRateMax` as the optional ceiling).
+ * Per-session price is computed from the floor at booking time.
+ *
+ * Verification model: `isVerifiedByFeera` gates marketplace visibility.
+ * Documents land in `verificationDocuments` as signed-URL records and a
+ * platform admin flips the flag from the admin queue.
  */
 export const coaches = pgTable(
   'coaches',
@@ -40,7 +55,17 @@ export const coaches = pgTable(
     certifications: jsonb('certifications').notNull().default(sql`'[]'::jsonb`),
     yearsExperience: integer('years_experience'),
     hourlyRate: doublePrecision('hourly_rate').notNull(),
+    hourlyRateMax: doublePrecision('hourly_rate_max'),
     currency: text('currency').notNull(),
+    weeklyAvailability: jsonb('weekly_availability')
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    verificationDocuments: jsonb('verification_documents')
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    introVideoUrl: text('intro_video_url'),
+    responseTimeAvgHours: integer('response_time_avg_hours').notNull().default(24),
+    isEditionEndorsed: boolean('is_edition_endorsed').notNull().default(false),
     acceptsWomenOnly: boolean('accepts_women_only').notNull().default(true),
     acceptsJuniors: boolean('accepts_juniors').notNull().default(true),
     isAcceptingBookings: boolean('is_accepting_bookings').notNull().default(true),
@@ -75,6 +100,7 @@ export const coachingSessions = pgTable(
     additionalLearners: jsonb('additional_learners').notNull().default(sql`'[]'::jsonb`),
     startAt: timestamp('start_at', { withTimezone: true }).notNull(),
     endAt: timestamp('end_at', { withTimezone: true }).notNull(),
+    sessionType: coachingSessionTypeEnum('session_type').notNull().default('single'),
     totalAmount: doublePrecision('total_amount').notNull(),
     currency: text('currency').notNull(),
     status: coachingSessionStatusEnum('status').notNull().default('pending'),

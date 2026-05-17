@@ -13,9 +13,25 @@ import {
 } from '@feera/payments';
 import { StripeAdapter } from '@feera/payments/providers/stripe';
 
-let cached: PaymentRouter | null = null;
+/**
+ * Extension of the upstream PaymentRouter with a provider-by-name accessor.
+ * Refund + capture flows need to talk to the exact provider that minted the
+ * original transaction, not the country-routed chain head.
+ */
+export class FeeraPaymentRouter extends PaymentRouter {
+  private readonly providers: ReadonlyMap<PaymentProviderName, PaymentProvider>;
+  constructor(opts: { providers: ReadonlyMap<PaymentProviderName, PaymentProvider> }) {
+    super(opts);
+    this.providers = opts.providers;
+  }
+  getProvider(name: PaymentProviderName): PaymentProvider | undefined {
+    return this.providers.get(name);
+  }
+}
 
-export function getPaymentRouter(): PaymentRouter {
+let cached: FeeraPaymentRouter | null = null;
+
+export function getPaymentRouter(): FeeraPaymentRouter {
   if (cached) return cached;
 
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -33,7 +49,7 @@ export function getPaymentRouter(): PaymentRouter {
 
   const stripe = new StripeAdapter({ secretKey, webhookSecret });
   const providers = new Map<PaymentProviderName, PaymentProvider>([['stripe', stripe]]);
-  cached = new PaymentRouter({ providers });
+  cached = new FeeraPaymentRouter({ providers });
   return cached;
 }
 

@@ -21,6 +21,7 @@ interface ProfileData {
     city: string | null;
     gender: string | null;
     genderVisibility: 'public' | 'friends' | 'private';
+    womenOnlyPoolOptIn: boolean;
     profilePhotoUrl: string | null;
     bio: string | null;
     editionMemberStatus: 'none' | 'applicant' | 'active' | 'lapsed' | 'suspended';
@@ -48,6 +49,7 @@ async function loadProfile(userId: string): Promise<ProfileData | null> {
         city: users.city,
         gender: users.gender,
         genderVisibility: users.genderVisibility,
+        womenOnlyPoolOptIn: users.womenOnlyPoolOptIn,
         profilePhotoUrl: users.profilePhotoUrl,
         bio: users.bio,
         editionMemberStatus: users.editionMemberStatus,
@@ -174,6 +176,62 @@ export default async function MePage() {
               Profile audience
             </p>
           </div>
+        </div>
+
+        <div className="mt-12">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pool and privacy</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <div className="grid gap-4 text-sm md:grid-cols-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
+                    Gender
+                  </p>
+                  <p className="mt-2 text-[color:var(--color-fg)]">
+                    {user.gender === 'm'
+                      ? 'Man'
+                      : user.gender === 'f'
+                        ? 'Woman'
+                        : user.gender === 'x'
+                          ? 'Prefer not to say'
+                          : 'Not set'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
+                    Visibility
+                  </p>
+                  <p className="mt-2 text-[color:var(--color-fg)]">
+                    {user.genderVisibility === 'public'
+                      ? 'Anyone can see'
+                      : user.genderVisibility === 'friends'
+                        ? 'Friends only'
+                        : 'Only you'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
+                    Women only pool
+                  </p>
+                  <p className="mt-2 text-[color:var(--color-fg)]">
+                    {user.gender === 'f'
+                      ? user.womenOnlyPoolOptIn
+                        ? 'Enabled'
+                        : 'Off'
+                      : 'Not eligible'}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/me/privacy"
+                className="mt-6 inline-flex items-center text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] hover:underline"
+              >
+                Edit pool and privacy
+              </Link>
+            </CardBody>
+          </Card>
         </div>
 
         <div className="mt-12">

@@ -7,6 +7,10 @@ import {
   DEFAULT_BOOKING_DURATION_MIN,
 } from '../src/lib/bookings/service';
 import { computeSetWinners } from '../src/lib/matches/service';
+import {
+  computePerSeatPrice,
+  computePricing,
+} from '../src/lib/bookings/pricing';
 
 const HAS_DB = Boolean(process.env.DATABASE_URL || process.env.DATABASE_URL_POOLED);
 
@@ -27,6 +31,43 @@ describe('bookings smoke (pure logic, no DB)', () => {
     const start = new Date('2026-06-01T10:00:00Z');
     const explicit = new Date('2026-06-01T11:30:00Z');
     expect(computeEndAt(start, explicit)).toEqual(explicit);
+  });
+});
+
+describe('per-seat pricing', () => {
+  it('splits a court total across max participants', () => {
+    expect(computePerSeatPrice(2000, 4)).toBe(500);
+  });
+
+  it('rounds to 2 decimal places (major units)', () => {
+    expect(computePerSeatPrice(1000, 3)).toBeCloseTo(333.33, 2);
+  });
+
+  it('computePricing charges organizer for their seats only', () => {
+    const out = computePricing(
+      { totalAmount: 2000, currency: 'PKR' },
+      { seatsBooked: 2, maxParticipants: 4 },
+    );
+    expect(out.perSeatAmount).toBe(500);
+    expect(out.organizerAmount).toBe(1000);
+    expect(out.creditApplied).toBe(0);
+  });
+
+  it('full-court organizer covers any rounding remainder', () => {
+    const out = computePricing(
+      { totalAmount: 1000, currency: 'PKR' },
+      { seatsBooked: 3, maxParticipants: 3 },
+    );
+    expect(out.organizerAmount).toBe(1000);
+  });
+
+  it('applies credits, capped at the organizer subtotal', () => {
+    const out = computePricing(
+      { totalAmount: 2000, currency: 'PKR' },
+      { seatsBooked: 2, maxParticipants: 4, creditsApplied: 1500 },
+    );
+    expect(out.creditApplied).toBe(1000);
+    expect(out.organizerAmount).toBe(0);
   });
 });
 

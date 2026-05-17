@@ -22,6 +22,8 @@ export interface DiscoverFilters {
   from: Date;
   to: Date;
   genderPreference?: 'open' | 'men_only' | 'women_only' | 'mixed';
+  /** Restrict to the women-only matchmaking pool (parallel Glicko). */
+  womenOnly?: boolean;
 }
 
 /**
@@ -58,6 +60,7 @@ export async function discoverOpenMatches(
         editionMemberStatus: users.editionMemberStatus,
         ratingInternal: userRatings.ratingInternal,
         ratingDeviation: userRatings.ratingDeviation,
+        womenOnlyPoolRating: userRatings.womenOnlyPoolRating,
         isFlaggedSandbag: userRatings.isFlaggedSandbag,
         onTimeRate: userSocialScores.onTimeRate,
         noShowRate: userSocialScores.noShowRate,
@@ -132,10 +135,13 @@ export async function discoverOpenMatches(
           userId: bookingParticipants.userId,
           status: bookingParticipants.status,
           ratingInternal: userRatings.ratingInternal,
+          womenOnlyPoolRating: userRatings.womenOnlyPoolRating,
+          gender: users.gender,
           onTimeRate: userSocialScores.onTimeRate,
           noShowRate: userSocialScores.noShowRate,
         })
         .from(bookingParticipants)
+        .leftJoin(users, eq(users.id, bookingParticipants.userId))
         .leftJoin(userRatings, eq(userRatings.userId, bookingParticipants.userId))
         .leftJoin(userSocialScores, eq(userSocialScores.userId, bookingParticipants.userId))
         .where(inArray(bookingParticipants.bookingId, bookingIds))
@@ -146,6 +152,8 @@ export async function discoverOpenMatches(
     Array<{
       userId: string;
       ratingInternal: number;
+      womenOnlyPoolRating: number | null;
+      gender: 'm' | 'f' | null;
       onTimeRate: number;
       noShowRate: number;
     }>
@@ -153,9 +161,12 @@ export async function discoverOpenMatches(
   for (const p of participantRows) {
     if (p.status === 'declined' || p.status === 'removed') continue;
     const arr = partsByBooking.get(p.bookingId) ?? [];
+    const g = p.gender === 'm' || p.gender === 'f' ? p.gender : null;
     arr.push({
       userId: p.userId,
       ratingInternal: p.ratingInternal ?? 1500,
+      womenOnlyPoolRating: p.womenOnlyPoolRating ?? null,
+      gender: g,
       onTimeRate: p.onTimeRate ?? 1.0,
       noShowRate: p.noShowRate ?? 0.0,
     });
@@ -191,6 +202,8 @@ export async function discoverOpenMatches(
         participants: parts.map((p) => ({
           userId: p.userId as Uuid,
           rating: p.ratingInternal,
+          womenPoolRating: p.womenOnlyPoolRating,
+          gender: p.gender,
           isFriend: false, // TODO(M4 follow-up): join friendships table once applied to prod
           isPriorOpponent: false, // TODO(M4 follow-up): derive from matches table history
           reliability: (p.onTimeRate + (1 - p.noShowRate)) / 2,
@@ -216,6 +229,7 @@ export async function discoverOpenMatches(
   const finderUser: FinderUser = {
     id: userRow.id as Uuid,
     rating: userRow.ratingInternal ?? 1500,
+    womenPoolRating: userRow.womenOnlyPoolRating ?? null,
     rd: userRow.ratingDeviation ?? 350,
     lat: homeLat,
     lng: homeLng,
@@ -238,6 +252,7 @@ export async function discoverOpenMatches(
       from: filters.from,
       to: filters.to,
       genderPreference: filters.genderPreference,
+      womenOnly: filters.womenOnly,
     },
   });
 }

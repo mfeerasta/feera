@@ -1,6 +1,9 @@
 import Link from 'next/link';
+import { eq } from 'drizzle-orm';
+import { users } from '@feera/db';
 import { playFetch } from '@/lib/play/api-client';
 import { EmptyState } from '@/components/play/empty-state';
+import { getSession, withRequestContext } from '@/lib/api/request-context';
 
 interface OpenBooking {
   id: string;
@@ -28,6 +31,7 @@ interface PageProps {
     levelMin?: string;
     levelMax?: string;
     gender?: string;
+    pool?: string;
   }>;
 }
 
@@ -48,6 +52,23 @@ function fmtRange(startIso: string, endIso: string): string {
 
 export default async function OpenMatchesPage({ searchParams }: PageProps) {
   const sp = await searchParams;
+
+  // Determine women-pool eligibility for the toggle.
+  const session = await getSession();
+  let womenEligible = false;
+  if (session) {
+    const row = await withRequestContext(session, async (tx) => {
+      const [u] = await tx
+        .select({ gender: users.gender, optIn: users.womenOnlyPoolOptIn })
+        .from(users)
+        .where(eq(users.id, session.userId))
+        .limit(1);
+      return u ?? null;
+    });
+    womenEligible = row?.gender === 'f' && row?.optIn === true;
+  }
+  const pool = sp.pool === 'women' && womenEligible ? 'women' : 'open';
+
   const qs = new URLSearchParams({ limit: '60' });
   if (sp.city) qs.set('city', sp.city);
   if (sp.from) qs.set('from', sp.from);
@@ -55,6 +76,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
   if (sp.levelMin) qs.set('levelMin', sp.levelMin);
   if (sp.levelMax) qs.set('levelMax', sp.levelMax);
   if (sp.gender) qs.set('gender', sp.gender);
+  if (pool === 'women') qs.set('pool', 'women');
 
   const res = await playFetch(`/api/v1/bookings/open?${qs.toString()}`);
   let rows: OpenBooking[] = [];
@@ -87,10 +109,31 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
 
       <section className="bg-cream">
         <div className="mx-auto max-w-[1280px] px-6 py-12">
+          {womenEligible && (
+            <div className="mb-8 flex items-center gap-3 border border-brass/40 bg-paper p-1 text-[10px] uppercase tracking-[0.2em]">
+              <Link
+                href="/play/open"
+                className={`px-4 py-2 ${
+                  pool === 'open' ? 'bg-ink-deep text-cream' : 'text-ink-deep/70 hover:text-ink-deep'
+                }`}
+              >
+                All players
+              </Link>
+              <Link
+                href="/play/open?pool=women"
+                className={`px-4 py-2 ${
+                  pool === 'women' ? 'bg-ink-deep text-cream' : 'text-ink-deep/70 hover:text-ink-deep'
+                }`}
+              >
+                Women only
+              </Link>
+            </div>
+          )}
           <form
             method="get"
             className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-6"
           >
+            {pool === 'women' && <input type="hidden" name="pool" value="women" />}
             <label className="flex flex-col gap-2 md:col-span-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
                 City

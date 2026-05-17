@@ -36,13 +36,14 @@ export async function POST(req: NextRequest, ctx: Ctx) {
         session.userId,
         session.role === 'platform_admin',
         parsed.data.reason,
+        parsed.data.kind,
       ),
     );
     if ('kind' in result) {
       if (result.kind === 'not_found') return notFound(`Match "${id}" not found.`);
       return forbidden('Only a player in the match may dispute.');
     }
-    return ok({ data: result.match });
+    return ok({ data: { match: result.match, dispute: result.dispute } });
   } catch (err) {
     return serverError('matches/[id]/dispute:POST', err);
   }

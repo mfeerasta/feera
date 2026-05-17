@@ -19,7 +19,9 @@ const updateSchema = z.object({
   displayName: z.string().min(1).max(160).optional(),
   locale: z.enum(['en', 'ur', 'ar', 'es', 'fr', 'it', 'pt']).optional(),
   city: z.string().min(1).max(80).nullable().optional(),
+  gender: z.enum(['m', 'f', 'x']).nullable().optional(),
   genderVisibility: z.enum(['public', 'friends', 'private']).optional(),
+  womenOnlyPoolOptIn: z.boolean().optional(),
   bio: z.string().max(2000).nullable().optional(),
 });
 

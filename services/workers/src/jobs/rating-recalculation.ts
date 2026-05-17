@@ -1,5 +1,5 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { matches as matchesTable, userRatings } from '@feera/db';
+import { matches as matchesTable, userRatings, users as usersTable } from '@feera/db';
 import { db as defaultDb } from '@feera/db/client';
 import {
   GLICKO,
@@ -45,6 +45,17 @@ export type RecalcReport = Readonly<{
   largestDeltaDisplay: number;
   driftAlertCount: number;
   snapshots: readonly RecalcSnapshot[];
+}>;
+
+/**
+ * Parallel women-only pool report. Built by folding only matches where ALL FOUR
+ * players have gender = 'f'. Players with no women-pool history (no eligible
+ * matches in their history) are simply omitted from the snapshot list.
+ */
+export type WomenPoolReport = Readonly<{
+  matchesProcessed: number;
+  playersTouched: number;
+  ratings: ReadonlyMap<string, RatingState>;
 }>;
 
 /** A display-rating shift larger than this in a single recomputation is suspicious. */
@@ -145,6 +156,62 @@ export function recompute(
     largestDeltaDisplay: Math.round(largestDelta * 100) / 100,
     driftAlertCount: drift,
     snapshots,
+  };
+}
+
+/**
+ * Compute parallel women-only pool ratings from a match history + gender map.
+ * Folds only matches where every one of the four players has gender = 'f'.
+ *
+ * Mathematically: women-pool ratings depend ONLY on women-pool matches, so
+ * the pool is independent from the open pool by construction.
+ */
+export function recomputeWomenPool(
+  matches: readonly MatchRow[],
+  genderOf: ReadonlyMap<string, string | null>,
+): WomenPoolReport {
+  const state = new Map<string, RatingState>();
+  const ordered = [...matches]
+    .filter((m) => m.isRanked)
+    .filter((m) =>
+      genderOf.get(m.teamAPlayer1) === 'f' &&
+      genderOf.get(m.teamAPlayer2) === 'f' &&
+      genderOf.get(m.teamBPlayer1) === 'f' &&
+      genderOf.get(m.teamBPlayer2) === 'f',
+    )
+    .sort((a, b) => a.playedAt.getTime() - b.playedAt.getTime());
+
+  let processed = 0;
+  for (const match of ordered) {
+    const ids = [
+      match.teamAPlayer1,
+      match.teamAPlayer2,
+      match.teamBPlayer1,
+      match.teamBPlayer2,
+    ] as const;
+    for (const id of ids) {
+      if (!state.has(id)) state.set(id, startingState());
+    }
+    const a1 = state.get(match.teamAPlayer1)!;
+    const a2 = state.get(match.teamAPlayer2)!;
+    const b1 = state.get(match.teamBPlayer1)!;
+    const b2 = state.get(match.teamBPlayer2)!;
+    const update = applyDoublesMatch({
+      teamA: [a1, a2],
+      teamB: [b1, b2],
+      winner: winnerOf(match),
+    });
+    state.set(match.teamAPlayer1, applyUpdate(a1, update.teamA[0], match.playedAt));
+    state.set(match.teamAPlayer2, applyUpdate(a2, update.teamA[1], match.playedAt));
+    state.set(match.teamBPlayer1, applyUpdate(b1, update.teamB[0], match.playedAt));
+    state.set(match.teamBPlayer2, applyUpdate(b2, update.teamB[1], match.playedAt));
+    processed += 1;
+  }
+
+  return {
+    matchesProcessed: processed,
+    playersTouched: state.size,
+    ratings: state,
   };
 }
 
@@ -267,6 +334,71 @@ export async function persistSnapshots(
 }
 
 /**
+ * Persist women-pool ratings only. Writes `user_ratings.women_only_pool_rating`
+ * for each player in the women-pool report. Skips users with no women-pool
+ * history. Uses the same SERIALIZABLE per-batch transaction shape.
+ */
+export async function persistWomenPool(
+  db: DbHandle,
+  report: WomenPoolReport,
+  log: JobContext['log'],
+  batchSize = PERSIST_BATCH_SIZE,
+): Promise<{ written: number; skippedSandbag: number }> {
+  const eligible = [...report.ratings.entries()].filter(
+    ([, state]) => state.matchCount > 0,
+  );
+
+  let written = 0;
+  let skippedSandbag = 0;
+
+  for (let i = 0; i < eligible.length; i += batchSize) {
+    const slice = eligible.slice(i, i + batchSize);
+    const ids = slice.map(([id]) => id);
+
+    const existing = await db
+      .select({ userId: userRatings.userId, isFlaggedSandbag: userRatings.isFlaggedSandbag })
+      .from(userRatings)
+      .where(inArray(userRatings.userId, ids));
+    const flagged = new Set(existing.filter((r) => r.isFlaggedSandbag).map((r) => r.userId));
+
+    const toWrite = slice.filter(([id]) => {
+      if (flagged.has(id)) {
+        skippedSandbag += 1;
+        return false;
+      }
+      return true;
+    });
+    if (toWrite.length === 0) continue;
+
+    await db.transaction(async (tx) => {
+      await tx.execute(sql`SET TRANSACTION ISOLATION LEVEL SERIALIZABLE`);
+      for (const [userId, state] of toWrite) {
+        // Upsert: keep the existing row's open-pool data untouched; only set
+        // women_only_pool_rating. New rows get sensible defaults.
+        await tx
+          .insert(userRatings)
+          .values({
+            userId,
+            womenOnlyPoolRating: state.rating,
+          })
+          .onConflictDoUpdate({
+            target: userRatings.userId,
+            set: { womenOnlyPoolRating: state.rating },
+          });
+      }
+    });
+    written += toWrite.length;
+  }
+
+  log.info('women pool persisted', {
+    job: 'rating-recalc',
+    written,
+    skippedSandbag,
+  });
+  return { written, skippedSandbag };
+}
+
+/**
  * Load all ranked matches from the DB. Cheap on day one; if `matches` grows
  * huge we'll bracket by `played_at`.
  */
@@ -321,6 +453,29 @@ export const ratingRecalculation: Job = {
         persistResult = await persistSnapshots(db, report.snapshots, log);
       }
 
+      // Parallel women-only pool. Loads each player's gender, folds only the
+      // all-female sub-history into a separate Glicko state, persists into
+      // `user_ratings.women_only_pool_rating`.
+      const allPlayerIds = new Set<string>();
+      for (const m of matches) {
+        allPlayerIds.add(m.teamAPlayer1);
+        allPlayerIds.add(m.teamAPlayer2);
+        allPlayerIds.add(m.teamBPlayer1);
+        allPlayerIds.add(m.teamBPlayer2);
+      }
+      const genderRows = allPlayerIds.size
+        ? await db
+            .select({ id: usersTable.id, gender: usersTable.gender })
+            .from(usersTable)
+            .where(inArray(usersTable.id, [...allPlayerIds]))
+        : [];
+      const genderOf = new Map(genderRows.map((r) => [r.id, r.gender]));
+      const womenReport = recomputeWomenPool(matches, genderOf);
+      let womenPersist = { written: 0, skippedSandbag: 0 };
+      if (apply && womenReport.playersTouched > 0) {
+        womenPersist = await persistWomenPool(db, womenReport, log);
+      }
+
       log.info('recalculation complete', {
         matchesProcessed: report.matchesProcessed,
         playersTouched: report.playersTouched,
@@ -329,6 +484,9 @@ export const ratingRecalculation: Job = {
         wrote: persistResult.written,
         skippedZeroMatch: persistResult.skippedZeroMatch,
         skippedSandbag: persistResult.skippedSandbag,
+        womenMatchesProcessed: womenReport.matchesProcessed,
+        womenPlayersTouched: womenReport.playersTouched,
+        womenWrote: womenPersist.written,
         applied: apply,
       });
       return {
@@ -338,6 +496,9 @@ export const ratingRecalculation: Job = {
           playersTouched: report.playersTouched,
           driftAlertCount: report.driftAlertCount,
           wrote: persistResult.written,
+          womenMatchesProcessed: womenReport.matchesProcessed,
+          womenPlayersTouched: womenReport.playersTouched,
+          womenWrote: womenPersist.written,
         },
         durationMs: Date.now() - start,
         notes: apply ? 'apply mode (live writes)' : 'dry-run',

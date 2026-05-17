@@ -1,173 +1,118 @@
-'use client';
+import Link from 'next/link';
+import { adminFetch } from '@/lib/admin/api-client';
+import { gateAdmin } from '@/lib/admin/gate';
+import { CheckoutCard } from '@/components/payments/checkout-card';
 
-import { useEffect, useMemo, useState } from 'react';
-import { use as usePromise } from 'react';
-import { loadStripe, type Stripe as StripeJs } from '@stripe/stripe-js';
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from '@stripe/react-stripe-js';
+export const dynamic = 'force-dynamic';
 
-// Minimal pay-page stub. M will wire the real organizer / participant context
-// from the bookings detail page in M3 polish.
-
-type IntentResponse = {
-  data: {
-    paymentId: string;
-    providerTransactionId: string;
-    clientSecret: string;
-    status: 'pending' | 'requires_action' | 'succeeded';
-  };
-};
-
-let stripePromise: Promise<StripeJs | null> | null = null;
-function getStripeJs(): Promise<StripeJs | null> {
-  if (!stripePromise) {
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-    stripePromise = key ? loadStripe(key) : Promise.resolve(null);
-  }
-  return stripePromise;
+interface ParticipantRow {
+  userId: string;
+  status: string;
+  paymentStatus: string;
 }
 
-async function createIntent(
-  bookingId: string,
-  payerUserId: string,
-  amountMinor: number,
-  currency: string,
-): Promise<IntentResponse> {
-  const res = await fetch('/api/v1/payments/intent', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-feera-dev-admin': '1',
-    },
-    body: JSON.stringify({ bookingId, payerUserId, amountMinor, currency }),
-  });
-  if (!res.ok) throw new Error(`intent failed: ${res.status}`);
-  return res.json();
+interface BookingDetail {
+  id: string;
+  courtId: string;
+  organizerUserId: string;
+  startAt: string;
+  endAt: string;
+  totalAmount: number;
+  currency: string;
+  status: string;
+  maxParticipants: number;
+  seatsBooked: number;
+  isOpenMatch: boolean;
+  notes: string | null;
+  participants: ParticipantRow[];
 }
 
-function CheckoutForm() {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [submitting, setSubmitting] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-    setSubmitting(true);
-    setErr(null);
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.href,
-      },
-    });
-    if (error) setErr(error.message ?? 'Payment failed.');
-    setSubmitting(false);
-  }
-
-  return (
-    <form onSubmit={onSubmit} className="space-y-4 max-w-md">
-      <PaymentElement />
-      {err ? <p className="text-sm text-red-600">{err}</p> : null}
-      <button
-        type="submit"
-        disabled={!stripe || submitting}
-        className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-      >
-        {submitting ? 'Confirming...' : 'Pay'}
-      </button>
-    </form>
-  );
-}
-
-export default function PayPage({
-  params,
-}: {
+interface PageProps {
   params: Promise<{ id: string }>;
-}) {
-  const { id: bookingId } = usePromise(params);
+  searchParams: Promise<{ admin?: string }>;
+}
 
-  // Stub controls so M can poke this page directly during M3 polish.
-  const [payerUserId, setPayerUserId] = useState('');
-  const [amountMinor, setAmountMinor] = useState(50000);
-  const [currency, setCurrency] = useState('PKR');
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+function fmtSlot(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
-  const stripeJs = useMemo(() => getStripeJs(), []);
+export default async function AdminPayPage({ params, searchParams }: PageProps) {
+  const sp = await searchParams;
+  gateAdmin(sp);
+  const { id } = await params;
 
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      setErr('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY not set. Cannot mount Stripe.');
-    }
-  }, []);
-
-  async function start() {
-    setLoading(true);
-    setErr(null);
-    try {
-      const out = await createIntent(bookingId, payerUserId, amountMinor, currency);
-      setClientSecret(out.data.clientSecret);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
-    }
+  const res = await adminFetch(`/api/v1/bookings/${id}`);
+  if (!res.ok) {
+    return (
+      <section className="mx-auto max-w-3xl px-6 py-12">
+        <p className="border border-red-500/40 bg-red-500/5 px-4 py-3 text-sm text-red-600">
+          Failed to load booking (HTTP {res.status}).
+        </p>
+      </section>
+    );
   }
+  const { data: booking } = (await res.json()) as { data: BookingDetail };
+
+  const max = Math.max(booking.maxParticipants, 1);
+  const perSeatMajor = Math.round((Number(booking.totalAmount) / max) * 100) / 100;
+  const seats = Math.min(Math.max(booking.seatsBooked, 1), max);
+  const organizerMajor =
+    seats === max
+      ? Number(booking.totalAmount)
+      : Math.round(perSeatMajor * seats * 100) / 100;
+
+  const amountMinor = Math.round(organizerMajor * 100);
+  const perSeatMinor = Math.round(perSeatMajor * 100);
 
   return (
-    <main className="p-6 space-y-6">
-      <h1 className="text-xl font-semibold">Pay for booking {bookingId}</h1>
+    <section className="mx-auto max-w-3xl space-y-10 px-6 py-12">
+      <div>
+        <Link
+          href={`/admin/bookings/${id}?admin=1` as never}
+          className="text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)] feera-motion hover:text-[color:var(--color-accent)]"
+        >
+          Back to booking
+        </Link>
+        <p className="mt-4 text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
+          Checkout
+        </p>
+        <h1 className="mt-2 font-serif text-4xl tracking-tight text-[color:var(--color-fg)]">
+          Settle your seats.
+        </h1>
+        <p className="mt-3 text-sm text-[color:var(--color-fg-muted)]">
+          {fmtSlot(booking.startAt)} to {fmtSlot(booking.endAt)} on court{' '}
+          {booking.courtId.slice(0, 8)}. Court total{' '}
+          {Number(booking.totalAmount).toLocaleString()} {booking.currency}.
+        </p>
+      </div>
 
-      {!clientSecret ? (
-        <div className="space-y-3 max-w-md">
-          <label className="block text-sm">
-            Payer user id
-            <input
-              className="mt-1 w-full rounded border px-2 py-1"
-              value={payerUserId}
-              onChange={(e) => setPayerUserId(e.target.value)}
-              placeholder="uuid"
-            />
-          </label>
-          <label className="block text-sm">
-            Amount (minor units)
-            <input
-              type="number"
-              className="mt-1 w-full rounded border px-2 py-1"
-              value={amountMinor}
-              onChange={(e) => setAmountMinor(Number(e.target.value))}
-            />
-          </label>
-          <label className="block text-sm">
-            Currency
-            <input
-              className="mt-1 w-full rounded border px-2 py-1"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            />
-          </label>
-          <button
-            type="button"
-            disabled={loading || !payerUserId}
-            onClick={start}
-            className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
-            {loading ? 'Creating intent...' : 'Start payment'}
-          </button>
-          {err ? <p className="text-sm text-red-600">{err}</p> : null}
-        </div>
-      ) : (
-        <Elements stripe={stripeJs} options={{ clientSecret }}>
-          <CheckoutForm />
-        </Elements>
-      )}
-    </main>
+      <CheckoutCard
+        bookingId={booking.id}
+        payerUserId={booking.organizerUserId}
+        amountMinor={amountMinor}
+        currency={booking.currency}
+        returnUrl={`/admin/bookings/${booking.id}?admin=1`}
+        seats={seats}
+        perSeatMinor={perSeatMinor}
+      />
+
+      <aside className="border border-[color:var(--color-border)] bg-[color:var(--color-bg-card)] px-6 py-5 text-sm text-[color:var(--color-fg-muted)]">
+        <p className="font-serif text-base tracking-tight text-[color:var(--color-fg)]">
+          How payouts settle
+        </p>
+        <p className="mt-2">
+          Each joiner pays their own seat as their request is approved. The
+          club receives the full court price once every seat has settled. Refunds
+          follow the cancellation policy: full refund more than 24 hours before
+          start, 50 percent inside 24 hours, none inside 4 hours.
+        </p>
+      </aside>
+    </section>
   );
 }

@@ -1,0 +1,41 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse audits
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LHCI_TARGET_URL: ${{ secrets.LHCI_TARGET_URL || 'https://www.feera.ai' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse autorun
+        run: lhci autorun --config=.lighthouserc.json
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lhci-reports
+          path: .lighthouseci/

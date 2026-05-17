@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { and, desc, eq, gt, gte, lte, sql, type SQL } from 'drizzle-orm';
 import { bookings, clubs, courts, users } from '@feera/db';
 import {
+  forbidden,
   fromZodError,
   ok,
   serverError,
@@ -25,6 +26,7 @@ const querySchema = z.object({
   to: isoDateTime.optional(),
   minLevel: z.coerce.number().min(0).max(7).optional(),
   maxLevel: z.coerce.number().min(0).max(7).optional(),
+  pool: z.enum(['open', 'women']).optional(),
   limit: z.coerce.number().int().positive().max(100).default(50),
   offset: z.coerce.number().int().nonnegative().default(0),
 });
@@ -62,6 +64,22 @@ export async function GET(req: NextRequest) {
     }
     if (q.maxLevel != null) {
       filters.push(lte(bookings.requiredLevelMin, q.maxLevel));
+    }
+
+    // Women-only pool: gate on caller gender + opt-in, then filter to women_only bookings.
+    if (q.pool === 'women') {
+      const callerRows = await withRequestContext(session, (tx) =>
+        tx
+          .select({ gender: users.gender, optIn: users.womenOnlyPoolOptIn })
+          .from(users)
+          .where(eq(users.id, session.userId))
+          .limit(1),
+      );
+      const caller = callerRows[0];
+      if (!caller || caller.gender !== 'f' || !caller.optIn) {
+        return forbidden('The women-only matchmaking pool is restricted to verified female players who have opted in.');
+      }
+      filters.push(eq(bookings.genderPreference, 'women_only'));
     }
 
     const rows = await withRequestContext(session, (tx) =>
