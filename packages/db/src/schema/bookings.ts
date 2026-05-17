@@ -9,14 +9,16 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import {
+  bookingParticipantStatusEnum,
+  bookingPaymentStatusEnum,
   bookingStatusEnum,
   createdAtColumn,
   genderPreferenceEnum,
   idColumn,
   updatedAtColumn,
-} from './common.js';
-import { courts } from './clubs.js';
-import { users } from './users.js';
+} from './common';
+import { courts } from './clubs';
+import { users } from './users';
 
 export const bookings = pgTable(
   'bookings',
@@ -43,10 +45,10 @@ export const bookings = pgTable(
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
-  (t) => ({
-    courtStartIdx: index('bookings_court_start_idx').on(t.courtId, t.startAt),
-    organizerStartIdx: index('bookings_organizer_start_idx').on(t.organizerUserId, t.startAt),
-  }),
+  (t) => [
+    index('bookings_court_start_idx').on(t.courtId, t.startAt),
+    index('bookings_organizer_start_idx').on(t.organizerUserId, t.startAt),
+  ],
 );
 
 export const bookingParticipants = pgTable('booking_participants', {
@@ -57,9 +59,9 @@ export const bookingParticipants = pgTable('booking_participants', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  status: text('status').notNull().default('invited'),
+  status: bookingParticipantStatusEnum('status').notNull().default('invited'),
   paidAmount: doublePrecision('paid_amount'),
-  paymentStatus: text('payment_status').notNull().default('pending'),
+  paymentStatus: bookingPaymentStatusEnum('payment_status').notNull().default('pending'),
   paidToOrganizerAt: timestamp('paid_to_organizer_at', { withTimezone: true }),
   createdAt: createdAtColumn(),
   updatedAt: updatedAtColumn(),

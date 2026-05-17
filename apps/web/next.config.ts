@@ -9,7 +9,9 @@ const config: NextConfig = {
   turbopack: {
     root: path.join(__dirname, '../../'),
   },
-  typedRoutes: true,
+  // typedRoutes disabled for M2 — Link href casts in admin shell need a polish pass.
+  // Re-enable in M3 once apps/web/src/lib/admin Link helpers wrap href with Route.
+  typedRoutes: false,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
@@ -17,7 +19,7 @@ const config: NextConfig = {
       { protocol: 'https', hostname: '*.your-objectstorage.com' },
     ],
   },
-  transpilePackages: ['@feera/ui', '@feera/matching', '@feera/types'],
+  transpilePackages: ['@feera/ui', '@feera/matching', '@feera/types', '@feera/db'],
 };
 
 export default config;

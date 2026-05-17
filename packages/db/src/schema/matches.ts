@@ -8,14 +8,14 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { bookings } from './bookings.js';
+import { bookings } from './bookings';
 import {
   createdAtColumn,
   idColumn,
   matchVerificationEnum,
   updatedAtColumn,
-} from './common.js';
-import { users } from './users.js';
+} from './common';
+import { users } from './users';
 
 export const matches = pgTable(
   'matches',
@@ -55,7 +55,7 @@ export const matches = pgTable(
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
-  (t) => ({
-    playedAtIdx: index('matches_played_at_idx').on(t.playedAt),
-  }),
+  (t) => [
+    index('matches_played_at_idx').on(t.playedAt),
+  ],
 );

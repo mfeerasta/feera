@@ -1,0 +1,16 @@
+/**
+ * Example: mount better-auth in apps/web at
+ *   apps/web/src/app/api/auth/[...all]/route.ts
+ *
+ * Do NOT copy this file as-is; it lives here so subagent C has a
+ * reference when wiring the web app. The example uses Next.js 16
+ * App Router and the toNextJsHandler helper from better-auth.
+ */
+
+import { auth } from '@feera/auth';
+import { toNextJsHandler } from 'better-auth/next-js';
+
+export const { GET, POST } = toNextJsHandler(auth);
+
+// Optional: force the Node runtime so Twilio/Resend SDKs work.
+export const runtime = 'nodejs';

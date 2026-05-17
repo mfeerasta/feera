@@ -1,0 +1,31 @@
+{
+  "name": "@feera/payments",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./router": "./src/router.ts",
+    "./providers/stripe": "./src/providers/stripe/index.ts",
+    "./providers/jazzcash": "./src/providers/jazzcash/index.ts",
+    "./providers/easypaisa": "./src/providers/easypaisa/index.ts",
+    "./providers/raast": "./src/providers/raast/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@feera/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@vitest/coverage-v8": "^2.1.8",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}

@@ -15,7 +15,7 @@ import {
   deletedAtColumn,
   idColumn,
   updatedAtColumn,
-} from './common.js';
+} from './common';
 
 export const clubs = pgTable(
   'clubs',
@@ -53,11 +53,11 @@ export const clubs = pgTable(
     updatedAt: updatedAtColumn(),
     deletedAt: deletedAtColumn(),
   },
-  (t) => ({
-    slugUq: uniqueIndex('clubs_slug_uq').on(t.slug),
-    geoIdx: index('clubs_geo_idx').on(t.lat, t.lng),
-    countryCityIdx: index('clubs_country_city_idx').on(t.countryCode, t.city),
-  }),
+  (t) => [
+    uniqueIndex('clubs_slug_uq').on(t.slug),
+    index('clubs_geo_idx').on(t.lat, t.lng),
+    index('clubs_country_city_idx').on(t.countryCode, t.city),
+  ],
 );
 
 export const courts = pgTable('courts', {
@@ -91,7 +91,7 @@ export const courtPricingRules = pgTable(
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
-  (t) => ({
-    courtDayIdx: index('court_pricing_rules_court_day_idx').on(t.courtId, t.dayOfWeek),
-  }),
+  (t) => [
+    index('court_pricing_rules_court_day_idx').on(t.courtId, t.dayOfWeek),
+  ],
 );

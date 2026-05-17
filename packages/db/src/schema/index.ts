@@ -1,25 +1,35 @@
 /**
  * Schema barrel. Each file groups closely related tables.
  *
- * M1 status:
- *   - users, user-ratings, user-social-scores: scaffolded
- *   - clubs, courts, court-pricing-rules: scaffolded
- *   - bookings, booking-participants: scaffolded
- *   - matches: scaffolded (rating_changes column reserved for Glicko deltas)
+ * M1:
+ *   - users, user-ratings, user-social-scores
+ *   - clubs, courts, court-pricing-rules
+ *   - bookings, booking-participants
+ *   - matches
  *
- * Deferred to M2:
- *   - tournaments + tournament-registrations + tournament-rounds + tournament-matches
- *   - coaches + coaching-sessions
- *   - chats + chat-members + chat-messages
- *   - payments + payouts
- *   - club-staff, federations + federation-player-links
- *   - edition-memberships + edition-clubs
+ * M2 additions:
+ *   - tournaments, tournament-registrations, tournament-rounds, tournament-matches
+ *   - coaches, coaching-sessions
+ *   - chats, chat-members, chat-messages
+ *   - payments, payouts
+ *   - club-staff
+ *   - federations, federation-player-links
+ *   - edition-memberships, edition-clubs
  *   - audit-log
  *
- * RLS policies live in `migrations/000X-rls-*.sql` and ship in M2 alongside the rest of the
- * schema, with integration tests that explicitly assert unauthorized access is denied.
+ * RLS policies live in `src/rls/*.sql` and are applied via a post-migrate hook
+ * (M2 follow-up) after `drizzle-kit migrate` lands the table DDL.
  */
-export * from './users.js';
-export * from './clubs.js';
-export * from './bookings.js';
-export * from './matches.js';
+export * from './common';
+export * from './users';
+export * from './clubs';
+export * from './bookings';
+export * from './matches';
+export * from './tournaments';
+export * from './coaching';
+export * from './chats';
+export * from './payments';
+export * from './club-staff';
+export * from './federations';
+export * from './edition';
+export * from './audit';

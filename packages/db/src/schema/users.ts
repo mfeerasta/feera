@@ -18,7 +18,7 @@ import {
   idColumn,
   localeEnum,
   updatedAtColumn,
-} from './common.js';
+} from './common';
 
 /**
  * users — primary identity. Phone is E.164. Soft-deleted via deleted_at.
@@ -47,11 +47,11 @@ export const users = pgTable(
     updatedAt: updatedAtColumn(),
     deletedAt: deletedAtColumn(),
   },
-  (t) => ({
-    phoneUq: uniqueIndex('users_phone_uq').on(t.phone),
-    emailUq: uniqueIndex('users_email_uq').on(t.email),
-    countryCityIdx: index('users_country_city_idx').on(t.countryCode, t.city),
-  }),
+  (t) => [
+    uniqueIndex('users_phone_uq').on(t.phone),
+    uniqueIndex('users_email_uq').on(t.email),
+    index('users_country_city_idx').on(t.countryCode, t.city),
+  ],
 );
 
 /**
@@ -74,9 +74,9 @@ export const userRatings = pgTable(
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
-  (t) => ({
-    discoveryIdx: index('user_ratings_discovery_idx').on(t.ratingDisplay, t.isProvisional),
-  }),
+  (t) => [
+    index('user_ratings_discovery_idx').on(t.ratingDisplay, t.isProvisional),
+  ],
 );
 
 /**

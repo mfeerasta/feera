@@ -12,12 +12,17 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@feera/db": "workspace:*",
     "@feera/matching": "workspace:*",
     "@feera/types": "workspace:*",
     "@feera/ui": "workspace:*",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.38.3",
     "next": "^16.0.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
