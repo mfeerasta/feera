@@ -9,6 +9,7 @@ import {
   text,
   time,
   uniqueIndex,
+  uuid,
 } from 'drizzle-orm/pg-core';
 import {
   createdAtColumn,
@@ -62,7 +63,9 @@ export const clubs = pgTable(
 
 export const courts = pgTable('courts', {
   id: idColumn(),
-  clubId: idColumn().references(() => clubs.id, { onDelete: 'cascade' }),
+  clubId: uuid('club_id')
+    .notNull()
+    .references(() => clubs.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   surface: text('surface').notNull().default('artificial_grass'),
   isIndoor: boolean('is_indoor').notNull().default(false),
@@ -79,7 +82,9 @@ export const courtPricingRules = pgTable(
   'court_pricing_rules',
   {
     id: idColumn(),
-    courtId: idColumn().references(() => courts.id, { onDelete: 'cascade' }),
+    courtId: uuid('court_id')
+      .notNull()
+      .references(() => courts.id, { onDelete: 'cascade' }),
     dayOfWeek: integer('day_of_week').notNull(),
     startTime: time('start_time').notNull(),
     endTime: time('end_time').notNull(),

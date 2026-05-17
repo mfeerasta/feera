@@ -1,0 +1,27 @@
+{
+  "name": "@feera/federations",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./adapters/ppf": "./src/adapters/ppf.ts",
+    "./adapters/fip": "./src/adapters/fip.ts",
+    "./adapters/spc": "./src/adapters/spc.ts",
+    "./adapters/uaepa": "./src/adapters/uaepa.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@feera/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}

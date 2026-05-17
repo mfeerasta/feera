@@ -1,0 +1,36 @@
+# Multi-stage build for services/workers (Node 22 alpine, in-process cron).
+
+FROM node:22-alpine AS base
+RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
+WORKDIR /app
+
+# --- deps stage: install workspace deps with the lockfile ---
+FROM base AS deps
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+COPY services/workers/package.json ./services/workers/
+COPY packages ./packages
+RUN pnpm install --frozen-lockfile
+
+# --- builder: copy source, compile TS to dist/ ---
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/services/workers/node_modules ./services/workers/node_modules
+COPY . .
+RUN pnpm --filter @feera/workers build
+
+# --- runner: tiny image, runs the cron scheduler ---
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+RUN addgroup --system --gid 1001 nodejs \
+ && adduser --system --uid 1001 workers
+
+COPY --from=builder /app/services/workers/dist ./services/workers/dist
+COPY --from=builder /app/services/workers/package.json ./services/workers/
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+
+USER workers
+WORKDIR /app/services/workers
+CMD ["node", "dist/index.js", "scheduler"]

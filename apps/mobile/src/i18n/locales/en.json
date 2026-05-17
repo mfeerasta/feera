@@ -1,0 +1,42 @@
+{
+  "brand": {
+    "wordmark": "FEERA",
+    "tagline": "Padel, properly."
+  },
+  "home": {
+    "title": "Home",
+    "hello": "Welcome back",
+    "subtitle": "Your next match, your next ranking move."
+  },
+  "discover": {
+    "title": "Discover",
+    "subtitle": "Find courts, partners, and clubs near you."
+  },
+  "tournaments": {
+    "title": "Tournaments",
+    "subtitle": "Open draws, club leagues, Feera Edition events."
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Your rating, matches, and settings."
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signInSubtitle": "We will text you a one-time code.",
+    "phonePlaceholder": "Phone number",
+    "continue": "Continue",
+    "signInCta": "Sign in to Feera"
+  },
+  "match": {
+    "title": "Match",
+    "subtitle": "Score, players, venue, time."
+  },
+  "club": {
+    "title": "Club",
+    "subtitle": "Courts, schedule, members, leaderboard."
+  },
+  "edition": {
+    "title": "Feera Edition",
+    "subtitle": "Curated tournaments. Restrained, editorial."
+  }
+}

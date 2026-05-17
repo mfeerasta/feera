@@ -9,6 +9,7 @@ import {
   text,
   timestamp,
   uniqueIndex,
+  uuid,
 } from 'drizzle-orm/pg-core';
 import {
   createdAtColumn,
@@ -60,7 +61,9 @@ export const users = pgTable(
 export const userRatings = pgTable(
   'user_ratings',
   {
-    userId: idColumn().references(() => users.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .primaryKey()
+      .references(() => users.id, { onDelete: 'cascade' }),
     ratingInternal: doublePrecision('rating_internal').notNull().default(1500),
     ratingDisplay: doublePrecision('rating_display').notNull().default(3.5),
     ratingDeviation: doublePrecision('rating_deviation').notNull().default(350),
@@ -83,7 +86,9 @@ export const userRatings = pgTable(
  * user_social_scores — derived reliability and sportsmanship metrics.
  */
 export const userSocialScores = pgTable('user_social_scores', {
-  userId: idColumn().references(() => users.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .primaryKey()
+    .references(() => users.id, { onDelete: 'cascade' }),
   onTimeRate: doublePrecision('on_time_rate').notNull().default(1.0),
   noShowRate: doublePrecision('no_show_rate').notNull().default(0.0),
   sportsmanshipAvg: doublePrecision('sportsmanship_avg'),

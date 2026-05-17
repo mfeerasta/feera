@@ -3,18 +3,22 @@
   "compilerOptions": {
     "jsx": "react-native",
     "lib": ["ES2023"],
+    "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
     "allowJs": true,
+    "types": ["expo/types", "nativewind/types"],
     "paths": {
-      "@/*": ["./app/*"]
+      "@/*": ["./app/*"],
+      "@feera/*": ["../../packages/*/src"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
   ],
   "exclude": ["node_modules"]
 }

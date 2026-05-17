@@ -1,0 +1,42 @@
+{
+  "brand": {
+    "wordmark": "MISSING_TRANSLATION",
+    "tagline": "MISSING_TRANSLATION"
+  },
+  "home": {
+    "title": "MISSING_TRANSLATION",
+    "hello": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  },
+  "discover": {
+    "title": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  },
+  "tournaments": {
+    "title": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  },
+  "profile": {
+    "title": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  },
+  "auth": {
+    "signIn": "MISSING_TRANSLATION",
+    "signInSubtitle": "MISSING_TRANSLATION",
+    "phonePlaceholder": "MISSING_TRANSLATION",
+    "continue": "MISSING_TRANSLATION",
+    "signInCta": "MISSING_TRANSLATION"
+  },
+  "match": {
+    "title": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  },
+  "club": {
+    "title": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  },
+  "edition": {
+    "title": "MISSING_TRANSLATION",
+    "subtitle": "MISSING_TRANSLATION"
+  }
+}
