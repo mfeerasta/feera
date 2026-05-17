@@ -12,6 +12,7 @@ import { headers } from 'next/headers';
 import Link from 'next/link';
 import { SignInForm } from './sign-in-form';
 import { peekDevOtp } from '@feera/auth';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -40,12 +41,16 @@ export default async function SignInPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-ink-deep text-cream">
-      <header className="border-b border-cream/10">
+    <main className="min-h-screen bg-[color:var(--color-bg)] text-[color:var(--color-fg)]">
+      <header className="border-b border-[color:var(--color-border)]">
         <div className="mx-auto flex max-w-[1280px] items-center justify-between px-6 py-5">
-          <Link href="/" className="font-serif text-2xl tracking-tight text-cream">
+          <Link
+            href="/"
+            className="feera-motion font-serif text-2xl tracking-tight"
+          >
             feera
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 

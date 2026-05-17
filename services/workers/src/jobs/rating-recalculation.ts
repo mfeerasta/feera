@@ -1,3 +1,6 @@
+import { and, eq, inArray, sql } from 'drizzle-orm';
+import { matches as matchesTable, userRatings } from '@feera/db';
+import { db as defaultDb } from '@feera/db/client';
 import {
   GLICKO,
   applyDoublesMatch,
@@ -47,6 +50,9 @@ export type RecalcReport = Readonly<{
 /** A display-rating shift larger than this in a single recomputation is suspicious. */
 const DRIFT_ALERT_THRESHOLD_DISPLAY = 0.5;
 
+/** Batch size for the persistence path. Keeps each tx short. */
+const PERSIST_BATCH_SIZE = 100;
+
 function startingState(): RatingState {
   return {
     rating: GLICKO.startRating,
@@ -76,7 +82,7 @@ function winnerOf(match: MatchRow): DoublesMatchResult['winner'] {
 /**
  * Pure recompute. Folds the full match history into a fresh ratings map.
  * The job invokes this with the DB-loaded matches; the test invokes it with
- * an in-memory list. Idempotent: same input → same output.
+ * an in-memory list. Idempotent: same input -> same output.
  */
 export function recompute(
   initial: ReadonlyMap<string, RatingState>,
@@ -142,7 +148,7 @@ export function recompute(
   };
 }
 
-export function summariseSnapshotForDb(snap: RecalcSnapshot): {
+export type PersistRow = {
   userId: string;
   ratingInternal: number;
   ratingDisplay: number;
@@ -152,7 +158,9 @@ export function summariseSnapshotForDb(snap: RecalcSnapshot): {
   matchCount: number;
   isProvisional: boolean;
   lastMatchAt: Date | null;
-} {
+};
+
+export function summariseSnapshotForDb(snap: RecalcSnapshot): PersistRow {
   return {
     userId: snap.userId,
     ratingInternal: snap.after.rating,
@@ -166,29 +174,162 @@ export function summariseSnapshotForDb(snap: RecalcSnapshot): {
   };
 }
 
+/**
+ * Persist computed snapshots. Skips players with zero ranked matches and
+ * those flagged as sandbag (we don't want auto-recomputation to overwrite
+ * a human-reviewed flag's frozen rating). Wraps the write in a
+ * SERIALIZABLE transaction per batch.
+ */
+export type DbHandle = Pick<typeof defaultDb, 'transaction' | 'select'>;
+
+export async function persistSnapshots(
+  db: DbHandle,
+  snapshots: readonly RecalcSnapshot[],
+  log: JobContext['log'],
+  batchSize = PERSIST_BATCH_SIZE,
+): Promise<{ written: number; skippedZeroMatch: number; skippedSandbag: number }> {
+  const eligible = snapshots.filter((s) => s.after.matchCount > 0);
+  const skippedZeroMatch = snapshots.length - eligible.length;
+
+  let written = 0;
+  let skippedSandbag = 0;
+
+  for (let i = 0; i < eligible.length; i += batchSize) {
+    const slice = eligible.slice(i, i + batchSize);
+    const ids = slice.map((s) => s.userId);
+
+    // Load existing rows to honour the sandbag flag.
+    const existing = await db
+      .select({ userId: userRatings.userId, isFlaggedSandbag: userRatings.isFlaggedSandbag })
+      .from(userRatings)
+      .where(inArray(userRatings.userId, ids));
+    const flagged = new Set(existing.filter((r) => r.isFlaggedSandbag).map((r) => r.userId));
+
+    const toWrite = slice.filter((s) => {
+      if (flagged.has(s.userId)) {
+        skippedSandbag += 1;
+        return false;
+      }
+      return true;
+    });
+
+    if (toWrite.length === 0) continue;
+
+    const start = Date.now();
+    await db.transaction(async (tx) => {
+      await tx.execute(sql`SET TRANSACTION ISOLATION LEVEL SERIALIZABLE`);
+      for (const snap of toWrite) {
+        const row = summariseSnapshotForDb(snap);
+        await tx
+          .insert(userRatings)
+          .values({
+            userId: row.userId,
+            ratingInternal: row.ratingInternal,
+            ratingDisplay: row.ratingDisplay,
+            ratingDeviation: row.ratingDeviation,
+            volatility: row.volatility,
+            reliabilityPct: row.reliabilityPct,
+            matchCount: row.matchCount,
+            isProvisional: row.isProvisional,
+            lastMatchAt: row.lastMatchAt,
+          })
+          .onConflictDoUpdate({
+            target: userRatings.userId,
+            set: {
+              ratingInternal: row.ratingInternal,
+              ratingDisplay: row.ratingDisplay,
+              ratingDeviation: row.ratingDeviation,
+              volatility: row.volatility,
+              reliabilityPct: row.reliabilityPct,
+              matchCount: row.matchCount,
+              isProvisional: row.isProvisional,
+              lastMatchAt: row.lastMatchAt,
+            },
+          });
+      }
+    });
+
+    const driftMax = toWrite.reduce(
+      (m, s) => Math.max(m, Math.abs(s.displayAfter - s.displayBefore)),
+      0,
+    );
+    log.info('batch persisted', {
+      job: 'rating-recalc',
+      batch: Math.floor(i / batchSize),
+      processed: toWrite.length,
+      drift_max: Math.round(driftMax * 1000) / 1000,
+      duration_ms: Date.now() - start,
+    });
+    written += toWrite.length;
+  }
+
+  return { written, skippedZeroMatch, skippedSandbag };
+}
+
+/**
+ * Load all ranked matches from the DB. Cheap on day one; if `matches` grows
+ * huge we'll bracket by `played_at`.
+ */
+async function loadMatchHistory(db: DbHandle): Promise<MatchRow[]> {
+  const rows = await db
+    .select({
+      id: matchesTable.id,
+      teamAPlayer1: matchesTable.teamAPlayer1,
+      teamAPlayer2: matchesTable.teamAPlayer2,
+      teamBPlayer1: matchesTable.teamBPlayer1,
+      teamBPlayer2: matchesTable.teamBPlayer2,
+      teamASetsWon: matchesTable.teamASetsWon,
+      teamBSetsWon: matchesTable.teamBSetsWon,
+      isRanked: matchesTable.isRanked,
+      playedAt: matchesTable.playedAt,
+    })
+    .from(matchesTable)
+    .where(and(eq(matchesTable.isRanked, true)));
+  return rows.map((r) => ({
+    id: r.id,
+    teamAPlayer1: r.teamAPlayer1,
+    teamAPlayer2: r.teamAPlayer2,
+    teamBPlayer1: r.teamBPlayer1,
+    teamBPlayer2: r.teamBPlayer2,
+    teamASetsWon: r.teamASetsWon,
+    teamBSetsWon: r.teamBSetsWon,
+    isRanked: r.isRanked,
+    playedAt: r.playedAt,
+  }));
+}
+
 export const ratingRecalculation: Job = {
   name: 'rating-recalculation',
   // Nightly at 03:15 Europe/Berlin (Hetzner Falkenstein local). croner accepts standard 5-field cron.
   schedule: '15 3 * * *',
   async run(ctx: JobContext): Promise<JobResult> {
     const start = Date.now();
-    const apply = ctx.argv.includes('--apply');
+    // M4: live writes are the default. Pass `--dry-run` for safety drills.
+    const dryRun = ctx.argv.includes('--dry-run');
+    const apply = !dryRun;
     const log = ctx.log.child({ job: 'rating-recalculation', runId: ctx.runId, dryRun: !apply });
 
     try {
-      // M2: structural skeleton. Real DB load lands once we have seed match data
-      // and the SERIALIZABLE-tx write path is hooked up. We log intent so ops
-      // can verify the job is firing on schedule.
       log.info('starting recalculation', { apply });
-      const matches: MatchRow[] = [];
+      const db = defaultDb as DbHandle;
+      const matches = await loadMatchHistory(db);
       const initial = new Map<string, RatingState>();
       const report = recompute(initial, matches);
+
+      let persistResult = { written: 0, skippedZeroMatch: 0, skippedSandbag: 0 };
+      if (apply) {
+        persistResult = await persistSnapshots(db, report.snapshots, log);
+      }
+
       log.info('recalculation complete', {
         matchesProcessed: report.matchesProcessed,
         playersTouched: report.playersTouched,
         largestDeltaDisplay: report.largestDeltaDisplay,
         driftAlertCount: report.driftAlertCount,
-        wouldWrite: apply,
+        wrote: persistResult.written,
+        skippedZeroMatch: persistResult.skippedZeroMatch,
+        skippedSandbag: persistResult.skippedSandbag,
+        applied: apply,
       });
       return {
         status: 'success',
@@ -196,9 +337,10 @@ export const ratingRecalculation: Job = {
           matchesProcessed: report.matchesProcessed,
           playersTouched: report.playersTouched,
           driftAlertCount: report.driftAlertCount,
+          wrote: persistResult.written,
         },
         durationMs: Date.now() - start,
-        notes: apply ? 'apply mode (writes still gated until DB seed lands)' : 'dry-run',
+        notes: apply ? 'apply mode (live writes)' : 'dry-run',
       };
     } catch (err) {
       log.error('recalculation failed', err);

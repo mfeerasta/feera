@@ -13,8 +13,10 @@ Background jobs for the Feera padel platform. Runs on the Hetzner Falkenstein bo
 | backup-check            | 04:45 daily              | Verify Neon PITR backup ran within the last 25h.         |
 | cost-watcher            | 06:00 daily              | Sum Hetzner + Neon spend, alert past `BUDGET_USD_MONTHLY`. |
 
-All Phase 1 jobs are **dry-run**. They log intent, compute deltas where pure, and
-report metrics. None mutate the database until M3.
+As of M4, `rating-recalculation` is **live**: it writes computed Glicko-2 state
+into `user_ratings` by default. Pass `--dry-run` for safety drills (computes
+deltas, logs, but skips writes). Other jobs remain dry-run pending their M5/M6
+cutovers (payment-reconciliation, notification-fanout, etc.).
 
 ## Usage
 
@@ -25,9 +27,9 @@ pnpm -C services/workers build
 # Start the cron scheduler (default).
 node dist/index.js scheduler
 
-# Fire a one-off run for ops.
+# Fire a one-off run for ops. Writes are live unless --dry-run is passed.
 node dist/index.js run rating-recalculation
-node dist/index.js run rating-recalculation --apply   # turns off dry-run
+node dist/index.js run rating-recalculation --dry-run   # safety drill, no writes
 
 # List registered jobs.
 node dist/index.js list

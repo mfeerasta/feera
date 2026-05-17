@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  /* flex.one-inspired palette per ADR-0010 */
+  /* Canonical flex.one-inspired palette per ADR-0010 (always available). */
   --color-ink-deep: #071c14;
   --color-ink-shadow: #051310;
   --color-ink-card: #1b2f24;
@@ -12,26 +12,162 @@
   --color-muted: #cccccc;
   --color-brass: #a88a3f;
 
+  /* Semantic surface tokens. Default to dark; flipped by [data-theme='light']. */
+  --color-bg: var(--color-ink-deep);
+  --color-bg-fold: var(--color-ink-shadow);
+  --color-bg-card: var(--color-ink-card);
+  --color-fg: var(--color-cream);
+  --color-fg-muted: oklch(from var(--color-cream) calc(l * 0.7) c h);
+  --color-border: oklch(from var(--color-cream) l c h / 0.12);
+  --color-accent: var(--color-court);
+
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-serif), Georgia, serif;
 
   --radius-none: 0px;
   --radius-sm: 4px;
+
+  --transition-default: 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Light theme override; either explicit data-theme='light' on <html>
+   or a nested island marked data-theme='light' inside the page. */
+[data-theme='light'] {
+  --color-bg: var(--color-paper);
+  --color-bg-fold: var(--color-cream);
+  --color-bg-card: #f5f0e6;
+  --color-fg: var(--color-ink-deep);
+  --color-fg-muted: oklch(from var(--color-ink-deep) calc(l * 1.5) c h);
+  --color-border: oklch(from var(--color-ink-deep) l c h / 0.15);
+}
+
+/* Explicit dark override (so inverted strips inside a light page stay dark). */
+[data-theme='dark'] {
+  --color-bg: var(--color-ink-deep);
+  --color-bg-fold: var(--color-ink-shadow);
+  --color-bg-card: var(--color-ink-card);
+  --color-fg: var(--color-cream);
+  --color-fg-muted: oklch(from var(--color-cream) calc(l * 0.7) c h);
+  --color-border: oklch(from var(--color-cream) l c h / 0.12);
 }
 
 :root {
-  color-scheme: dark;
-  background: var(--color-ink-deep);
-  color: var(--color-cream);
+  color-scheme: dark light;
+  background: var(--color-bg);
+  color: var(--color-fg);
 }
 
-html,
+[data-theme='light']:root,
+html[data-theme='light'] {
+  color-scheme: light dark;
+}
+
+html {
+  transition:
+    background-color var(--transition-default),
+    color var(--transition-default);
+}
+
 body {
+  background: var(--color-bg);
+  color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Global polish: every color/border state change eases. */
+*,
+*::before,
+*::after {
+  transition:
+    background-color var(--transition-default),
+    border-color var(--transition-default),
+    color var(--transition-default),
+    fill var(--transition-default),
+    stroke var(--transition-default),
+    opacity var(--transition-default);
+}
+
+/* Composable utility for components that want the same motion curve
+   on transform / box-shadow / etc. */
+.feera-motion {
+  transition:
+    background-color var(--transition-default),
+    border-color var(--transition-default),
+    color var(--transition-default),
+    transform var(--transition-default),
+    box-shadow var(--transition-default),
+    opacity var(--transition-default);
+}
+
+/* Subtle Suspense fallback: animated underline rather than full shimmer. */
+@keyframes feera-underline {
+  0% { transform: scaleX(0); transform-origin: left; }
+  50% { transform: scaleX(1); transform-origin: left; }
+  51% { transform: scaleX(1); transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
+}
+
+.feera-loading {
+  position: relative;
+}
+.feera-loading::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: var(--color-accent);
+  animation: feera-underline 1400ms ease-in-out infinite;
+}
+
+/* Modal / sheet reveal. */
+@keyframes feera-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.feera-reveal {
+  animation: feera-fade-up var(--transition-default) both;
+}
+
+/* View Transitions API: page navigations get a soft cross-fade. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Keyboard focus: 1px solid accent, no offset. */
+:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 0;
 }
 
 ::selection {
   background: var(--color-court);
   color: var(--color-cream);
+}
+
+/* Respect reduced motion across the board. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after,
+  html,
+  body {
+    transition: none !important;
+    animation: none !important;
+  }
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
 }

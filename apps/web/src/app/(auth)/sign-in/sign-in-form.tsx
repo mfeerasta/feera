@@ -17,15 +17,15 @@ interface Props {
 }
 
 const darkInput =
-  'mt-2 w-full rounded-none border border-cream/40 bg-transparent px-4 py-3 text-sm text-cream placeholder:text-cream/30 transition-colors duration-150 focus:border-court focus:outline-none disabled:opacity-50';
+  'feera-motion mt-2 w-full rounded-none border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] placeholder:text-[color:var(--color-fg-muted)] focus:border-[color:var(--color-accent)] focus:outline-none disabled:opacity-50';
 
 const ctaBtn =
-  'w-full inline-flex items-center justify-center rounded-none border border-cream bg-transparent px-6 py-3 text-sm text-cream transition-colors duration-150 hover:border-court hover:text-court disabled:opacity-50 disabled:pointer-events-none';
+  'feera-motion w-full inline-flex items-center justify-center rounded-none border border-[color:var(--color-fg)] bg-transparent px-6 py-3 text-sm text-[color:var(--color-fg)] hover:border-[color:var(--color-accent)] hover:bg-[color:var(--color-accent)]/5 hover:text-[color:var(--color-accent)] disabled:opacity-50 disabled:pointer-events-none';
 
 const oauthBtn =
-  'w-full inline-flex items-center justify-center rounded-none border border-cream/40 bg-transparent px-6 py-3 text-sm text-cream transition-colors duration-150 hover:border-court hover:text-court';
+  'feera-motion w-full inline-flex items-center justify-center rounded-none border border-[color:var(--color-border)] bg-transparent px-6 py-3 text-sm text-[color:var(--color-fg)] hover:border-[color:var(--color-accent)] hover:bg-[color:var(--color-accent)]/5 hover:text-[color:var(--color-accent)]';
 
-const eyebrow = 'text-xs uppercase tracking-[0.18em] text-cream/60';
+const eyebrow = 'text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]';
 
 export function SignInForm({ defaultMode }: Props) {
   const [mode, setMode] = useState<Mode>(defaultMode);
@@ -97,7 +97,7 @@ export function SignInForm({ defaultMode }: Props) {
   return (
     <div className="space-y-8">
       {/* Mode tabs as underlined links */}
-      <div className="flex gap-8 border-b border-cream/15 pb-3 text-sm">
+      <div className="flex gap-8 border-b border-[color:var(--color-border)] pb-3 text-sm">
         {(['phone', 'email', 'oauth'] as const).map((m) => (
           <button
             key={m}
@@ -107,15 +107,15 @@ export function SignInForm({ defaultMode }: Props) {
               setPhase('idle');
               setMessage(null);
             }}
-            className={`relative pb-3 capitalize transition-colors duration-150 ${
+            className={`feera-motion relative pb-3 capitalize ${
               mode === m
-                ? 'text-cream'
-                : 'text-cream/40 hover:text-cream/70'
+                ? 'text-[color:var(--color-fg)]'
+                : 'text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)]'
             }`}
           >
             {m}
             {mode === m && (
-              <span className="absolute -bottom-[13px] left-0 right-0 h-px bg-court" />
+              <span className="absolute -bottom-[13px] left-0 right-0 h-px bg-[color:var(--color-accent)]" />
             )}
           </button>
         ))}

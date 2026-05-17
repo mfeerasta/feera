@@ -5,18 +5,18 @@ type Variant = 'primary' | 'ghost' | 'inverted' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
 const base =
-  'inline-flex items-center justify-center font-normal rounded-none transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-court focus-visible:ring-offset-2 focus-visible:ring-offset-ink-deep disabled:opacity-50 disabled:pointer-events-none';
+  'feera-motion inline-flex items-center justify-center font-normal rounded-none focus-visible:outline-none focus-visible:outline-1 focus-visible:outline-[color:var(--color-accent)] disabled:opacity-50 disabled:pointer-events-none';
 
 const variants: Record<Variant, string> = {
-  /** Default for dark surfaces: cream border + cream text + court on hover. */
+  /** Default: themed border + fg + subtle accent fill on hover. */
   primary:
-    'border border-cream text-cream bg-transparent hover:border-court hover:text-court',
+    'border border-[color:var(--color-fg)] text-[color:var(--color-fg)] bg-transparent hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)] hover:bg-[color:var(--color-accent)]/5',
   /** Underline-on-hover, no border. */
   ghost:
-    'text-cream bg-transparent hover:text-court hover:underline underline-offset-4',
-  /** For light surfaces: ink border + ink text + court on hover. */
+    'text-[color:var(--color-fg)] bg-transparent hover:text-[color:var(--color-accent)] hover:underline underline-offset-4',
+  /** Inverted variant: explicit dark text on light surfaces inside a dark page. */
   inverted:
-    'border border-ink-deep text-ink-deep bg-transparent hover:border-court hover:text-court',
+    'border border-ink-deep text-ink-deep bg-transparent hover:border-court hover:text-court hover:bg-court/5',
   /** Destructive. */
   danger:
     'border border-red-500 text-red-500 bg-transparent hover:bg-red-500 hover:text-cream',

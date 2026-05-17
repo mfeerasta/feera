@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 /**
  * Feera Edition microsite. M2 stub fully fleshed in M7 with Editorial CMS
@@ -17,7 +18,7 @@ export const metadata = {
 
 export default function EditionPage() {
   return (
-    <div className="min-h-screen bg-ink-deep text-cream">
+    <div data-theme="dark" className="min-h-screen bg-ink-deep text-cream">
       {/* Nav */}
       <header className="border-b border-brass/20">
         <div className="mx-auto flex max-w-[1280px] items-center justify-between px-6 py-6">
@@ -39,10 +40,11 @@ export default function EditionPage() {
             </Link>
             <Link
               href="/edition/apply"
-              className="border border-brass px-4 py-2 text-brass transition-colors hover:bg-brass hover:text-ink-deep"
+              className="feera-motion border border-brass px-4 py-2 text-brass hover:bg-brass hover:text-ink-deep"
             >
               Apply
             </Link>
+            <ThemeToggle />
           </nav>
         </div>
       </header>

@@ -52,16 +52,15 @@ This is **Feera + Feera Edition**. A multi-decade venture, not a prototype. Code
 Default to the most defensible option, document the call in an ADR, proceed. Only stop for:
 
 - Real money transactions.
-- Paid service signups (Doppler, Supabase Pro, Vercel Pro, Twilio paid, Sentry Team, OneSignal, etc.).
-- Region locks (Supabase project region, Hetzner region).
+- Paid service signups (Doppler, Neon Pro, Twilio paid, Sentry Team, OneSignal, EAS paid, etc.).
+- Region locks (Neon project region, Hetzner region).
 - Hard breaking changes to public APIs after launch.
 
 ## File organisation cheatsheet
 
 ```
-apps/web              feera.ai marketing + club admin + public SEO + /edition
-apps/mobile           player app
-apps/admin            internal Feera team ops
+apps/web              feera.ai marketing + /play player surface + (admin) club admin + public SEO + /edition
+apps/mobile           Expo player app (EAS builds)
 packages/matching     Glicko-2 + partner-finder + tournament engine
 packages/payments     adapters + router (PaymentProvider interface)
 packages/notifications adapters + router (NotificationChannel interface)

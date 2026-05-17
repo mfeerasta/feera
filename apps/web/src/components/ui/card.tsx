@@ -2,14 +2,14 @@ import * as React from 'react';
 import { cn } from '@/lib/cn';
 
 /**
- * Hairline card per ADR-0010. No shadow, no radius.
- * Surface adapts: on cream backgrounds use ink hairlines; on dark, cream/15.
+ * Hairline card per ADR-0010. No shadow, no radius. Theme-aware via
+ * semantic CSS variables: surface is bg-card, hairlines use border.
  */
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        'border border-ink-deep/15 bg-paper rounded-none',
+        'feera-motion border border-[color:var(--color-border)] bg-[color:var(--color-bg-card)] rounded-none',
         className,
       )}
       {...props}
@@ -20,7 +20,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('border-b border-ink-deep/10 px-6 py-5', className)}
+      className={cn('border-b border-[color:var(--color-border)] px-6 py-5', className)}
       {...props}
     />
   );
@@ -30,7 +30,7 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
   return (
     <h2
       className={cn(
-        'font-serif text-xl tracking-tight text-ink-deep',
+        'font-serif text-xl tracking-tight text-[color:var(--color-fg)]',
         className,
       )}
       {...props}
@@ -46,7 +46,7 @@ export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDiv
   return (
     <div
       className={cn(
-        'border-t border-ink-deep/10 px-6 py-4 text-sm text-ink-deep/70',
+        'border-t border-[color:var(--color-border)] px-6 py-4 text-sm text-[color:var(--color-fg-muted)]',
         className,
       )}
       {...props}

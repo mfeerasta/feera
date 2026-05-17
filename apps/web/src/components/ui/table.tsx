@@ -5,7 +5,7 @@ export function Table({ className, ...props }: React.HTMLAttributes<HTMLTableEle
   return (
     <div className="w-full overflow-x-auto">
       <table
-        className={cn('w-full text-sm text-ink-deep', className)}
+        className={cn('w-full text-sm text-[color:var(--color-fg)]', className)}
         {...props}
       />
     </div>
@@ -15,25 +15,30 @@ export function Table({ className, ...props }: React.HTMLAttributes<HTMLTableEle
 export function THead(props: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
     <thead
-      className="border-b border-ink-deep/20 text-left"
+      className="border-b border-[color:var(--color-border)] text-left"
       {...props}
     />
   );
 }
 
 export function TBody(props: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <tbody className="divide-y divide-ink-deep/10" {...props} />;
+  return <tbody className="divide-y divide-[color:var(--color-border)]" {...props} />;
 }
 
 export function TR(props: React.HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className="transition-colors duration-150 hover:bg-cream" {...props} />;
+  return (
+    <tr
+      className="feera-motion hover:bg-[color:var(--color-bg-fold)]"
+      {...props}
+    />
+  );
 }
 
 export function TH({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
       className={cn(
-        'px-5 py-4 text-xs font-normal uppercase tracking-[0.18em] text-ink-deep/60',
+        'px-5 py-4 text-xs font-normal uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]',
         className,
       )}
       {...props}
