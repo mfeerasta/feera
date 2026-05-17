@@ -90,8 +90,10 @@ export interface PresignedReadInput {
   ttlSeconds?: number;
 }
 
+export type StorageProviderName = 'r2' | 'hetzner' | 's3';
+
 export interface StorageProvider {
-  readonly name: 'hetzner';
+  readonly name: StorageProviderName;
   put(bucket: BucketName, key: string, body: Buffer | Uint8Array, opts?: PutOpts): Promise<PutResult>;
   get(bucket: BucketName, key: string): Promise<GetResult>;
   delete(bucket: BucketName, key: string): Promise<void>;

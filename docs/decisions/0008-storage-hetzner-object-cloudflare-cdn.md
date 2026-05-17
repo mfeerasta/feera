@@ -1,11 +1,41 @@
-# 0008. Object storage: Hetzner Object Storage + Cloudflare CDN
+# 0008. Object storage: Cloudflare R2 (revised from Hetzner Object Storage)
 
-- Status: accepted
-- Date: 2026-05-17
+- Status: accepted (revised 2026-05-18)
+- Date: 2026-05-17 (original), 2026-05-18 (R2 swap)
 - Deciders: M, Claude
 - Tags: storage, media
 
-## Context
+## 2026-05-18 amendment: swap to Cloudflare R2
+
+Egress projection killed Hetzner Object Storage:
+
+- Phase 3 mature (50k users, ~100 TB egress/mo from photo views):
+  - **Cloudflare R2**: $15 storage + **$0 egress** = $15/mo
+  - Hetzner OS: $5 storage + $100 egress = $105/mo
+  - AWS S3: $230 storage + $9,000 egress = $9,230/mo (rejected long ago)
+
+Same S3-compatible SDK code, swap is endpoint URL + creds only. Cloudflare zone
+already exists for `feera.ai` so attaching `cdn.feera.ai` to the public R2
+bucket = 1 dashboard click. No nginx proxy needed (R2 + custom domain replaces
+the previous nginx → Hetzner upstream).
+
+**Default provider: `R2StorageAdapter`** at `packages/storage/src/providers/r2.ts`.
+**Fallback: `HetznerStorageAdapter`** retained for regional residency edge cases
+(Saudi PDPL may want in-region origin storage; revisit Phase 2).
+
+Endpoint format: `https://<account-id>.r2.cloudflarestorage.com`.
+Region: `auto` (R2 has no regional addressing).
+
+**Critical R2 difference from S3/Hetzner**: R2 does NOT accept the `ACL`
+parameter on PutObject. Public-vs-private is set via custom-domain binding in
+the Cloudflare dashboard. The adapter detects bucket type and skips ACL.
+
+Migration: M creates 3 R2 buckets in dashboard, pastes account-id + R2 token
+into `/srv/feera/.env`, no further code change required.
+
+---
+
+## Original context (preserved below)
 
 Supabase Storage is out (ADR-0005). Feera needs blob storage for:
 

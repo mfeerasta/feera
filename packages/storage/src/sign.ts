@@ -5,7 +5,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import { getHetznerStorage } from './providers/hetzner';
+import { getR2Storage } from './providers/r2';
 import { aclForKind, bucketForKind, isPublicKind } from './providers/router';
 import { extForMime, validateUpload, type ValidationErr } from './moderation';
 import type { ContentKind, PresignedUpload, StorageProvider } from './types';
@@ -44,7 +44,7 @@ export async function createPresignedUploadUrl(
   segments.push(`${randomUUID()}-${slug}.${ext}`);
   const key = segments.join('/');
 
-  const provider = input.provider ?? getHetznerStorage();
+  const provider = input.provider ?? getR2Storage();
   const upload = await provider.createPresignedUploadUrl({
     bucket,
     key,
@@ -65,7 +65,7 @@ export interface PrepareReadInput {
 
 export async function createPresignedReadUrl(input: PrepareReadInput): Promise<string> {
   const bucket = bucketForKind(input.kind);
-  const provider = input.provider ?? getHetznerStorage();
+  const provider = input.provider ?? getR2Storage();
   // Public assets do not need signing; return the CDN URL directly.
   if (isPublicKind(input.kind) && 'publicUrl' in provider) {
     const p = provider as unknown as { publicUrl: (b: string, k: string) => string };
