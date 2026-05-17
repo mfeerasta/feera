@@ -1,11 +1,20 @@
 import Link from 'next/link';
+import { getT } from '@/lib/i18n/t';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 export const metadata = {
   title: 'Privacy — Feera',
   description: 'How Feera handles your data.',
 };
 
-export default function PrivacyPage() {
+/**
+ * Privacy page. Per ADR / brief: section headings are translated for nav
+ * clarity but the full legal body stays English in Phase 1 for legal
+ * accuracy. Phase 2 will commission certified Urdu and Arabic translations.
+ */
+export default async function PrivacyPage() {
+  const t = await getT();
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-fg)]">
       <header className="border-b border-[var(--color-border)]">
@@ -13,41 +22,31 @@ export default function PrivacyPage() {
           <Link href="/" className="font-serif text-2xl tracking-tight">
             feera
           </Link>
-          <Link
-            href="/"
-            className="text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-accent)]"
-          >
-            Back
-          </Link>
+          <div className="flex items-center gap-4">
+            <LocaleSwitcher />
+            <Link
+              href="/"
+              className="text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-accent)]"
+            >
+              {t('common.back')}
+            </Link>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 py-[80px]">
+      <main className="mx-auto max-w-3xl px-6 py-[80px]" lang="en" dir="ltr">
         <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-fg-muted)]">
-          Last updated 17 May 2026
+          {t('privacy.lastUpdated')}
         </p>
         <h1 className="mt-6 font-serif text-5xl leading-tight tracking-tight md:text-6xl">
-          Privacy.
+          {t('privacy.title')}
         </h1>
 
         <div className="mt-12 space-y-10 text-base leading-relaxed text-[var(--color-fg)]">
           <section>
-            <h2 className="font-serif text-2xl tracking-tight">Who we are</h2>
-            <p className="mt-3">
-              Feera is operated by Feerasta Ventures. Contact:{' '}
-              <a
-                href="mailto:hello@feera.ai"
-                className="underline underline-offset-4 transition-colors hover:text-[var(--color-accent)]"
-              >
-                hello@feera.ai
-              </a>
-              . The platform serves players and clubs in Pakistan, the Gulf, and the rest
-              of the world.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-serif text-2xl tracking-tight">What we collect</h2>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.collect')}
+            </h2>
             <ul className="mt-3 list-disc space-y-2 ps-6">
               <li>
                 Account data: phone number, email, display name, locale, city, optional
@@ -59,8 +58,7 @@ export default function PrivacyPage() {
               </li>
               <li>
                 Payment data: transaction amount, currency, status, last four digits of
-                the card (your full card number is never stored on our servers; it lives
-                with our payment providers Stripe, JazzCash, Easypaisa, and 1Link).
+                the card. Your full card number is never stored on our servers.
               </li>
               <li>
                 Device data: IP address, user agent, locale; used for security and
@@ -73,21 +71,9 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl tracking-tight">Where it lives</h2>
-            <p className="mt-3">
-              Your data is stored on encrypted Postgres servers hosted by Neon in
-              Frankfurt, Germany. Application servers run on Hetzner in Falkenstein,
-              Germany. We use Cloudflare for DNS and CDN. We use Stripe for international
-              card payments, JazzCash and Easypaisa for Pakistani mobile wallets, and
-              1Link Raast for Pakistani interbank transfers. We use Twilio Verify for
-              one-time-password delivery via SMS or WhatsApp, and Resend for transactional
-              email. Each of these providers has their own privacy posture you may want to
-              review.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-serif text-2xl tracking-tight">How we use it</h2>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.use')}
+            </h2>
             <ul className="mt-3 list-disc space-y-2 ps-6">
               <li>To let you book courts, find players, and play matches.</li>
               <li>
@@ -108,26 +94,23 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl tracking-tight">Privacy controls you own</h2>
-            <ul className="mt-3 list-disc space-y-2 ps-6">
-              <li>
-                Gender visibility: choose public, friends-only, or private. Default is
-                private.
-              </li>
-              <li>
-                Women-only matchmaking pool: opt in or out at any time. Your women-pool
-                rating is computed only from all-women matches.
-              </li>
-              <li>Channel opt-in per notification type, including marketing.</li>
-              <li>
-                Friendship-block: blocked users never see your bookings, matches, or
-                profile.
-              </li>
-            </ul>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.share')}
+            </h2>
+            <p className="mt-3">
+              Data is stored on encrypted Postgres servers hosted by Neon in Frankfurt,
+              Germany. Application servers run on Hetzner in Falkenstein, Germany. We
+              use Cloudflare for DNS and CDN, Stripe for international card payments,
+              JazzCash and Easypaisa for Pakistani mobile wallets, 1Link Raast for
+              Pakistani interbank transfers, Twilio Verify for OTP delivery via SMS or
+              WhatsApp, and Resend for transactional email.
+            </p>
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl tracking-tight">Your rights under GDPR</h2>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.rights')}
+            </h2>
             <p className="mt-3">
               You can export every piece of data we hold about you at{' '}
               <Link
@@ -143,42 +126,38 @@ export default function PrivacyPage() {
               >
                 /me/delete
               </Link>
-              . Deletion is honoured within 30 days, with a 7-day grace period in case you
-              change your mind. Some non-personal records (anonymised match results that
-              affect other players' ratings, tax receipts) are retained for the
-              durations required by law.
+              . Deletion is honoured within 30 days, with a 7-day grace period.
             </p>
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl tracking-tight">Security</h2>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.retention')}
+            </h2>
+            <p className="mt-3">
+              Account data is retained for as long as your account is active and for 30
+              days after deletion. Match and rating data is retained for as long as
+              other affected players' ratings depend on it. Tax receipts are retained
+              for the periods required by Pakistani, UAE, and EU tax law.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.security')}
+            </h2>
             <p className="mt-3">
               Sensitive columns (phone, email, payment method details, federation
               identifiers) are encrypted at rest using Postgres pgcrypto with quarterly
-              key rotation. All HTTPS traffic uses TLS 1.3 with HSTS and certificate
-              pinning at the edge. We follow OWASP Top 10 mitigations and run automated
-              dependency scanning.
+              key rotation. All HTTPS traffic uses TLS 1.3 with HSTS. We follow OWASP
+              Top 10 mitigations and run automated dependency scanning.
             </p>
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl tracking-tight">Children</h2>
-            <p className="mt-3">
-              Feera is intended for players aged 16 and older. Under-16 player accounts
-              require a parent or guardian to register with Feera support.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-serif text-2xl tracking-tight">Changes</h2>
-            <p className="mt-3">
-              When we materially change this policy we notify affected users by email and
-              update the "last updated" date at the top of this page.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-serif text-2xl tracking-tight">Contact</h2>
+            <h2 className="font-serif text-2xl tracking-tight">
+              {t('privacy.section.contact')}
+            </h2>
             <p className="mt-3">
               Questions or complaints? Email{' '}
               <a
@@ -187,8 +166,7 @@ export default function PrivacyPage() {
               >
                 privacy@feera.ai
               </a>
-              . If you believe your data has been mishandled and we have not resolved
-              your concern, you may also contact your local data protection authority.
+              .
             </p>
           </section>
         </div>
@@ -200,7 +178,7 @@ export default function PrivacyPage() {
             feera
           </Link>
           <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-fg-muted)]">
-            Feera ©2026
+            {t('footer.copyright')}
           </p>
         </div>
       </footer>

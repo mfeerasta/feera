@@ -38,3 +38,4 @@ export * from './friendships';
 export * from './user-deletion-requests';
 export * from './booking-credits';
 export * from './match-disputes';
+export * from './push-tokens';

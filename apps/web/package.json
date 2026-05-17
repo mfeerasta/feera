@@ -15,6 +15,7 @@
   "dependencies": {
     "@feera/auth": "workspace:*",
     "@feera/db": "workspace:*",
+    "@feera/i18n": "workspace:*",
     "@feera/matching": "workspace:*",
     "@feera/payments": "workspace:*",
     "@feera/types": "workspace:*",

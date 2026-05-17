@@ -1,28 +1,59 @@
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
+import { Linking, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
+import { Screen } from '../../src/components/screen';
+import { Button } from '../../src/components/button';
+
+/**
+ * Feera Edition microsite (mobile mirror of /edition on web).
+ * Quiet, restrained, editorial tone. Brass accent only.
+ */
 export default function EditionScreen() {
-  const { t } = useTranslation();
+  const router = useRouter();
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F0E6' }}>
-      <View style={{ flex: 1, paddingHorizontal: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 12, letterSpacing: 3, color: '#0A2E1D' }}>EDITION</Text>
-        <Text
-          style={{
-            fontSize: 36,
-            fontWeight: '500',
-            color: '#0A2E1D',
-            fontFamily: 'Georgia',
-          }}
-        >
-          {t('edition.title')}
+    <Screen variant="ink">
+      <View className="gap-4 mt-12">
+        <Text className="text-brass text-[10px] uppercase tracking-[4px]">EDITION</Text>
+        <Text className="font-serif text-5xl text-cream leading-tight">
+          A quieter way to play.
         </Text>
-        <Text style={{ fontSize: 16, color: '#0A2E1D99' }}>{t('edition.subtitle')}</Text>
-        <Text style={{ fontSize: 12, color: '#0A2E1D77', marginTop: 12 }}>
-          Route: /edition. Curated draws land in M7.
+        <Text className="text-base text-cream/70 leading-6 mt-2">
+          Feera Edition is a small, by-invitation circle of clubs and players. Curated
+          tournaments. Single-table dinners. Match formats designed to be remembered.
         </Text>
       </View>
-    </SafeAreaView>
+
+      <View className="gap-6 mt-12">
+        <Pillar title="Curated draws" body="Sixteen players, two days, one trophy. No live leaderboards in the public app." />
+        <Pillar title="Member clubs" body="Lahore, Lisbon, Dubai. New rooms added once a year." />
+        <Pillar title="Restrained tools" body="A printed program. A pen. A page on the website. That is the surface." />
+      </View>
+
+      <View className="gap-3 mt-12">
+        <Button
+          variant="brass"
+          onPress={() => Linking.openURL('https://www.feera.ai/edition/apply')}
+        >
+          Apply for invitation
+        </Button>
+        <Button variant="ghost" onPress={() => router.back()}>
+          Return
+        </Button>
+      </View>
+
+      <Text className="text-cream/30 text-[10px] uppercase tracking-[3px] text-center mt-16 mb-8">
+        Feera Edition . Established 2026
+      </Text>
+    </Screen>
+  );
+}
+
+function Pillar({ title, body }: { title: string; body: string }) {
+  return (
+    <View className="border-t border-cream/15 pt-4 gap-2">
+      <Text className="font-serif text-2xl text-cream">{title}</Text>
+      <Text className="text-sm text-cream/70 leading-6">{body}</Text>
+    </View>
   );
 }

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { and, asc, eq, isNull } from 'drizzle-orm';
 import { clubs } from '@feera/db';
 import { withRequestContext } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -44,6 +46,7 @@ function amenityPills(c: ClubRow): string[] {
 }
 
 export default async function PublicClubsDirectoryPage() {
+  const t = await getT();
   const rows = (await withRequestContext(null, (tx) =>
     tx
       .select({
@@ -84,19 +87,20 @@ export default async function PublicClubsDirectoryPage() {
           <Link href="/" className="font-serif text-2xl tracking-tight">
             feera
           </Link>
-          <nav className="flex items-center gap-8 text-sm">
+          <nav className="flex items-center gap-6 text-sm">
             <Link
               href="/clubs/onboard"
               className="text-ink-deep/70 transition-colors duration-150 hover:text-court"
             >
-              List a club
+              {t('clubs.onboardTitle')}
             </Link>
             <Link
               href="/sign-in"
               className="text-ink-deep/70 transition-colors duration-150 hover:text-court"
             >
-              Sign in
+              {t('common.signIn')}
             </Link>
+            <LocaleSwitcher />
           </nav>
         </div>
       </header>
@@ -104,14 +108,13 @@ export default async function PublicClubsDirectoryPage() {
       <section className="bg-ink-shadow text-cream">
         <div className="mx-auto max-w-[1280px] px-6 py-[80px]">
           <p className="text-xs uppercase tracking-[0.3em] text-cream/60">
-            Directory
+            {t('nav.clubs')}
           </p>
           <h1 className="mt-6 max-w-[20ch] font-serif text-5xl leading-none tracking-tight text-cream md:text-6xl">
-            Padel clubs.
+            {t('clubs.directoryTitle')}
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-cream/70">
-            {rows.length} club{rows.length === 1 ? '' : 's'} live across{' '}
-            {cities.length} cit{cities.length === 1 ? 'y' : 'ies'}.
+            {t('clubs.directorySubtitle')}
           </p>
         </div>
       </section>
@@ -120,12 +123,12 @@ export default async function PublicClubsDirectoryPage() {
         <div className="mx-auto max-w-[1280px] px-6 py-[80px]">
           {cities.length === 0 ? (
             <p className="text-sm text-ink-deep/60">
-              No clubs are live yet. Be the first.{' '}
+              {t('clubs.noResults')}{' '}
               <Link
                 href="/clubs/onboard"
                 className="text-ink-deep underline underline-offset-4 hover:text-court"
               >
-                List your club.
+                {t('clubs.onboardTitle')}
               </Link>
             </p>
           ) : (

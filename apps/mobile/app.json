@@ -11,24 +11,50 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FAF8F4"
+      "backgroundColor": "#071C14"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ai.feera.app"
+      "bundleIdentifier": "ai.feera.app",
+      "associatedDomains": ["applinks:www.feera.ai", "applinks:feera.ai"]
     },
     "android": {
       "package": "ai.feera.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FAF8F4"
-      }
+        "backgroundColor": "#071C14"
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": [
+            { "scheme": "https", "host": "www.feera.ai", "pathPrefix": "/booking" },
+            { "scheme": "https", "host": "www.feera.ai", "pathPrefix": "/match" },
+            { "scheme": "https", "host": "www.feera.ai", "pathPrefix": "/tournament" },
+            { "scheme": "https", "host": "www.feera.ai", "pathPrefix": "/court" },
+            { "scheme": "https", "host": "www.feera.ai", "pathPrefix": "/club" }
+          ]
+        }
+      ]
     },
-    "plugins": ["expo-router", "expo-font", "expo-localization"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#437E5B"
+        }
+      ]
+    ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": false
     },
     "extra": {
+      "apiUrl": "https://www.feera.ai",
       "eas": {
         "projectId": ""
       }

@@ -1,13 +1,25 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LocaleSwitcher } from '@/components/locale-switcher';
+import { getT } from '@/lib/i18n/t';
 
 /**
  * Player-facing chrome. Dark nav strip over theme-aware content area.
  * The nav itself is always dark (`data-theme='dark'`) so it stays consistent
  * regardless of page theme; the main content inherits the page theme.
  */
-export default function PlayLayout({ children }: { children: ReactNode }) {
+export default async function PlayLayout({ children }: { children: ReactNode }) {
+  const t = await getT();
+
+  const links: { href: string; key: string }[] = [
+    { href: '/play/clubs', key: 'nav.clubs' },
+    { href: '/play/open', key: 'nav.openMatches' },
+    { href: '/play/coaches', key: 'nav.coaches' },
+    { href: '/play/bookings', key: 'nav.myBookings' },
+    { href: '/me', key: 'nav.profile' },
+  ];
+
   return (
     <div className="min-h-screen bg-[color:var(--color-bg)] text-[color:var(--color-fg)]">
       <header
@@ -22,42 +34,22 @@ export default function PlayLayout({ children }: { children: ReactNode }) {
             feera
           </Link>
           <nav className="flex items-center gap-6 text-sm">
-            <Link
-              href="/play/clubs"
-              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
-            >
-              Clubs
-            </Link>
-            <Link
-              href="/play/open"
-              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
-            >
-              Open matches
-            </Link>
-            <Link
-              href="/play/coaches"
-              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
-            >
-              Coaches
-            </Link>
-            <Link
-              href="/play/bookings"
-              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
-            >
-              My bookings
-            </Link>
-            <Link
-              href="/me"
-              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
-            >
-              Profile
-            </Link>
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
+              >
+                {t(link.key)}
+              </Link>
+            ))}
             <Link
               href="/sign-in"
               className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
             >
-              Sign in
+              {t('common.signIn')}
             </Link>
+            <LocaleSwitcher />
             <ThemeToggle />
           </nav>
         </div>

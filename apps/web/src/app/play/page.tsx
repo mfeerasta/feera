@@ -1,9 +1,13 @@
 import Link from 'next/link';
+import { getT } from '@/lib/i18n/t';
 
 /**
- * Player landing. Hero, two CTAs, three city cards.
+ * Player landing. Hero, two CTAs, three city cards. All copy goes through
+ * the translator so EN, UR, AR all render natively.
  */
-export default function PlayHome() {
+export default async function PlayHome() {
+  const t = await getT();
+
   const cities = [
     {
       name: 'Lahore',
@@ -27,27 +31,26 @@ export default function PlayHome() {
       <section className="bg-ink-shadow text-cream">
         <div className="mx-auto flex min-h-[70vh] max-w-[1280px] flex-col items-start justify-center px-6 py-[107px]">
           <p className="text-xs uppercase tracking-[0.25em] text-cream/60">
-            Play
+            {t('play.eyebrow')}
           </p>
           <h1 className="mt-6 max-w-[20ch] font-serif text-6xl font-normal leading-none tracking-[-0.02em] text-cream md:text-7xl">
-            Find a court. Book a slot. Play with anyone.
+            {t('play.heroTitle')}
           </h1>
           <p className="mt-8 max-w-xl text-lg leading-relaxed text-cream/70">
-            Live availability across clubs in your city. Solo or with three
-            friends. Open the seat to strangers and we will match you on level.
+            {t('play.heroSubtitle')}
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/play/clubs"
               className="inline-flex items-center justify-center border border-cream px-6 py-3 text-sm text-cream transition-colors duration-150 hover:border-court hover:text-court"
             >
-              Browse clubs
+              {t('play.ctaBrowseClubs')}
             </Link>
             <Link
               href="/play/open"
               className="inline-flex items-center justify-center border border-brass px-6 py-3 text-sm text-brass transition-colors duration-150 hover:bg-brass hover:text-ink-deep"
             >
-              Open matches near you
+              {t('play.ctaOpenMatches')}
             </Link>
           </div>
         </div>
@@ -71,7 +74,7 @@ export default function PlayHome() {
                 {c.blurb}
               </p>
               <span className="mt-auto text-sm text-ink-deep underline-offset-4 group-hover:text-court group-hover:underline">
-                View clubs
+                {t('play.viewClubs')}
               </span>
             </Link>
           ))}
