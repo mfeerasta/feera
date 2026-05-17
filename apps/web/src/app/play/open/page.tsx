@@ -4,6 +4,8 @@ import { users } from '@feera/db';
 import { playFetch } from '@/lib/play/api-client';
 import { EmptyState } from '@/components/play/empty-state';
 import { getSession, withRequestContext } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
+import { getLocale } from '@/lib/i18n/server';
 
 interface OpenBooking {
   id: string;
@@ -38,20 +40,22 @@ interface PageProps {
 const inputCls =
   'h-11 rounded-none border border-ink-deep/30 bg-transparent px-4 text-sm text-ink-deep focus:border-court focus:outline-none';
 
-function fmtRange(startIso: string, endIso: string): string {
+function fmtRange(startIso: string, endIso: string, locale: string): string {
   const s = new Date(startIso);
   const e = new Date(endIso);
-  const datePart = s.toLocaleDateString(undefined, {
+  const datePart = s.toLocaleDateString(locale, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
   });
-  const timePart = `${s.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} - ${e.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
+  const timePart = `${s.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })} - ${e.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
   return `${datePart} · ${timePart}`;
 }
 
 export default async function OpenMatchesPage({ searchParams }: PageProps) {
   const sp = await searchParams;
+  const t = await getT();
+  const locale = await getLocale();
 
   // Determine women-pool eligibility for the toggle.
   const session = await getSession();
@@ -87,7 +91,22 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
   } else if (res.status === 404) {
     error = null; // endpoint not deployed yet, treat as empty.
   } else {
-    error = `Failed to load open matches (HTTP ${res.status}).`;
+    error = t('errors.loadFailed');
+  }
+
+  function genderLabel(g: string): string {
+    switch (g) {
+      case 'open':
+        return t('playCourt.genderPrefAny');
+      case 'mixed':
+        return t('playCourt.genderPrefMixed');
+      case 'men_only':
+        return t('playCourt.genderPrefMen');
+      case 'women_only':
+        return t('playCourt.genderPrefWomen');
+      default:
+        return g;
+    }
   }
 
   return (
@@ -95,14 +114,13 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
       <section className="bg-ink-shadow text-cream">
         <div className="mx-auto max-w-[1280px] px-6 py-20">
           <p className="text-xs uppercase tracking-[0.25em] text-cream/60">
-            Open matches
+            {t('play.openMatchesTitle')}
           </p>
           <h1 className="mt-4 font-serif text-5xl tracking-tight text-cream md:text-6xl">
-            Find a game tonight.
+            {t('play.openMatchesTitle')}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-cream/70">
-            Bookings with seats open in your city. Filter by level and time,
-            then request to join.
+            {t('play.openMatchesSubtitle')}
           </p>
         </div>
       </section>
@@ -117,7 +135,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
                   pool === 'open' ? 'bg-ink-deep text-cream' : 'text-ink-deep/70 hover:text-ink-deep'
                 }`}
               >
-                All players
+                {t('playOpen.filterAll')}
               </Link>
               <Link
                 href="/play/open?pool=women"
@@ -125,7 +143,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
                   pool === 'women' ? 'bg-ink-deep text-cream' : 'text-ink-deep/70 hover:text-ink-deep'
                 }`}
               >
-                Women only
+                {t('playOpen.filterWomenOnly')}
               </Link>
             </div>
           )}
@@ -136,19 +154,19 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
             {pool === 'women' && <input type="hidden" name="pool" value="women" />}
             <label className="flex flex-col gap-2 md:col-span-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
-                City
+                {t('playOpen.filterCity')}
               </span>
               <input
                 type="text"
                 name="city"
                 defaultValue={sp.city ?? ''}
-                placeholder="Lahore"
+                placeholder={t('onboarding.cityPlaceholder')}
                 className={inputCls}
               />
             </label>
             <label className="flex flex-col gap-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
-                From
+                {t('common.from')}
               </span>
               <input
                 type="datetime-local"
@@ -159,7 +177,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
             </label>
             <label className="flex flex-col gap-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
-                To
+                {t('common.to')}
               </span>
               <input
                 type="datetime-local"
@@ -170,7 +188,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
             </label>
             <label className="flex flex-col gap-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
-                Level min
+                {t('playCourt.levelMin')}
               </span>
               <input
                 type="number"
@@ -184,7 +202,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
             </label>
             <label className="flex flex-col gap-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
-                Level max
+                {t('playCourt.levelMax')}
               </span>
               <input
                 type="number"
@@ -198,18 +216,18 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
             </label>
             <label className="flex flex-col gap-2 md:col-span-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-deep/60">
-                Gender preference
+                {t('playCourt.genderPrefLabel')}
               </span>
               <select
                 name="gender"
                 defaultValue={sp.gender ?? ''}
                 className={inputCls}
               >
-                <option value="">Any</option>
-                <option value="open">Open</option>
-                <option value="mixed">Mixed</option>
-                <option value="men_only">Men only</option>
-                <option value="women_only">Women only</option>
+                <option value="">{t('playCourt.genderPrefAny')}</option>
+                <option value="open">{t('status.open')}</option>
+                <option value="mixed">{t('playCourt.genderPrefMixed')}</option>
+                <option value="men_only">{t('playCourt.genderPrefMen')}</option>
+                <option value="women_only">{t('playCourt.genderPrefWomen')}</option>
               </select>
             </label>
             <div className="flex items-end md:col-span-4">
@@ -217,7 +235,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
                 type="submit"
                 className="inline-flex h-11 items-center justify-center border border-ink-deep px-6 text-sm text-ink-deep transition-colors duration-150 hover:border-court hover:text-court"
               >
-                Apply filters
+                {t('common.apply')}
               </button>
             </div>
           </form>
@@ -228,10 +246,10 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
             </p>
           ) : rows.length === 0 ? (
             <EmptyState
-              headline="Nothing here yet."
-              body="No open matches match these filters right now. Browse clubs and start your own, friends will join."
+              headline={t('emptyState.defaultTitle')}
+              body={t('play.openMatchesEmpty')}
               ctaHref="/play/clubs"
-              ctaLabel="Browse clubs"
+              ctaLabel={t('play.ctaBrowseClubs')}
             />
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -245,19 +263,21 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
                       {b.city ?? ''} {b.clubName ? `· ${b.clubName}` : ''}
                     </p>
                     <span className="border border-brass/60 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-brass">
-                      {b.seatsOpen} open
+                      {b.seatsOpen === 1
+                        ? t('playOpen.seatsOpenBadgeOne', { total: b.maxParticipants })
+                        : t('playOpen.seatsOpenBadge', { n: b.seatsOpen, total: b.maxParticipants })}
                     </span>
                   </div>
                   <h2 className="font-serif text-2xl tracking-tight text-ink-deep">
-                    {b.courtName ?? 'Court'}
+                    {b.courtName ?? t('admin.colCourt')}
                   </h2>
                   <p className="text-sm text-ink-deep/70">
-                    {fmtRange(b.startAt, b.endAt)}
+                    {fmtRange(b.startAt, b.endAt, locale)}
                   </p>
                   <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.15em] text-ink-deep/60">
                     {b.organizerName && (
                       <span className="border border-ink-deep/15 px-2 py-1">
-                        Host: {b.organizerName}
+                        {t('playOpen.hostedBy', { name: b.organizerName })}
                         {typeof b.organizerRatingDisplay === 'number'
                           ? ` · ${b.organizerRatingDisplay.toFixed(1)}`
                           : ''}
@@ -265,12 +285,15 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
                     )}
                     {(b.requiredLevelMin || b.requiredLevelMax) && (
                       <span className="border border-ink-deep/15 px-2 py-1">
-                        Level {b.requiredLevelMin ?? 0}-{b.requiredLevelMax ?? 7}
+                        {t('playOpen.levelRequirement', {
+                          min: b.requiredLevelMin ?? 0,
+                          max: b.requiredLevelMax ?? 7,
+                        })}
                       </span>
                     )}
                     {b.genderPreference !== 'open' && (
                       <span className="border border-ink-deep/15 px-2 py-1">
-                        {b.genderPreference.replace(/_/g, ' ')}
+                        {genderLabel(b.genderPreference)}
                       </span>
                     )}
                   </div>
@@ -278,7 +301,7 @@ export default async function OpenMatchesPage({ searchParams }: PageProps) {
                     href={`/play/open/${b.id}`}
                     className="mt-auto inline-flex items-center justify-center border border-ink-deep px-5 py-2.5 text-sm text-ink-deep transition-colors duration-150 hover:border-court hover:text-court"
                   >
-                    Request to join
+                    {t('play.requestToJoin')}
                   </Link>
                 </article>
               ))}

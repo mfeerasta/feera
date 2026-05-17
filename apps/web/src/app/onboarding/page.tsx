@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { users } from '@feera/db';
 import { getSession, withRequestContext } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
 import { OnboardingForm } from './onboarding-form';
 
 export const runtime = 'nodejs';
@@ -44,27 +45,27 @@ export default async function OnboardingPage() {
     redirect('/me');
   }
 
+  const t = await getT();
   return (
     <main className="min-h-screen bg-cream text-ink-deep">
       <header className="border-b border-ink-deep/10">
         <div className="mx-auto flex max-w-[1280px] items-center justify-between px-6 py-5">
           <span className="font-serif text-2xl tracking-tight">feera</span>
           <span className="text-xs uppercase tracking-[0.25em] text-ink-deep/60">
-            Welcome
+            {t('onboarding.title')}
           </span>
         </div>
       </header>
 
       <section className="mx-auto max-w-2xl px-6 py-16">
         <p className="text-xs uppercase tracking-[0.25em] text-ink-deep/60">
-          A few quick things
+          {t('onboarding.subtitle')}
         </p>
         <h1 className="mt-3 font-serif text-5xl tracking-tight">
-          Set up your profile.
+          {t('onboarding.title')}
         </h1>
         <p className="mt-4 max-w-lg text-base leading-relaxed text-ink-deep/70">
-          Three short steps. Your gender is used for matchmaking and tournament
-          eligibility. You decide who sees it, and you can change everything later.
+          {t('onboarding.privacyBody')}
         </p>
 
         <div className="mt-12">

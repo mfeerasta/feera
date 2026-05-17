@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { uploadFilePrivate } from '@/lib/storage/client';
 
 type Step = 'profile' | 'pricing' | 'schedule' | 'verification';
 
@@ -417,10 +418,10 @@ export function CoachOnboardForm() {
           </div>
 
           <div>
-            <p className={labelCls}>Verification documents (signed URLs)</p>
+            <p className={labelCls}>Verification documents</p>
             <p className="mt-1 text-xs text-ink-deep/60">
-              Paste a signed URL for each document. File upload from your device
-              ships once Hetzner Object Storage signing lands.
+              Upload a PDF or photo for each document. Files land in the private
+              Feera bucket; only Feera verifiers and you can see them.
             </p>
             <div className="mt-2 flex flex-col gap-3">
               {docs.map((d, i) => (
@@ -441,17 +442,35 @@ export function CoachOnboardForm() {
                     <option value="insurance">Insurance</option>
                     <option value="other">Other</option>
                   </select>
-                  <input
-                    type="url"
-                    placeholder="https://..."
-                    value={d.url}
-                    onChange={(e) =>
-                      setDocs((ds) =>
-                        ds.map((row, j) => (j === i ? { ...row, url: e.target.value } : row)),
-                      )
-                    }
-                    className={inputCls}
-                  />
+                  <div className="flex flex-col gap-1">
+                    <input
+                      type="file"
+                      accept="application/pdf,image/jpeg,image/png"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          const r = await uploadFilePrivate(file, 'verification-doc');
+                          setDocs((ds) =>
+                            ds.map((row, j) =>
+                              j === i ? { ...row, url: r.key } : row,
+                            ),
+                          );
+                        } catch (err) {
+                          alert(err instanceof Error ? err.message : 'Upload failed.');
+                        } finally {
+                          e.target.value = '';
+                        }
+                      }}
+                      className="text-sm text-ink-deep"
+                      aria-label={`Upload ${d.kind} document`}
+                    />
+                    {d.url ? (
+                      <span className="truncate text-[10px] text-ink-deep/50" title={d.url}>
+                        stored: {d.url}
+                      </span>
+                    ) : null}
+                  </div>
                   <input
                     placeholder="Label (optional)"
                     value={d.label}

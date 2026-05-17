@@ -2,7 +2,7 @@ import type {
   NotificationChannel,
   NotificationChannelName,
   NotificationRequest,
-} from './types.js';
+} from './types';
 
 /**
  * Picks the channel chain for a given recipient + urgency.

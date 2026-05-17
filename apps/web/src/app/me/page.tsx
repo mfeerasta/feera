@@ -4,7 +4,9 @@ import { eq } from 'drizzle-orm';
 import { userRatings, users } from '@feera/db';
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 import { getSession, withRequestContext } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
 import { MeForm } from './me-form';
 
 export const runtime = 'nodejs';
@@ -86,6 +88,21 @@ export default async function MePage() {
   }
 
   const { user, rating } = data;
+  const t = await getT();
+  const genderLabel =
+    user.gender === 'm'
+      ? t('onboarding.genderMale')
+      : user.gender === 'f'
+        ? t('onboarding.genderFemale')
+        : user.gender === 'x'
+          ? t('onboarding.genderOther')
+          : t('common.none');
+  const visibilityLabel =
+    user.genderVisibility === 'public'
+      ? t('privacyControls.allowMessagesAll')
+      : user.genderVisibility === 'friends'
+        ? t('privacyControls.allowMessagesFriends')
+        : t('privacyControls.allowMessagesNone');
 
   return (
     <div className="min-h-screen bg-[color:var(--color-bg)] text-[color:var(--color-fg)]">
@@ -102,26 +119,27 @@ export default async function MePage() {
               href="/play/clubs"
               className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
             >
-              Clubs
+              {t('nav.clubs')}
             </Link>
             <Link
               href="/play/open"
               className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
             >
-              Open matches
+              {t('nav.openMatches')}
             </Link>
             <Link
               href="/play/bookings"
               className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
             >
-              My bookings
+              {t('nav.myBookings')}
             </Link>
             <Link
               href="/me"
               className="feera-motion text-[color:var(--color-fg)] hover:text-[color:var(--color-accent)]"
             >
-              Profile
+              {t('nav.profile')}
             </Link>
+            <LocaleSwitcher />
             <ThemeToggle />
           </nav>
         </div>
@@ -129,51 +147,51 @@ export default async function MePage() {
 
       <main className="mx-auto max-w-3xl px-6 py-12">
         <p className="text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
-          You
+          {t('me.title')}
         </p>
         <h1 className="mt-2 font-serif text-4xl tracking-tight">{user.displayName}</h1>
         <p className="mt-2 text-sm text-[color:var(--color-fg-muted)]">
-          {user.email ?? user.phone ?? 'No contact on file'}
+          {user.email ?? user.phone ?? '—'}
           {' '}
           ·
           {' '}
           {user.city ? `${user.city}, ${user.countryCode}` : user.countryCode}
-          {user.editionMemberStatus === 'active' ? ' · Edition' : ''}
-          {user.isVerifiedCoach ? ' · Coach' : ''}
+          {user.editionMemberStatus === 'active' ? ` · ${t('me.editionMember')}` : ''}
+          {user.isVerifiedCoach ? ` · ${t('nav.coaches')}` : ''}
         </p>
 
         <div className="mt-10 grid grid-cols-3 gap-px border border-[color:var(--color-border)] bg-[color:var(--color-border)]">
           <div className="bg-[color:var(--color-bg)] p-6">
             <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-              Rating
+              {t('me.rating')}
             </p>
             <p className="mt-2 font-serif text-3xl tracking-tight">
               {rating ? rating.ratingDisplay.toFixed(2) : '-.--'}
             </p>
             <p className="mt-1 text-xs text-[color:var(--color-fg-muted)]">
-              {rating?.isProvisional ? 'Provisional' : 'Confirmed'}
+              {rating?.isProvisional ? t('status.pending') : t('status.confirmed')}
             </p>
           </div>
           <div className="bg-[color:var(--color-bg)] p-6">
             <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-              Reliability
+              {t('me.reliabilityCard')}
             </p>
             <p className="mt-2 font-serif text-3xl tracking-tight">
               {rating ? `${rating.reliabilityPct}%` : '-'}
             </p>
             <p className="mt-1 text-xs text-[color:var(--color-fg-muted)]">
-              {rating?.matchCount ?? 0} matches
+              {t('me.matchesPlayed')}: {rating?.matchCount ?? 0}
             </p>
           </div>
           <div className="bg-[color:var(--color-bg)] p-6">
             <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-              Visibility
+              {t('section.privacy')}
             </p>
-            <p className="mt-2 font-serif text-2xl tracking-tight capitalize">
-              {user.genderVisibility}
+            <p className="mt-2 font-serif text-2xl tracking-tight">
+              {visibilityLabel}
             </p>
             <p className="mt-1 text-xs text-[color:var(--color-fg-muted)]">
-              Profile audience
+              {t('privacyControls.showFullName')}
             </p>
           </div>
         </div>
@@ -181,46 +199,32 @@ export default async function MePage() {
         <div className="mt-12">
           <Card>
             <CardHeader>
-              <CardTitle>Pool and privacy</CardTitle>
+              <CardTitle>{t('me.section.privacy')}</CardTitle>
             </CardHeader>
             <CardBody>
               <div className="grid gap-4 text-sm md:grid-cols-3">
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-                    Gender
+                    {t('onboarding.genderLabel')}
                   </p>
-                  <p className="mt-2 text-[color:var(--color-fg)]">
-                    {user.gender === 'm'
-                      ? 'Man'
-                      : user.gender === 'f'
-                        ? 'Woman'
-                        : user.gender === 'x'
-                          ? 'Prefer not to say'
-                          : 'Not set'}
-                  </p>
+                  <p className="mt-2 text-[color:var(--color-fg)]">{genderLabel}</p>
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-                    Visibility
+                    {t('me.section.privacy')}
                   </p>
-                  <p className="mt-2 text-[color:var(--color-fg)]">
-                    {user.genderVisibility === 'public'
-                      ? 'Anyone can see'
-                      : user.genderVisibility === 'friends'
-                        ? 'Friends only'
-                        : 'Only you'}
-                  </p>
+                  <p className="mt-2 text-[color:var(--color-fg)]">{visibilityLabel}</p>
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-                    Women only pool
+                    {t('privacyControls.womenOnlyTitle')}
                   </p>
                   <p className="mt-2 text-[color:var(--color-fg)]">
                     {user.gender === 'f'
                       ? user.womenOnlyPoolOptIn
-                        ? 'Enabled'
-                        : 'Off'
-                      : 'Not eligible'}
+                        ? t('status.active')
+                        : t('common.no')
+                      : t('common.none')}
                   </p>
                 </div>
               </div>
@@ -228,7 +232,7 @@ export default async function MePage() {
                 href="/me/privacy"
                 className="mt-6 inline-flex items-center text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] hover:underline"
               >
-                Edit pool and privacy
+                {t('common.edit')}
               </Link>
             </CardBody>
           </Card>
@@ -237,7 +241,7 @@ export default async function MePage() {
         <div className="mt-12">
           <Card>
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
+              <CardTitle>{t('nav.profile')}</CardTitle>
             </CardHeader>
             <CardBody>
               <MeForm
@@ -247,6 +251,7 @@ export default async function MePage() {
                   city: user.city ?? '',
                   genderVisibility: user.genderVisibility,
                   bio: user.bio ?? '',
+                  profilePhotoUrl: user.profilePhotoUrl,
                 }}
               />
             </CardBody>

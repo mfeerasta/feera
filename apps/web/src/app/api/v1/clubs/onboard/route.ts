@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
           phone: input.phone,
           email: input.email ?? input.owner.email,
           websiteUrl: input.websiteUrl,
+          logoUrl: input.logoUrl,
           isActive: false,
           approvalStatus: 'pending',
           hasIndoor: input.hasIndoor,

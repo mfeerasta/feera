@@ -1,5 +1,5 @@
-import type { NotificationTemplate } from '../types.js';
-import { t } from './t.js';
+import type { NotificationTemplate } from '../types';
+import { t } from './t';
 
 type Vars = 'tournamentName' | 'updateSummary' | 'tournamentId';
 

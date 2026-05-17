@@ -3,7 +3,7 @@ import type {
   NotificationRequest,
   NotificationResult,
   RenderedTemplate,
-} from '../types.js';
+} from '../types';
 
 /**
  * OneSignal web push facade. Phase 1 (M2) does no network IO.

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,22 +16,21 @@ export default async function ExportPage() {
   if (!session) {
     redirect('/sign-in?next=/me/export');
   }
+  const t = await getT();
 
   return (
     <div className="min-h-screen bg-[color:var(--color-bg)] text-[color:var(--color-fg)]">
       <main className="mx-auto max-w-2xl px-6 py-16">
         <p className="text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
-          Your data
+          {t('me.section.account')}
         </p>
-        <h1 className="mt-2 font-serif text-4xl tracking-tight">Download your data</h1>
+        <h1 className="mt-2 font-serif text-4xl tracking-tight">{t('me.exportData')}</h1>
         <p className="mt-6 text-base leading-relaxed text-[color:var(--color-fg-muted)]">
-          Under Article 20 of the GDPR you have the right to receive every piece of
-          personal data Feera holds about you in a portable format. The archive below
-          contains a JSON file per category, packaged as a ZIP.
+          {t('me.exportDescription')}
         </p>
 
         <section className="mt-10 border border-[color:var(--color-border)] bg-[color:var(--color-bg-card)] p-6">
-          <h2 className="font-serif text-xl tracking-tight">What is inside</h2>
+          <h2 className="font-serif text-xl tracking-tight">{t('common.details')}</h2>
           <ul className="mt-4 space-y-2 text-sm text-[color:var(--color-fg-muted)]">
             <li><span className="font-medium text-[color:var(--color-fg)]">profile.json</span>: account, rating, social score.</li>
             <li><span className="font-medium text-[color:var(--color-fg)]">bookings.json</span>: bookings you organized or joined, plus join requests.</li>
@@ -48,19 +48,18 @@ export default async function ExportPage() {
             download
             className="feera-motion inline-flex items-center border border-[color:var(--color-fg)] bg-[color:var(--color-fg)] px-6 py-3 text-sm uppercase tracking-[0.18em] text-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-bg)]"
           >
-            Download my data
+            {t('me.exportButton')}
           </a>
           <Link
             href="/me"
             className="feera-motion text-sm uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)]"
           >
-            Back to profile
+            {t('common.back')}
           </Link>
         </div>
 
         <p className="mt-10 text-xs text-[color:var(--color-fg-muted)]">
-          The download may take a moment for active accounts. If you have trouble,
-          contact privacy@feera.ai.
+          privacy@feera.ai
         </p>
       </main>
     </div>

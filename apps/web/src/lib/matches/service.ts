@@ -15,6 +15,7 @@ import {
   type DoublesMatchResult,
   type Player,
 } from '@feera/matching/glicko';
+import { enqueueNotificationSafe } from '@/lib/notifications/outbox';
 
 export type MatchCreateError =
   | { kind: 'booking_not_found' }
@@ -314,14 +315,42 @@ export async function submitMatchScore(
     .where(eq(matches.id, matchId))
     .returning();
 
-  // TODO(M3-C @feera/notifications): notify the opposing team via the router.
-  // For now log + emit a typed PostHog event via @feera/analytics once it lands.
   console.info('[matches] score submitted', {
     matchId,
     actorUserId,
     teamASetsWon,
     teamBSetsWon,
   });
+
+  // Notify the opposing team. The recorder is on one team; the other team
+  // gets the prompt to verify or dispute.
+  const recorderOnA =
+    actorUserId === match.teamAPlayer1 || actorUserId === match.teamAPlayer2;
+  const opponents = recorderOnA
+    ? [match.teamBPlayer1, match.teamBPlayer2]
+    : [match.teamAPlayer1, match.teamAPlayer2];
+  const [actor] = await tx
+    .select({ displayName: users.displayName })
+    .from(users)
+    .where(eq(users.id, actorUserId))
+    .limit(1);
+  const scoreStr = `${teamASetsWon}-${teamBSetsWon}`;
+  for (const userId of opponents) {
+    await enqueueNotificationSafe(
+      {
+        recipientUserId: userId,
+        template: 'match_score_submitted',
+        variables: {
+          opponentName: actor?.displayName ?? 'Your opponent',
+          score: scoreStr,
+          matchId,
+        },
+        urgency: 'medium',
+        idempotencyKey: `match_score_submitted:${matchId}:${userId}`,
+      },
+      tx,
+    );
+  }
 
   if (!updated) return { kind: 'not_found' };
   return { match: updated, ratingChanges };
@@ -445,6 +474,42 @@ export async function disputeMatch(
     .where(eq(matches.id, matchId))
     .returning();
   if (!updated) return { kind: 'not_found' };
+
+  // Notify the organizer + every other player on the match. Platform admins
+  // get pinged through Sentry/PostHog, not the user-facing notification path.
+  const [disputer] = await tx
+    .select({ displayName: users.displayName })
+    .from(users)
+    .where(eq(users.id, actorUserId))
+    .limit(1);
+  const bookingRow = match.bookingId
+    ? (
+        await tx
+          .select({ organizerUserId: bookings.organizerUserId })
+          .from(bookings)
+          .where(eq(bookings.id, match.bookingId))
+          .limit(1)
+      )[0]
+    : null;
+  const recipients = new Set<string>(players.filter((id) => id !== actorUserId));
+  if (bookingRow?.organizerUserId) recipients.add(bookingRow.organizerUserId);
+  recipients.delete(actorUserId);
+  for (const userId of recipients) {
+    await enqueueNotificationSafe(
+      {
+        recipientUserId: userId,
+        template: 'match_disputed',
+        variables: {
+          disputerName: disputer?.displayName ?? 'A player',
+          reason,
+          matchId,
+        },
+        urgency: 'medium',
+        idempotencyKey: `match_disputed:${dispute.id}:${userId}`,
+      },
+      tx,
+    );
+  }
   return { match: updated, dispute };
 }
 

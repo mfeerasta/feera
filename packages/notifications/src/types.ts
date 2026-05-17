@@ -19,12 +19,19 @@ export type NotificationUrgency = 'high' | 'medium' | 'low' | 'marketing';
 export type NotificationTemplateName =
   | 'booking_confirmed'
   | 'booking_cancelled'
+  | 'booking_join_requested'
+  | 'booking_join_approved'
+  | 'booking_join_declined'
   | 'match_invite'
+  | 'match_score_submitted'
+  | 'match_disputed'
   | 'tournament_update'
   | 'chat_message'
   | 'payment_succeeded'
   | 'otp_fallback'
-  | 'edition_application_update';
+  | 'edition_application_update'
+  | 'coaching_session_reviewed'
+  | 'coaching_verification_approved';
 
 export type NotificationRecipient = Readonly<{
   userId: Uuid;

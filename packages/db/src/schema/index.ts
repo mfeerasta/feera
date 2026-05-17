@@ -39,3 +39,4 @@ export * from './user-deletion-requests';
 export * from './booking-credits';
 export * from './match-disputes';
 export * from './push-tokens';
+export * from './notifications-outbox';

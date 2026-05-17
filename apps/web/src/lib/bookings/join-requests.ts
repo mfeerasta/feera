@@ -6,8 +6,10 @@ import {
   clubStaff,
   courts,
   userRatings,
+  users,
 } from '@feera/db';
 import type { db as Db } from '@feera/db';
+import { enqueueNotificationSafe } from '@/lib/notifications/outbox';
 
 /**
  * Slot-level join request workflow.
@@ -138,13 +140,42 @@ export async function requestJoin(
     .returning();
   if (!row) throw new Error('join request insert returned no row');
 
-  // TODO(@feera/notifications M6): emit booking.join_requested event to organizer.
   console.log('[booking.join_requested]', {
     bookingId: input.bookingId,
     requesterUserId: input.requesterUserId,
     requestId: row.id,
     seatsRequested: input.seatsRequested,
   });
+
+  // Look up the court for clubName + booking time formatting, and the
+  // requester display name, so the notification reads sensibly.
+  const [court] = await tx
+    .select({ name: courts.name })
+    .from(courts)
+    .where(eq(courts.id, booking.courtId))
+    .limit(1);
+  const [requester] = await tx
+    .select({ displayName: users.displayName })
+    .from(users)
+    .where(eq(users.id, input.requesterUserId))
+    .limit(1);
+  await enqueueNotificationSafe(
+    {
+      recipientUserId: booking.organizerUserId,
+      template: 'booking_join_requested',
+      variables: {
+        requesterName: requester?.displayName ?? 'A player',
+        clubName: court?.name ?? 'the club',
+        date: booking.startAt.toISOString().slice(0, 10),
+        time: booking.startAt.toISOString().slice(11, 16),
+        bookingId: input.bookingId,
+        requestId: row.id,
+      },
+      urgency: 'medium',
+      idempotencyKey: `booking_join_requested:${row.id}`,
+    },
+    tx,
+  );
 
   return { row };
 }
@@ -241,13 +272,33 @@ export async function approveJoin(
     .where(eq(bookingJoinRequests.id, requestId))
     .returning();
 
-  // TODO(@feera/notifications M6): emit booking.join_approved to requester.
   console.log('[booking.join_approved]', {
     bookingId,
     requestId,
     requesterUserId: request.requesterUserId,
     seatsBooked: newSeatsBooked,
   });
+
+  const [court] = await tx
+    .select({ name: courts.name })
+    .from(courts)
+    .where(eq(courts.id, booking.courtId))
+    .limit(1);
+  await enqueueNotificationSafe(
+    {
+      recipientUserId: request.requesterUserId,
+      template: 'booking_join_approved',
+      variables: {
+        clubName: court?.name ?? 'the club',
+        date: booking.startAt.toISOString().slice(0, 10),
+        time: booking.startAt.toISOString().slice(11, 16),
+        bookingId,
+      },
+      urgency: 'high',
+      idempotencyKey: `booking_join_approved:${requestId}`,
+    },
+    tx,
+  );
 
   if (!updatedBooking || !updatedRequest) {
     throw new Error('approveJoin: update returned no row');
@@ -277,12 +328,32 @@ export async function declineJoin(
     .where(eq(bookingJoinRequests.id, requestId))
     .returning();
 
-  // TODO(@feera/notifications M6): emit booking.join_declined.
   console.log('[booking.join_declined]', {
     bookingId,
     requestId,
     requesterUserId: loaded.request.requesterUserId,
   });
+
+  const [court] = await tx
+    .select({ name: courts.name })
+    .from(courts)
+    .where(eq(courts.id, loaded.booking.courtId))
+    .limit(1);
+  await enqueueNotificationSafe(
+    {
+      recipientUserId: loaded.request.requesterUserId,
+      template: 'booking_join_declined',
+      variables: {
+        clubName: court?.name ?? 'the club',
+        date: loaded.booking.startAt.toISOString().slice(0, 10),
+        time: loaded.booking.startAt.toISOString().slice(11, 16),
+        bookingId,
+      },
+      urgency: 'medium',
+      idempotencyKey: `booking_join_declined:${requestId}`,
+    },
+    tx,
+  );
 
   if (!updated) throw new Error('declineJoin: update returned no row');
   return { request: updated };

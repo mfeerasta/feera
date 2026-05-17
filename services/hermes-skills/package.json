@@ -1,0 +1,13 @@
+{
+  "name": "@feera/hermes-skills",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Background-ops skills run by the Hermes daemon on the Feera Hetzner box.",
+  "scripts": {
+    "test": "node --test tests/"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5"
+  }
+}

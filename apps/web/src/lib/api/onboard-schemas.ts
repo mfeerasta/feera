@@ -25,6 +25,7 @@ export const clubOnboardSchema = z.object({
   email: z.string().email().optional(),
   websiteUrl: z.string().url().optional(),
   defaultCurrency: z.string().length(3).toUpperCase(),
+  logoUrl: z.string().url().optional(),
 
   // Step 2: location
   lat: z.number().min(-90).max(90),

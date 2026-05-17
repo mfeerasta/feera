@@ -19,6 +19,7 @@
     "@feera/analytics": "workspace:*",
     "@feera/db": "workspace:*",
     "@feera/matching": "workspace:*",
+    "@feera/notifications": "workspace:*",
     "@feera/payments": "workspace:*",
     "@feera/types": "workspace:*",
     "croner": "^9.0.0",

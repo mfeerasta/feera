@@ -3,20 +3,22 @@ import type { ReactNode } from 'react';
 import { and, eq, isNull } from 'drizzle-orm';
 import { clubs } from '@feera/db';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 import { getSession, withRequestContext } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
   showCount?: boolean;
 }
 const navItems: readonly NavItem[] = [
-  { href: '/admin/clubs', label: 'Clubs' },
-  { href: '/admin/clubs/pending', label: 'Pending clubs', showCount: true },
-  { href: '/admin/bookings', label: 'Bookings' },
-  { href: '/admin/matches/discover', label: 'Matches' },
-  { href: '/admin/chats', label: 'Chats' },
-  { href: '/admin/coaches', label: 'Coaches' },
+  { href: '/admin/clubs', labelKey: 'admin.navClubs' },
+  { href: '/admin/clubs/pending', labelKey: 'admin.navPendingClubs', showCount: true },
+  { href: '/admin/bookings', labelKey: 'admin.navBookings' },
+  { href: '/admin/matches/discover', labelKey: 'admin.navMatches' },
+  { href: '/admin/chats', labelKey: 'admin.navChats' },
+  { href: '/admin/coaches', labelKey: 'admin.navCoaches' },
 ];
 
 async function pendingClubsCount(): Promise<number> {
@@ -40,6 +42,7 @@ async function pendingClubsCount(): Promise<number> {
  */
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const pending = await pendingClubsCount();
+  const t = await getT();
   return (
     <div className="flex min-h-screen">
       <aside
@@ -51,7 +54,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             feera
           </Link>
           <p className="mt-1 text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
-            Admin
+            {t('nav.admin')}
           </p>
         </div>
         <nav className="flex flex-col gap-px px-3 pb-6">
@@ -62,7 +65,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               className="feera-motion group relative flex items-center justify-between px-3 py-2.5 text-sm text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)]"
             >
               <span className="feera-motion absolute inset-y-2 -start-3 w-px bg-transparent group-hover:bg-[color:var(--color-accent)]" />
-              <span>{item.label}</span>
+              <span>{t(item.labelKey)}</span>
               {item.showCount && pending > 0 ? (
                 <span className="ms-2 inline-flex h-5 min-w-5 items-center justify-center border border-[color:var(--color-accent)] px-1.5 text-[10px] text-[color:var(--color-accent)]">
                   {pending}
@@ -77,14 +80,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <header className="flex items-center justify-end border-b border-[color:var(--color-border)] px-8 py-4 text-sm">
           <div className="flex items-center gap-4">
             <span className="text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-muted)]">
-              Dev admin
+              {t('admin.topBarTitle')}
             </span>
             <Link
               href="/sign-in"
               className="feera-motion text-[color:var(--color-fg)] hover:text-[color:var(--color-accent)]"
             >
-              Sign out
+              {t('admin.signOut')}
             </Link>
+            <LocaleSwitcher />
             <ThemeToggle />
           </div>
         </header>

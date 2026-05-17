@@ -10,6 +10,7 @@ import {
 } from '@/lib/api/responses';
 import { getSession, withRequestContext } from '@/lib/api/request-context';
 import { startTournament } from '@/lib/tournaments/service';
+import { channelFor, triggerEvent } from '@/lib/realtime/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -43,6 +44,11 @@ export async function POST(_req: NextRequest, ctx: Ctx) {
           return badRequest('At least two confirmed registrations required.');
       }
     }
+    void triggerEvent(channelFor.tournament(id), 'tournament.started', {
+      tournamentId: id,
+      matchesCreated: result.matches.length,
+      startedAt: new Date().toISOString(),
+    });
     return ok({
       data: {
         tournament: result.tournament,

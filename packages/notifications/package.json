@@ -24,6 +24,11 @@
     "@feera/analytics": "workspace:*",
     "@feera/types": "workspace:*"
   },
+  "optionalDependencies": {
+    "expo-server-sdk": "^3.10.0",
+    "resend": "^6.12.3",
+    "twilio": "^6.0.2"
+  },
   "devDependencies": {
     "@types/node": "^22.10.5",
     "typescript": "^5.7.3",

@@ -8,6 +8,7 @@ import {
   parseLatLngFromMapsUrl,
   slugify,
 } from '@/lib/api/onboard-schemas';
+import { uploadFilePublic } from '@/lib/storage/client';
 
 type Draft = {
   // step 1
@@ -19,6 +20,7 @@ type Draft = {
   phone: string;
   email: string;
   websiteUrl: string;
+  logoUrl: string;
   defaultCurrency: string;
   // step 2
   lat: string;
@@ -54,6 +56,7 @@ const EMPTY: Draft = {
   phone: '',
   email: '',
   websiteUrl: '',
+  logoUrl: '',
   defaultCurrency: 'PKR',
   lat: '',
   lng: '',
@@ -232,6 +235,7 @@ export function OnboardForm() {
         phone: draft.phone.trim() || undefined,
         email: draft.email.trim() || undefined,
         websiteUrl: draft.websiteUrl.trim() || undefined,
+        logoUrl: draft.logoUrl.trim() || undefined,
         defaultCurrency: draft.defaultCurrency.toUpperCase(),
         lat: Number(draft.lat),
         lng: Number(draft.lng),
@@ -408,8 +412,70 @@ function Field({
 }
 
 function Step1({ draft, update }: StepProps) {
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [logoError, setLogoError] = useState<string | null>(null);
+
+  async function handleLogo(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoUploading(true);
+    setLogoError(null);
+    try {
+      const r = await uploadFilePublic(file, 'club-logo');
+      update('logoUrl', r.url);
+    } catch (err) {
+      setLogoError(err instanceof Error ? err.message : 'Upload failed.');
+    } finally {
+      setLogoUploading(false);
+    }
+  }
+
   return (
     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="md:col-span-2">
+        <Field label="Club logo" hint="Square PNG or JPG, up to 2 MB. Optional.">
+          <div className="flex items-center gap-4">
+            {draft.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={draft.logoUrl}
+                alt="Club logo preview"
+                className="h-16 w-16 border border-ink-deep/20 object-cover"
+                width={64}
+                height={64}
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="h-16 w-16 border border-ink-deep/15 bg-cream"
+              />
+            )}
+            <div className="grid gap-1">
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                onChange={handleLogo}
+                disabled={logoUploading}
+                className="text-sm text-ink-deep"
+                aria-label="Club logo file"
+              />
+              {logoUploading ? (
+                <p className="text-xs text-ink-deep/60">Uploading.</p>
+              ) : logoError ? (
+                <p className="text-xs text-red-600">{logoError}</p>
+              ) : draft.logoUrl ? (
+                <button
+                  type="button"
+                  onClick={() => update('logoUrl', '')}
+                  className="text-xs text-ink-deep/60 underline-offset-2 hover:underline"
+                >
+                  Remove
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </Field>
+      </div>
       <div className="md:col-span-2">
         <Field label="Club name">
           <Input

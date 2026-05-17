@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/api/request-context';
 import { playFetch } from '@/lib/play/api-client';
 import { EmptyState } from '@/components/play/empty-state';
+import { getT, type TFn } from '@/lib/i18n/t';
+import { getLocale } from '@/lib/i18n/server';
 
 interface BookingRow {
   id: string;
@@ -20,8 +22,8 @@ interface BookingRow {
   maxParticipants: number;
 }
 
-function fmtFull(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+function fmtFull(iso: string, locale: string): string {
+  return new Date(iso).toLocaleString(locale, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -34,6 +36,9 @@ export default async function MyBookingsPage() {
   const session = await getSession();
   if (!session) redirect('/sign-in?next=/play/bookings');
 
+  const t = await getT();
+  const locale = await getLocale();
+
   const qs = new URLSearchParams({
     organizerUserId: session.userId,
     limit: '100',
@@ -45,7 +50,7 @@ export default async function MyBookingsPage() {
     const j = (await res.json()) as { data: BookingRow[] };
     rows = j.data;
   } else {
-    error = `Failed to load bookings (HTTP ${res.status}).`;
+    error = t('errors.loadFailed');
   }
 
   const now = new Date();
@@ -61,10 +66,10 @@ export default async function MyBookingsPage() {
       <section className="bg-ink-shadow text-cream">
         <div className="mx-auto max-w-[1280px] px-6 py-16">
           <p className="text-xs uppercase tracking-[0.25em] text-cream/60">
-            Account
+            {t('me.section.account')}
           </p>
           <h1 className="mt-4 font-serif text-5xl tracking-tight text-cream">
-            My bookings.
+            {t('play.myBookingsTitle')}
           </h1>
         </div>
       </section>
@@ -78,20 +83,24 @@ export default async function MyBookingsPage() {
           )}
 
           <BookingsSection
-            title="Upcoming"
+            t={t}
+            locale={locale}
+            title={t('play.upcoming')}
             rows={upcoming}
             currentUserId={session.userId}
-            emptyHeadline="Nothing here yet."
-            emptyBody="You have no upcoming bookings. Browse clubs to book a court."
+            emptyHeadline={t('emptyState.defaultTitle')}
+            emptyBody={t('playBookings.noUpcomingBookings')}
           />
           <div className="mt-16">
             <BookingsSection
-              title="Past"
+              t={t}
+              locale={locale}
+              title={t('play.past')}
               rows={past}
               currentUserId={session.userId}
               isPast
-              emptyHeadline="No past bookings."
-              emptyBody="Once you have played, your history will appear here."
+              emptyHeadline={t('playBookings.noPastBookings')}
+              emptyBody={t('playBookings.noPastBookings')}
             />
           </div>
         </div>
@@ -101,6 +110,8 @@ export default async function MyBookingsPage() {
 }
 
 interface SectionProps {
+  t: TFn;
+  locale: string;
   title: string;
   rows: BookingRow[];
   currentUserId: string;
@@ -109,7 +120,15 @@ interface SectionProps {
   isPast?: boolean;
 }
 
+function statusLabel(status: string, t: TFn): string {
+  const key = `status.${status}`;
+  const v = t(key);
+  return v === key ? status : v;
+}
+
 function BookingsSection({
+  t,
+  locale,
   title,
   rows,
   currentUserId,
@@ -123,7 +142,7 @@ function BookingsSection({
         {title}
       </p>
       <h2 className="mt-2 font-serif text-3xl tracking-tight text-ink-deep">
-        {rows.length} booking{rows.length === 1 ? '' : 's'}.
+        {rows.length}
       </h2>
       <div className="mt-6">
         {rows.length === 0 ? (
@@ -131,7 +150,7 @@ function BookingsSection({
             headline={emptyHeadline}
             body={emptyBody}
             ctaHref="/play/clubs"
-            ctaLabel="Browse clubs"
+            ctaLabel={t('play.ctaBrowseClubs')}
           />
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -155,18 +174,18 @@ function BookingsSection({
                             : 'border-ink-deep/30 text-ink-deep/60'
                       }`}
                     >
-                      {b.status}
+                      {statusLabel(b.status, t)}
                     </span>
                   </div>
                   <h3 className="font-serif text-2xl tracking-tight text-ink-deep">
-                    {b.courtName ?? 'Court'}
+                    {b.courtName ?? t('admin.colCourt')}
                   </h3>
                   <p className="text-sm text-ink-deep/70">
-                    {fmtFull(b.startAt)}
+                    {fmtFull(b.startAt, locale)}
                   </p>
                   <p className="text-xs text-ink-deep/60">
                     {b.totalAmount} {b.currency}
-                    {b.isOpenMatch ? ' · open match' : ''}
+                    {b.isOpenMatch ? ` · ${t('play.openMatchesTitle')}` : ''}
                   </p>
                   {!isPast && (
                     <div className="mt-auto flex flex-wrap gap-3 pt-2 text-sm">
@@ -175,7 +194,7 @@ function BookingsSection({
                           href={`/play/bookings/${b.id}/joins`}
                           className="text-ink-deep underline-offset-4 hover:text-court hover:underline"
                         >
-                          View join requests
+                          {t('playBookings.viewJoinRequests')}
                         </Link>
                       )}
                       {b.status === 'pending' && (
@@ -183,11 +202,11 @@ function BookingsSection({
                           href={`/admin/bookings/${b.id}/pay`}
                           className="text-ink-deep underline-offset-4 hover:text-court hover:underline"
                         >
-                          Pay
+                          {t('playBookings.payYourShare')}
                         </Link>
                       )}
                       {isOrganizer && b.status !== 'cancelled' && (
-                        <CancelButton bookingId={b.id} />
+                        <CancelButton bookingId={b.id} label={t('playBookings.cancelBooking')} />
                       )}
                     </div>
                   )}
@@ -213,7 +232,7 @@ async function cancelBookingAction(formData: FormData) {
   revalidatePath('/play/bookings');
 }
 
-function CancelButton({ bookingId }: { bookingId: string }) {
+function CancelButton({ bookingId, label }: { bookingId: string; label: string }) {
   return (
     <form action={cancelBookingAction}>
       <input type="hidden" name="bookingId" value={bookingId} />
@@ -221,7 +240,7 @@ function CancelButton({ bookingId }: { bookingId: string }) {
         type="submit"
         className="text-red-600 underline-offset-4 hover:underline"
       >
-        Cancel
+        {label}
       </button>
     </form>
   );

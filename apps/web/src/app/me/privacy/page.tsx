@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { users } from '@feera/db';
 import { getSession, withRequestContext } from '@/lib/api/request-context';
+import { getT } from '@/lib/i18n/t';
 import { PrivacyForm } from './privacy-form';
 
 export const runtime = 'nodejs';
@@ -25,6 +26,7 @@ export default async function PrivacyPage() {
     return u ?? null;
   });
   if (!row) redirect('/sign-in?next=/me/privacy');
+  const t = await getT();
 
   return (
     <main className="min-h-screen bg-cream text-ink-deep">
@@ -34,21 +36,20 @@ export default async function PrivacyPage() {
             feera
           </Link>
           <Link href="/me" className="text-xs uppercase tracking-[0.25em] text-ink-deep/60 hover:text-court">
-            Back to profile
+            {t('common.back')}
           </Link>
         </div>
       </header>
 
       <section className="mx-auto max-w-2xl px-6 py-16">
         <p className="text-xs uppercase tracking-[0.25em] text-ink-deep/60">
-          Privacy
+          {t('me.section.privacy')}
         </p>
         <h1 className="mt-3 font-serif text-5xl tracking-tight">
-          Pool and privacy.
+          {t('privacyControls.title')}
         </h1>
         <p className="mt-4 max-w-lg text-base leading-relaxed text-ink-deep/70">
-          Control who sees your gender, and opt in or out of the women only
-          matchmaking pool. Everything saves immediately.
+          {t('privacyControls.subtitle')}
         </p>
 
         <div className="mt-10">

@@ -8,6 +8,7 @@ import {
 import type { db as Db } from '@feera/db';
 import { resolvePricing } from './pricing';
 import { hasCourtConflict } from './conflict';
+import { enqueueNotificationSafe } from '@/lib/notifications/outbox';
 import type { BookingCreateInput, BookingUpdateInput } from '@/lib/api/booking-schemas';
 
 export const DEFAULT_BOOKING_DURATION_MIN = 90;
@@ -126,19 +127,42 @@ export async function createBooking(
     status: 'accepted',
   });
 
+  let invitedIds: string[] = [];
   if (input.participantUserIds && input.participantUserIds.length > 0) {
-    const dedup = Array.from(
+    invitedIds = Array.from(
       new Set(input.participantUserIds.filter((id) => id !== organizerUserId)),
     );
-    if (dedup.length > 0) {
+    if (invitedIds.length > 0) {
       await tx.insert(bookingParticipants).values(
-        dedup.map((userId) => ({
+        invitedIds.map((userId) => ({
           bookingId: booking.id,
           userId,
           status: 'invited' as const,
         })),
       );
     }
+  }
+
+  // Fan-out booking_confirmed to organizer + every invited participant.
+  const dateStr = booking.startAt.toISOString().slice(0, 10);
+  const timeStr = booking.startAt.toISOString().slice(11, 16);
+  const recipients = [organizerUserId, ...invitedIds];
+  for (const userId of recipients) {
+    await enqueueNotificationSafe(
+      {
+        recipientUserId: userId,
+        template: 'booking_confirmed',
+        variables: {
+          clubName: court.name ?? 'the club',
+          date: dateStr,
+          time: timeStr,
+          bookingId: booking.id,
+        },
+        urgency: 'high',
+        idempotencyKey: `booking_confirmed:${booking.id}:${userId}`,
+      },
+      tx,
+    );
   }
 
   return { booking, priceWarning: pricing.warning };
@@ -258,6 +282,7 @@ export async function cancelBooking(
   bookingId: string,
   actorUserId: string,
   isAdmin: boolean,
+  reason: string = 'cancelled by organizer',
 ): Promise<{ booking: typeof bookings.$inferSelect } | { kind: 'not_found' | 'forbidden' | 'already_cancelled' }> {
   const [existing] = await tx
     .select()
@@ -275,6 +300,57 @@ export async function cancelBooking(
     .set({ status: 'cancelled' })
     .where(eq(bookings.id, bookingId))
     .returning();
+
+  if (updated) {
+    // Notify every participant whose status is invited/accepted, plus pending joiners.
+    const parts = await tx
+      .select({ userId: bookingParticipants.userId })
+      .from(bookingParticipants)
+      .where(eq(bookingParticipants.bookingId, bookingId));
+    const [court] = await tx
+      .select({ name: courts.name })
+      .from(courts)
+      .where(eq(courts.id, existing.courtId))
+      .limit(1);
+    const dateStr = existing.startAt.toISOString().slice(0, 10);
+    const timeStr = existing.startAt.toISOString().slice(11, 16);
+
+    // Lazy import of bookingJoinRequests to avoid a circular schema dep at module init.
+    const { bookingJoinRequests } = await import('@feera/db');
+    const pending = await tx
+      .select({ userId: bookingJoinRequests.requesterUserId })
+      .from(bookingJoinRequests)
+      .where(
+        and(
+          eq(bookingJoinRequests.bookingId, bookingId),
+          eq(bookingJoinRequests.status, 'pending'),
+        ),
+      );
+
+    const recipients = new Set<string>([
+      ...parts.map((p) => p.userId),
+      ...pending.map((p) => p.userId),
+    ]);
+    for (const userId of recipients) {
+      await enqueueNotificationSafe(
+        {
+          recipientUserId: userId,
+          template: 'booking_cancelled',
+          variables: {
+            clubName: court?.name ?? 'the club',
+            date: dateStr,
+            time: timeStr,
+            bookingId,
+            reason,
+          },
+          urgency: 'high',
+          idempotencyKey: `booking_cancelled:${bookingId}:${userId}`,
+        },
+        tx,
+      );
+    }
+  }
+
   // TODO(M3-C @feera/payments): trigger refund via payments router using
   // booking.id as idempotency key. Refund policy per region in ADR-0003.
   return updated ? { booking: updated } : { kind: 'not_found' };

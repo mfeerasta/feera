@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useT } from '@/lib/i18n/context';
 
 type State =
   | { phase: 'form'; error?: string }
@@ -8,6 +9,7 @@ type State =
   | { phase: 'submitted' };
 
 export function EditionApplyForm() {
+  const t = useT();
   const [state, setState] = useState<State>({ phase: 'form' });
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -31,7 +33,7 @@ export function EditionApplyForm() {
         const body = await res.json().catch(() => ({}));
         setState({
           phase: 'form',
-          error: body.message ?? 'Could not submit. Try again.',
+          error: body.message ?? t('errors.unknown'),
         });
         return;
       }
@@ -39,7 +41,7 @@ export function EditionApplyForm() {
     } catch (err) {
       setState({
         phase: 'form',
-        error: err instanceof Error ? err.message : 'Network error.',
+        error: err instanceof Error ? err.message : t('errors.network'),
       });
     }
   }
@@ -47,12 +49,14 @@ export function EditionApplyForm() {
   if (state.phase === 'submitted') {
     return (
       <div className="border border-brass/40 p-10">
-        <p className="text-xs uppercase tracking-[0.3em] text-brass">Received</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-brass">
+          {t('status.confirmed')}
+        </p>
         <h2 className="mt-4 font-serif text-3xl leading-tight tracking-tight text-cream">
-          Thank you.
+          {t('editionApply.successTitle')}
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-cream/70">
-          We will be in touch within a week. Until then, play well.
+          {t('editionApply.successBody')}
         </p>
       </div>
     );
@@ -60,20 +64,21 @@ export function EditionApplyForm() {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-8">
-      <Field label="Full name" name="fullName" required />
-      <Field label="Email" name="email" type="email" required />
-      <Field label="Phone (E.164)" name="phone" type="tel" placeholder="+923001234567" />
-      <Field label="City" name="city" placeholder="Lahore" required />
-      <Field label="Introduced by" name="referrer" placeholder="Member name or club" />
+      <Field label={t('editionApply.fieldFullName')} name="fullName" required />
+      <Field label={t('editionApply.fieldEmail')} name="email" type="email" required />
+      <Field label={t('editionApply.fieldPhone')} name="phone" type="tel" placeholder="+923001234567" />
+      <Field label={t('editionApply.fieldCity')} name="city" placeholder={t('onboarding.cityPlaceholder')} required />
+      <Field label={t('editionApply.fieldIntroducedBy')} name="referrer" placeholder={t('editionApply.fieldIntroducedByHelp')} />
 
       <label className="flex flex-col gap-2">
         <span className="text-xs uppercase tracking-[0.25em] text-cream/60">
-          Why Edition?
+          {t('editionApply.fieldWhy')}
         </span>
         <textarea
           name="note"
           rows={5}
           required
+          placeholder={t('editionApply.fieldWhyHelp')}
           className="border border-cream/30 bg-transparent px-4 py-3 text-cream placeholder-cream/30 outline-none transition-colors focus:border-brass"
         />
       </label>
@@ -89,7 +94,7 @@ export function EditionApplyForm() {
         disabled={state.phase === 'submitting'}
         className="self-start border border-brass px-10 py-4 text-xs uppercase tracking-[0.25em] text-brass transition-colors hover:bg-brass hover:text-ink-deep disabled:opacity-50"
       >
-        {state.phase === 'submitting' ? 'Sending…' : 'Submit application'}
+        {state.phase === 'submitting' ? t('common.submitting') : t('editionApply.submitCta')}
       </button>
     </form>
   );

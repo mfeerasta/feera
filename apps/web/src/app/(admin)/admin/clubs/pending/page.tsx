@@ -8,6 +8,7 @@ import { getSession, withRequestContext } from '@/lib/api/request-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
+import { getT } from '@/lib/i18n/t';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,24 +76,25 @@ export default async function AdminClubsPendingPage({ searchParams }: PageProps)
   gateAdmin(sp);
 
   const rows = await loadPending();
+  const t = await getT();
 
   return (
     <section className="mx-auto max-w-5xl">
       <div className="mb-10 flex items-end justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
-            Operations
+            {t('nav.admin')}
           </p>
-          <h1 className="mt-2 font-serif text-4xl tracking-tight">Pending clubs</h1>
+          <h1 className="mt-2 font-serif text-4xl tracking-tight">{t('admin.pendingClubsTitle')}</h1>
           <p className="mt-2 text-sm text-[color:var(--color-fg-muted)]">
-            {rows.length} awaiting review
+            {rows.length} · {t('admin.pendingReview')}
           </p>
         </div>
         <Link
           href="/admin/clubs"
           className="text-xs uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
         >
-          All clubs
+          {t('admin.navClubs')}
         </Link>
       </div>
 
@@ -100,17 +102,17 @@ export default async function AdminClubsPendingPage({ searchParams }: PageProps)
         <CardBody className="p-0">
           {rows.length === 0 ? (
             <p className="px-6 py-8 text-sm text-[color:var(--color-fg-muted)]">
-              No clubs are waiting for approval.
+              {t('admin.pendingClubsEmpty')}
             </p>
           ) : (
             <Table>
               <THead>
                 <TR>
-                  <TH>Name</TH>
-                  <TH>Location</TH>
-                  <TH>Owner email</TH>
-                  <TH>Submitted</TH>
-                  <TH className="text-end">Action</TH>
+                  <TH>{t('admin.colName')}</TH>
+                  <TH>{t('admin.colCity')}</TH>
+                  <TH>{t('admin.colOwner')}</TH>
+                  <TH>{t('admin.colCreated')}</TH>
+                  <TH className="text-end">{t('admin.colActions')}</TH>
                 </TR>
               </THead>
               <TBody>
@@ -131,7 +133,7 @@ export default async function AdminClubsPendingPage({ searchParams }: PageProps)
                       {c.city}, {c.countryCode}
                     </TD>
                     <TD className="text-[color:var(--color-fg-muted)]">
-                      {c.email ?? 'not set'}
+                      {c.email ?? '—'}
                     </TD>
                     <TD className="text-[color:var(--color-fg-muted)]">
                       {new Date(c.createdAt).toISOString().slice(0, 10)}
@@ -141,7 +143,7 @@ export default async function AdminClubsPendingPage({ searchParams }: PageProps)
                         <form action={approveAction}>
                           <input type="hidden" name="slug" value={c.slug} />
                           <Button type="submit" size="sm" variant="inverted">
-                            Approve
+                            {t('admin.actionApprove')}
                           </Button>
                         </form>
                         <form
@@ -151,13 +153,13 @@ export default async function AdminClubsPendingPage({ searchParams }: PageProps)
                           <input type="hidden" name="slug" value={c.slug} />
                           <input
                             name="reason"
-                            placeholder="Reason"
+                            placeholder={t('admin.rejectReason')}
                             className="h-9 w-32 border border-[color:var(--color-border)] bg-transparent px-2 text-xs"
                             required
                             minLength={3}
                           />
                           <Button type="submit" size="sm" variant="danger">
-                            Reject
+                            {t('admin.actionReject')}
                           </Button>
                         </form>
                       </div>

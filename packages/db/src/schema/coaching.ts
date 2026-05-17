@@ -63,6 +63,7 @@ export const coaches = pgTable(
     verificationDocuments: jsonb('verification_documents')
       .notNull()
       .default(sql`'[]'::jsonb`),
+    photos: jsonb('photos').notNull().default(sql`'[]'::jsonb`),
     introVideoUrl: text('intro_video_url'),
     responseTimeAvgHours: integer('response_time_avg_hours').notNull().default(24),
     isEditionEndorsed: boolean('is_edition_endorsed').notNull().default(false),

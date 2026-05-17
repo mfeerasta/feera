@@ -14,6 +14,7 @@ import {
   chatMessageListQuerySchema,
 } from '@/lib/api/chat-schemas';
 import { isChatMember, listMessages, sendMessage } from '@/lib/chats/service';
+import { channelFor, triggerEvent } from '@/lib/realtime/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -62,6 +63,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       return { forbidden: false as const, msg };
     });
     if (result.forbidden) return forbidden('Not a member of this chat.');
+    void triggerEvent(channelFor.chat(id), 'message.new', {
+      id: result.msg.id,
+      chatId: id,
+      senderUserId: session.userId,
+      body: result.msg.body ?? null,
+      attachments: result.msg.attachments ?? [],
+      createdAt: result.msg.createdAt,
+    });
     return created({ data: result.msg });
   } catch (err) {
     return serverError('chats:messages:POST', err);

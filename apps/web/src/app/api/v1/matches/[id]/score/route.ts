@@ -11,6 +11,7 @@ import {
 import { getSession, withRequestContext } from '@/lib/api/request-context';
 import { matchScoreSchema } from '@/lib/api/booking-schemas';
 import { submitMatchScore } from '@/lib/matches/service';
+import { channelFor, triggerEvent } from '@/lib/realtime/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -48,6 +49,13 @@ export async function POST(req: NextRequest, ctx: Ctx) {
           return badRequest('A padel match cannot end in a tie.');
       }
     }
+    // Fire-and-forget realtime broadcast. Never block the response.
+    void triggerEvent(channelFor.match(id), 'match.score.submitted', {
+      matchId: id,
+      sets: parsed.data.sets,
+      ratingChanges: result.ratingChanges,
+      submittedAt: new Date().toISOString(),
+    });
     return ok({ data: { match: result.match, ratingChanges: result.ratingChanges } });
   } catch (err) {
     return serverError('matches/[id]/score:POST', err);

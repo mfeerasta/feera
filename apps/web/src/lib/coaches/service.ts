@@ -17,6 +17,7 @@ import {
   type AvailableSlot,
   type WeeklyAvailability,
 } from './availability';
+import { enqueueNotificationSafe } from '@/lib/notifications/outbox';
 
 export interface CoachListFilters {
   city?: string;
@@ -396,6 +397,23 @@ export async function setVerificationFlag(
       .update(users)
       .set({ isVerifiedCoach: isVerified })
       .where(eq(users.id, userId));
+    if (isVerified) {
+      const [coach] = await tx
+        .select({ displayName: users.displayName })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      await enqueueNotificationSafe(
+        {
+          recipientUserId: userId,
+          template: 'coaching_verification_approved',
+          variables: { coachName: coach?.displayName ?? 'Coach' },
+          urgency: 'high',
+          idempotencyKey: `coaching_verification_approved:${updated.id}`,
+        },
+        tx,
+      );
+    }
   }
   return updated ?? null;
 }
@@ -679,6 +697,27 @@ export async function reviewCoachingSession(
     .update(coaches)
     .set({ averageRating: newAverage, ratingCount: newCount })
     .where(eq(coaches.id, coachRow.id));
+
+  // Notify the coach a review was left.
+  const [learner] = await tx
+    .select({ displayName: users.displayName })
+    .from(users)
+    .where(eq(users.id, viewerUserId))
+    .limit(1);
+  await enqueueNotificationSafe(
+    {
+      recipientUserId: coachRow.userId,
+      template: 'coaching_session_reviewed',
+      variables: {
+        learnerName: learner?.displayName ?? 'A learner',
+        rating: input.rating,
+        sessionId: id,
+      },
+      urgency: 'low',
+      idempotencyKey: `coaching_session_reviewed:${id}`,
+    },
+    tx,
+  );
 
   return { session: updated, newAverage, newCount };
 }
