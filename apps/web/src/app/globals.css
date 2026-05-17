@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-feera-court: #0f4d2c;
+  --color-feera-court-hover: #186940;
+  --color-feera-court-active: #094020;
+  --color-feera-cream: #faf8f4;
+  --color-feera-charcoal: #1a1a1a;
+  --color-feera-pink: #ff4d8b;
+
+  --color-edition-forest: #0a2e1d;
+  --color-edition-ivory: #f5f0e6;
+  --color-edition-brass: #a88a3f;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  background: var(--color-feera-cream);
+  color: var(--color-feera-charcoal);
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

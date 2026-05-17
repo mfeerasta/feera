@@ -1,0 +1,97 @@
+import { sql } from 'drizzle-orm';
+import {
+  boolean,
+  doublePrecision,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  time,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
+import {
+  createdAtColumn,
+  deletedAtColumn,
+  idColumn,
+  updatedAtColumn,
+} from './common.js';
+
+export const clubs = pgTable(
+  'clubs',
+  {
+    id: idColumn(),
+    name: text('name').notNull(),
+    slug: text('slug').notNull(),
+    countryCode: text('country_code').notNull(),
+    city: text('city').notNull(),
+    address: text('address'),
+    lat: doublePrecision('lat'),
+    lng: doublePrecision('lng'),
+    phone: text('phone'),
+    email: text('email'),
+    websiteUrl: text('website_url'),
+    logoUrl: text('logo_url'),
+    photos: jsonb('photos').notNull().default(sql`'[]'::jsonb`),
+    amenities: jsonb('amenities').notNull().default(sql`'{}'::jsonb`),
+    openingHours: jsonb('opening_hours').notNull().default(sql`'{}'::jsonb`),
+    isActive: boolean('is_active').notNull().default(true),
+    hasWomenOnlyHours: boolean('has_women_only_hours').notNull().default(false),
+    womenOnlySchedule: jsonb('women_only_schedule'),
+    hasIndoor: boolean('has_indoor').notNull().default(false),
+    hasOutdoor: boolean('has_outdoor').notNull().default(true),
+    hasClimateControl: boolean('has_climate_control').notNull().default(false),
+    hasPanoramic: boolean('has_panoramic').notNull().default(false),
+    hasPrayerRoom: boolean('has_prayer_room').notNull().default(false),
+    hasShowerFacilities: boolean('has_shower_facilities').notNull().default(true),
+    hasParking: boolean('has_parking').notNull().default(false),
+    hasFoodService: boolean('has_food_service').notNull().default(false),
+    editionPartnerStatus: text('edition_partner_status').notNull().default('none'),
+    platformFeePct: doublePrecision('platform_fee_pct').notNull().default(0.1),
+    defaultCurrency: text('default_currency').notNull(),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+    deletedAt: deletedAtColumn(),
+  },
+  (t) => ({
+    slugUq: uniqueIndex('clubs_slug_uq').on(t.slug),
+    geoIdx: index('clubs_geo_idx').on(t.lat, t.lng),
+    countryCityIdx: index('clubs_country_city_idx').on(t.countryCode, t.city),
+  }),
+);
+
+export const courts = pgTable('courts', {
+  id: idColumn(),
+  clubId: idColumn().references(() => clubs.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  surface: text('surface').notNull().default('artificial_grass'),
+  isIndoor: boolean('is_indoor').notNull().default(false),
+  isClimateControlled: boolean('is_climate_controlled').notNull().default(false),
+  isPanoramic: boolean('is_panoramic').notNull().default(false),
+  courtDimensions: text('court_dimensions').notNull().default('standard'),
+  isActive: boolean('is_active').notNull().default(true),
+  photos: jsonb('photos').notNull().default(sql`'[]'::jsonb`),
+  createdAt: createdAtColumn(),
+  updatedAt: updatedAtColumn(),
+});
+
+export const courtPricingRules = pgTable(
+  'court_pricing_rules',
+  {
+    id: idColumn(),
+    courtId: idColumn().references(() => courts.id, { onDelete: 'cascade' }),
+    dayOfWeek: integer('day_of_week').notNull(),
+    startTime: time('start_time').notNull(),
+    endTime: time('end_time').notNull(),
+    pricePerSlot: doublePrecision('price_per_slot').notNull(),
+    currency: text('currency').notNull(),
+    isMemberOnly: boolean('is_member_only').notNull().default(false),
+    isPeak: boolean('is_peak').notNull().default(false),
+    appliesToEditionOnly: boolean('applies_to_edition_only').notNull().default(false),
+    createdAt: createdAtColumn(),
+    updatedAt: updatedAtColumn(),
+  },
+  (t) => ({
+    courtDayIdx: index('court_pricing_rules_court_day_idx').on(t.courtId, t.dayOfWeek),
+  }),
+);

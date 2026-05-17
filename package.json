@@ -1,0 +1,38 @@
+{
+  "name": "feera",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Feera + Feera Edition: padel social network and ecosystem platform.",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json,yml,yaml}\"",
+    "i18n:check": "pnpm --filter @feera/i18n check",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.4",
+    "typescript": "^5.7.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{md,json,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}
