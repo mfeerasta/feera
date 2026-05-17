@@ -15,7 +15,7 @@ import { expo } from '@better-auth/expo';
 
 import { db } from '@feera/db/client';
 import * as authSchema from './schema/auth-tables';
-import { phoneOtpSender, verifyOtp } from './plugins/phone-otp';
+import { phoneOtpSender, verifyOtpFallback } from './plugins/phone-otp';
 import { magicLinkSender } from './plugins/magic-link';
 import { buildFeeraClaims, feeraAdditionalUserFields } from './jwt-claims';
 
@@ -72,7 +72,7 @@ export const auth = betterAuth({
       sendOTP: phoneOtpSender(),
       // Twilio Verify owns code generation; we just confirm.
       verifyOTP: async ({ phoneNumber: phone, code }) => {
-        const result = await verifyOtp(phone, code);
+        const result = await verifyOtpFallback(phone, code);
         return result.valid;
       },
       signUpOnVerification: {

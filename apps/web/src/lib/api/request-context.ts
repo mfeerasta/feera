@@ -1,93 +1,91 @@
 import { headers } from 'next/headers';
 import { sql } from 'drizzle-orm';
 import { db } from '@feera/db';
+import { auth, buildFeeraClaims } from '@feera/auth';
+import type { FeeraJwtClaims } from '@feera/auth';
 
 /**
- * Session shape resolved from the request. M2 stub.
- *
- * TODO(auth): replace `getSession()` body with better-auth's verified JWT path
- * once subagent B lands `packages/auth`. The JWT claims object must contain at
- * minimum: { sub, country_code, edition_status, role }. We already wire those
- * claims into Postgres via `set_config('request.jwt.claims', ...)` so the RLS
- * policies subagent A wrote will pick them up untouched.
+ * Session shape resolved from the request. Backed by better-auth.
  */
 export interface Session {
   userId: string;
   countryCode: string;
   editionStatus: 'none' | 'applicant' | 'active' | 'lapsed' | 'suspended';
   role: 'player' | 'club_staff' | 'platform_admin';
+  isCoach: boolean;
+  locale: string;
 }
 
 const DEV_ADMIN_SESSION: Session = {
-  // Stable synthetic UUID v4 reserved for the dev-admin path. Documented so
-  // it never collides with a real user.
+  // Stable synthetic UUID v4 reserved for the dev-admin path.
   userId: '00000000-0000-4000-8000-00000000dead',
   countryCode: 'PK',
   editionStatus: 'active',
   role: 'platform_admin',
+  isCoach: false,
+  locale: 'en',
 };
 
+function devAdminHeaderEnabled(): boolean {
+  if (process.env.ADMIN_DEV_HEADER === '1') return true;
+  if (process.env.NODE_ENV !== 'production') return true;
+  return false;
+}
+
 /**
- * Best-effort JWT payload decode. No signature verification. Replace with
- * better-auth's verify in M2/M3 (TODO above).
+ * Resolve the session for the current request. Returns null when
+ * unauthenticated.
+ *
+ * The `x-feera-dev-admin: 1` header bypass is gated on dev mode or the
+ * explicit ADMIN_DEV_HEADER=1 escape hatch. Demo box sets the env var.
  */
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
+export async function getSession(): Promise<Session | null> {
+  const h = await headers();
+
+  if (h.get('x-feera-dev-admin') === '1' && devAdminHeaderEnabled()) {
+    return DEV_ADMIN_SESSION;
+  }
+
   try {
-    const json = Buffer.from(parts[1]!, 'base64url').toString('utf8');
-    const parsed = JSON.parse(json);
-    return typeof parsed === 'object' && parsed !== null
-      ? (parsed as Record<string, unknown>)
-      : null;
+    const session = await auth.api.getSession({ headers: h });
+    if (!session || !session.user) return null;
+    const u = session.user as {
+      id: string;
+      countryCode?: string | null;
+      locale?: string | null;
+      editionStatus?: string | null;
+      isCoach?: boolean | null;
+      isClubStaff?: boolean | null;
+    };
+    return {
+      userId: u.id,
+      countryCode: u.countryCode ?? 'PK',
+      editionStatus:
+        (u.editionStatus as Session['editionStatus']) ?? 'none',
+      role: u.isClubStaff ? 'club_staff' : 'player',
+      isCoach: Boolean(u.isCoach),
+      locale: u.locale ?? 'en',
+    };
   } catch {
     return null;
   }
 }
 
 /**
- * Resolve the session for the current request. Returns null when the request
- * is unauthenticated.
- *
- * Dev shortcut: when `x-feera-dev-admin: 1` is present, returns a synthetic
- * platform_admin session. Gate this header at the edge (Caddy) before
- * production launch.
- */
-export async function getSession(): Promise<Session | null> {
-  const h = await headers();
-
-  if (h.get('x-feera-dev-admin') === '1') {
-    return DEV_ADMIN_SESSION;
-  }
-
-  const auth = h.get('authorization');
-  if (auth && auth.toLowerCase().startsWith('bearer ')) {
-    const payload = decodeJwtPayload(auth.slice(7).trim());
-    if (payload && typeof payload.sub === 'string') {
-      return {
-        userId: payload.sub,
-        countryCode:
-          typeof payload.country_code === 'string' ? payload.country_code : 'PK',
-        editionStatus:
-          (payload.edition_status as Session['editionStatus']) ?? 'none',
-        role: (payload.role as Session['role']) ?? 'player',
-      };
-    }
-  }
-
-  return null;
-}
-
-/**
- * Build the JWT-claims JSON that RLS policies read via `current_setting()`.
+ * Build the JWT-claims JSON that Postgres RLS helpers read via
+ * `current_setting('request.jwt.claims', true)`. Shape matches
+ * `FeeraJwtClaims` so the `auth.*` helper functions resolve correctly.
  */
 function buildClaims(session: Session): string {
-  return JSON.stringify({
-    sub: session.userId,
-    country_code: session.countryCode,
-    edition_status: session.editionStatus,
-    role: session.role,
+  const claims: Omit<FeeraJwtClaims, 'iat' | 'exp'> = buildFeeraClaims({
+    id: session.userId,
+    countryCode: session.countryCode,
+    locale: session.locale,
+    editionStatus: session.editionStatus,
+    isCoach: session.isCoach,
+    isClubStaff: session.role === 'club_staff' || session.role === 'platform_admin',
   });
+  return JSON.stringify(claims);
 }
 
 /**
@@ -95,8 +93,8 @@ function buildClaims(session: Session): string {
  * transaction so `set_config(..., true)` (local scope) applies for the
  * duration of `fn`.
  *
- * For unauthenticated requests, claims are cleared so RLS falls back to the
- * anonymous role.
+ * For unauthenticated requests, claims are cleared so RLS falls back to
+ * the anonymous role.
  */
 export async function withRequestContext<T>(
   session: Session | null,

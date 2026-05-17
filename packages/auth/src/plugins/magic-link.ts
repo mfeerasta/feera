@@ -53,6 +53,13 @@ export async function sendMagicLinkEmail({ email, url }: MagicLinkPayload) {
  */
 export function magicLinkSender() {
   return async ({ email, url, token }: MagicLinkPayload) => {
+    if (
+      !process.env.RESEND_API_KEY &&
+      (process.env.NODE_ENV !== 'production' || process.env.AUTH_DEV_OTP === '1')
+    ) {
+      console.log(`[auth/magic-link:DEV] ${email} -> ${url}`);
+      return;
+    }
     await sendMagicLinkEmail({ email, url, token });
   };
 }

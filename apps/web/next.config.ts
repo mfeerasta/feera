@@ -19,7 +19,7 @@ const config: NextConfig = {
       { protocol: 'https', hostname: '*.your-objectstorage.com' },
     ],
   },
-  transpilePackages: ['@feera/ui', '@feera/matching', '@feera/types', '@feera/db'],
+  transpilePackages: ['@feera/ui', '@feera/matching', '@feera/types', '@feera/db', '@feera/payments'],
 };
 
 export default config;

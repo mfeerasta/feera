@@ -8,23 +8,26 @@ export const dynamic = 'force-dynamic';
  */
 export default function NewClubPage() {
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">New club</h1>
-      <p className="mt-4 text-sm text-neutral-600">
+    <section className="mx-auto max-w-2xl">
+      <Link
+        href={'/admin/clubs' as never}
+        className="text-xs uppercase tracking-[0.2em] text-ink-deep/60 transition-colors duration-150 hover:text-court"
+      >
+        Back to clubs
+      </Link>
+      <p className="mt-6 text-xs uppercase tracking-[0.25em] text-ink-deep/50">
+        Operations
+      </p>
+      <h1 className="mt-2 font-serif text-4xl tracking-tight">New club</h1>
+      <p className="mt-4 text-sm text-ink-deep/70">
         Form lands in M3. For now create clubs via API:
       </p>
-      <pre className="mt-4 overflow-x-auto rounded bg-neutral-900 p-4 text-xs text-neutral-100">
+      <pre className="mt-6 overflow-x-auto border border-ink-deep/20 bg-ink-deep p-4 text-xs text-cream">
 {`curl -X POST http://localhost:3000/api/v1/clubs \\
   -H 'content-type: application/json' \\
   -H 'x-feera-dev-admin: 1' \\
   -d '{"name":"Sample","slug":"sample","countryCode":"PK","city":"Lahore","defaultCurrency":"PKR"}'`}
       </pre>
-      <Link
-        href={'/admin/clubs' as never}
-        className="mt-6 inline-block text-sm text-feera-court underline"
-      >
-        Back to clubs
-      </Link>
-    </main>
+    </section>
   );
 }

@@ -12,23 +12,26 @@ export default async function ClubDetailPage({
 }) {
   const { slug } = await params;
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <section className="mx-auto max-w-3xl">
       <Link
         href={'/admin/clubs' as never}
-        className="text-sm text-feera-court underline"
+        className="text-xs uppercase tracking-[0.2em] text-ink-deep/60 transition-colors duration-150 hover:text-court"
       >
-        ← Back
+        Back
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold">Club: {slug}</h1>
-      <p className="mt-4 text-sm text-neutral-600">
+      <p className="mt-6 text-xs uppercase tracking-[0.25em] text-ink-deep/50">
+        Club
+      </p>
+      <h1 className="mt-2 font-serif text-4xl tracking-tight">{slug}</h1>
+      <p className="mt-4 text-sm text-ink-deep/70">
         Detail view + court management ships in M3. Use the API for now:
       </p>
-      <pre className="mt-4 overflow-x-auto rounded bg-neutral-900 p-4 text-xs text-neutral-100">
+      <pre className="mt-6 overflow-x-auto border border-ink-deep/20 bg-ink-deep p-4 text-xs text-cream">
 {`GET    /api/v1/clubs/${slug}
 PATCH  /api/v1/clubs/${slug}
 GET    /api/v1/clubs/${slug}/courts
 POST   /api/v1/clubs/${slug}/courts`}
       </pre>
-    </main>
+    </section>
   );
 }

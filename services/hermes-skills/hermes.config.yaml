@@ -1,0 +1,93 @@
+# Feera Hermes Agent skill manifest.
+# Deployed to /root/hermes/feera-skills/hermes.config.yaml on 46.225.157.75.
+# Phase-1: all entries point at placeholder scripts; M7 fleshes them out.
+
+namespace: feera
+
+defaults:
+  runtime: node
+  timeout_seconds: 300
+  retry:
+    max_attempts: 3
+    backoff_seconds: 30
+
+skills:
+  - name: sentry-to-pr
+    trigger: webhook
+    webhook_path: /webhooks/sentry
+    entry: ./skills/sentry-to-pr.mjs
+    env:
+      - SENTRY_WEBHOOK_SECRET
+      - GITHUB_TOKEN
+      - TELEGRAM_BOT_TOKEN
+      - TELEGRAM_CHAT_ID
+
+  - name: daily-briefing
+    schedule: "0 3 * * *"
+    entry: ./skills/daily-briefing.mjs
+    env:
+      - DATABASE_URL_POOLED
+      - TELEGRAM_BOT_TOKEN
+      - TELEGRAM_CHAT_ID
+
+  - name: payment-reconciliation
+    schedule: "*/30 * * * *"
+    entry: ./skills/payment-reconciliation.mjs
+    env:
+      - DATABASE_URL_POOLED
+      - STRIPE_SECRET_KEY
+      - JAZZCASH_MERCHANT_ID
+      - JAZZCASH_PASSWORD
+
+  - name: rating-recalculation
+    schedule: "0 2 * * *"
+    timeout_seconds: 1800
+    entry: ./skills/rating-recalculation.mjs
+    env:
+      - DATABASE_URL_POOLED
+      - SENTRY_DSN
+
+  - name: db-backup-check
+    schedule: "0 4 * * *"
+    entry: ./skills/db-backup-check.mjs
+    env:
+      - NEON_API_KEY
+      - NEON_PROJECT_ID
+      - TELEGRAM_BOT_TOKEN
+      - TELEGRAM_CHAT_ID
+
+  - name: cost-watcher
+    schedule: "0 6 * * *"
+    entry: ./skills/cost-watcher.mjs
+    env:
+      - HETZNER_API_TOKEN
+      - NEON_API_KEY
+      - TWILIO_ACCOUNT_SID
+      - TWILIO_AUTH_TOKEN
+      - BUDGET_USD_MONTHLY
+      - TELEGRAM_BOT_TOKEN
+
+  - name: tournament-day-mode
+    schedule: "*/5 * * * *"
+    entry: ./skills/tournament-day-mode.mjs
+    env:
+      - DATABASE_URL_POOLED
+      - TELEGRAM_BOT_TOKEN
+
+  - name: support-triage
+    trigger: webhook
+    webhook_path: /webhooks/twilio-whatsapp
+    entry: ./skills/support-triage.mjs
+    env:
+      - TWILIO_AUTH_TOKEN
+      - LINEAR_API_KEY
+      - LINEAR_TEAM_ID
+
+  - name: edition-application-review
+    trigger: pg_listen
+    channel: edition_application_inserted
+    entry: ./skills/edition-application-review.mjs
+    env:
+      - DATABASE_URL_POOLED
+      - TELEGRAM_BOT_TOKEN
+      - TELEGRAM_CHAT_ID

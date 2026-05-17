@@ -33,3 +33,4 @@ export * from './club-staff';
 export * from './federations';
 export * from './edition';
 export * from './audit';
+export * from './friendships';

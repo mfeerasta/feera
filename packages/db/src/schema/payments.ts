@@ -100,3 +100,28 @@ export const payouts = pgTable(
     index('payouts_status_idx').on(t.status),
   ],
 );
+
+/**
+ * payment_webhook_events - idempotency log for inbound provider webhooks.
+ * Unique on (provider, eventId) so re-delivery is a no-op.
+ *
+ * TODO(db): apply via the separate migration file shipped alongside this PR
+ * (`packages/db/migrations/0001-payment-webhook-events.sql`). Do NOT regenerate
+ * the baseline; the parent agent will apply this migration to the live Neon
+ * database before the webhook route goes live.
+ */
+export const paymentWebhookEvents = pgTable(
+  'payment_webhook_events',
+  {
+    id: idColumn(),
+    provider: paymentProviderEnum('provider').notNull(),
+    eventId: text('event_id').notNull(),
+    eventType: text('event_type'),
+    receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+    payload: jsonb('payload').notNull().default(sql`'{}'::jsonb`),
+  },
+  (t) => [
+    uniqueIndex('payment_webhook_events_provider_event_uq').on(t.provider, t.eventId),
+    index('payment_webhook_events_received_idx').on(t.receivedAt),
+  ],
+);

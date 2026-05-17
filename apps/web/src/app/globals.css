@@ -1,27 +1,37 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-feera-court: #0f4d2c;
-  --color-feera-court-hover: #186940;
-  --color-feera-court-active: #094020;
-  --color-feera-cream: #faf8f4;
-  --color-feera-charcoal: #1a1a1a;
-  --color-feera-pink: #ff4d8b;
+  /* flex.one-inspired palette per ADR-0010 */
+  --color-ink-deep: #071c14;
+  --color-ink-shadow: #051310;
+  --color-ink-card: #1b2f24;
+  --color-court: #437e5b;
+  --color-cream: #f6f3ee;
+  --color-paper: #ffffff;
+  --color-line: #dddddd;
+  --color-muted: #cccccc;
+  --color-brass: #a88a3f;
 
-  --color-edition-forest: #0a2e1d;
-  --color-edition-ivory: #f5f0e6;
-  --color-edition-brass: #a88a3f;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), Georgia, serif;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-none: 0px;
+  --radius-sm: 4px;
 }
 
 :root {
-  color-scheme: light;
-  background: var(--color-feera-cream);
-  color: var(--color-feera-charcoal);
+  color-scheme: dark;
+  background: var(--color-ink-deep);
+  color: var(--color-cream);
 }
 
-html {
+html,
+body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-court);
+  color: var(--color-cream);
 }

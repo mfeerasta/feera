@@ -20,7 +20,8 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@feera/types": "workspace:*"
+    "@feera/types": "workspace:*",
+    "stripe": "^18.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

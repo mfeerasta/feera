@@ -16,7 +16,13 @@ export type { FeeraJwtClaims } from './jwt-claims';
 
 export * as authSchema from './schema/auth-tables';
 
-export { sendOtp, verifyOtp, phoneOtpSender } from './plugins/phone-otp';
+export {
+  sendOtp,
+  verifyOtp,
+  verifyOtpFallback,
+  phoneOtpSender,
+  peekDevOtp,
+} from './plugins/phone-otp';
 export {
   sendWhatsappOtp,
   verifyWhatsappOtp,

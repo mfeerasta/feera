@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { adminFetch } from '@/lib/admin/api-client';
 import { gateAdmin } from '@/lib/admin/gate';
 import { Button } from '@/components/ui/button';
-import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardBody } from '@/components/ui/card';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 
 interface ClubRow {
@@ -34,25 +34,27 @@ export default async function AdminClubsPage({ searchParams }: PageProps) {
 
   return (
     <section className="mx-auto max-w-5xl">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-10 flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Clubs</h1>
-          <p className="text-sm text-neutral-600">{clubs.length} total</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-ink-deep/50">
+            Operations
+          </p>
+          <h1 className="mt-2 font-serif text-4xl tracking-tight">Clubs</h1>
+          <p className="mt-2 text-sm text-ink-deep/60">{clubs.length} total</p>
         </div>
         <Link href="/admin/clubs/new">
-          <Button>+ New club</Button>
+          <Button variant="inverted" size="sm">
+            New club
+          </Button>
         </Link>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>All clubs</CardTitle>
-        </CardHeader>
         <CardBody className="p-0">
           {error ? (
             <p className="px-6 py-8 text-sm text-red-600">{error}</p>
           ) : clubs.length === 0 ? (
-            <p className="px-6 py-8 text-sm text-neutral-600">
+            <p className="px-6 py-8 text-sm text-ink-deep/60">
               No clubs yet. Create one to get started.
             </p>
           ) : (
@@ -70,11 +72,14 @@ export default async function AdminClubsPage({ searchParams }: PageProps) {
                 {clubs.map((c) => (
                   <TR key={c.id}>
                     <TD className="font-medium">
-                      <Link className="text-feera-court hover:underline" href={`/admin/clubs/${c.slug}`}>
+                      <Link
+                        className="text-ink-deep transition-colors duration-150 hover:text-court"
+                        href={`/admin/clubs/${c.slug}`}
+                      >
                         {c.name}
                       </Link>
                     </TD>
-                    <TD className="text-neutral-600">{c.slug}</TD>
+                    <TD className="text-ink-deep/60">{c.slug}</TD>
                     <TD>{c.countryCode}</TD>
                     <TD>{c.city}</TD>
                     <TD>{c.isActive ? 'Yes' : 'No'}</TD>

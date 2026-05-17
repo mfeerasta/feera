@@ -1,0 +1,752 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - list [ref=e5]:
+        - listitem [ref=e6]:
+          - link "Flex is recognized as one of Fast Company’s 2026 Most Innovative Companies Read more →" [ref=e7] [cursor=pointer]:
+            - /url: https://www.fastcompany.com/91497212/finance-personal-finance-most-innovative-companies-2026
+            - generic [ref=e9]: Flex is recognized as one of Fast Company’s 2026 Most Innovative Companies Read more
+            - generic [ref=e10]: →
+      - banner [ref=e11]:
+        - generic [ref=e13]:
+          - navigation [ref=e14]:
+            - generic [ref=e15]:
+              - link "Home" [ref=e16] [cursor=pointer]:
+                - /url: /
+              - button "Products" [ref=e18] [cursor=pointer]:
+                - generic [ref=e19]: Products
+              - link "Customers" [ref=e20] [cursor=pointer]:
+                - /url: /customers
+              - link "Pricing" [ref=e21] [cursor=pointer]:
+                - /url: /pricing
+              - button "Resources" [ref=e23] [cursor=pointer]:
+                - generic [ref=e24]: Resources
+              - link "About" [ref=e25] [cursor=pointer]:
+                - /url: /company
+              - generic [ref=e26]:
+                - link "Log In" [ref=e27] [cursor=pointer]:
+                  - /url: https://home.flex.one/login
+                - link "Get Started" [ref=e28] [cursor=pointer]:
+                  - /url: https://home.flex.one/register/get-started
+          - link "home" [ref=e29] [cursor=pointer]:
+            - /url: /
+            - img "Flex logo" [ref=e30]
+    - generic [ref=e31]:
+      - generic [ref=e38]:
+        - heading "AI-Native Finance Platform for Business Owners" [level=1] [ref=e40]
+        - paragraph [ref=e42]:
+          - text: Flex manages every transaction, from business revenue to your personal spend, so you can optimize your whole life in one seamless platform.
+          - strong [ref=e43]: Designed for the 1%, now available to entrepreneurs globally.
+        - generic [ref=e45]:
+          - link "opens in a new window" [ref=e46] [cursor=pointer]:
+            - /url: https://home.flex.one/register/get-started
+            - generic [ref=e47]: Get Started
+          - link "Learn about Flex Elite Personal Financial Suite" [ref=e48] [cursor=pointer]:
+            - /url: /elite
+            - generic [ref=e49]:
+              - generic [ref=e50]: Learn about Flex Elite
+              - generic [ref=e52]: Personal Financial Suite
+            - img [ref=e54]
+        - generic [ref=e57]: ⁺Coming soon
+      - region [ref=e68]:
+        - generic [ref=e69]:
+          - group [ref=e70]:
+            - img [ref=e71]
+          - group [ref=e72]:
+            - img [ref=e73]
+          - group [ref=e74]:
+            - img [ref=e75]
+          - group "4 of 8" [ref=e76]:
+            - img "Banana Capital Logo" [ref=e77]
+          - group "5 of 8" [ref=e78]:
+            - img "ringba logo" [ref=e79]
+          - group "6 of 8" [ref=e80]:
+            - img "Shoreside Support Logo" [ref=e81]
+          - group "7 of 8" [ref=e82]:
+            - img "Sharma Brands logo" [ref=e83]
+          - group "8 of 8" [ref=e84]:
+            - img "Innovaquant logo" [ref=e85]
+          - group "1 of 8" [ref=e86]:
+            - img "Roam Logo" [ref=e87]
+          - group "2 of 8" [ref=e88]:
+            - img "Betr Logo" [ref=e89]
+          - group "3 of 8" [ref=e90]:
+            - img "Comfrt logo" [ref=e91]
+          - group "4 of 8" [ref=e92]:
+            - img "Banana Capital Logo" [ref=e93]
+          - group "5 of 8" [ref=e94]:
+            - img "ringba logo" [ref=e95]
+          - group "6 of 8" [ref=e96]:
+            - img "Shoreside Support Logo" [ref=e97]
+          - group [ref=e98]:
+            - img [ref=e99]
+          - group [ref=e100]:
+            - img [ref=e101]
+          - group [ref=e102]:
+            - img [ref=e103]
+          - group [ref=e104]:
+            - img [ref=e105]
+          - group [ref=e106]:
+            - img [ref=e107]
+          - group [ref=e108]:
+            - img [ref=e109]
+          - group [ref=e110]:
+            - img [ref=e111]
+          - group [ref=e112]:
+            - img [ref=e113]
+          - group [ref=e114]:
+            - img [ref=e115]
+          - group [ref=e116]:
+            - img [ref=e117]
+      - generic [ref=e134]:
+        - heading "Your Whole World." [level=2] [ref=e136]
+        - heading "Business and Personal⁺." [level=2] [ref=e138]:
+          - text: Business
+          - emphasis [ref=e139]: and
+          - text: Personal⁺.
+        - heading "In One Place." [level=2] [ref=e141]
+        - generic [ref=e143]:
+          - text: ⁺Coming soon.
+          - text: Flexbase Technologies, Inc. (Flex) is a financial technology company and is not a bank. The Flex Business Credit Card is issued by Lead Bank, pursuant to a license from Visa U.S.A. Inc. and is only available to eligible commercial entities. Fees and terms and conditions apply. Applicants are subject to eligibility requirements.
+          - text: Flexbase Technologies, Inc. (Flex) is a financial technology company and is not an FDIC-insured bank. Banking services provided by Thread Bank, Member FDIC. FDIC deposit insurance covers the failure of an insured bank. Certain conditions must be satisfied for pass-through deposit insurance coverage to apply.
+      - generic [ref=e149]:
+        - generic [ref=e153]: ⁺Coming soon
+        - link "opens in a new window" [ref=e156] [cursor=pointer]:
+          - /url: https://home.flex.one/register/get-started
+          - generic [ref=e157]: Get Started
+      - generic [ref=e161]:
+        - generic [ref=e162]:
+          - generic [ref=e164]:
+            - img [ref=e166]
+            - generic [ref=e168]: Flex Financial Management
+          - heading "With Flex, you get a financial platform designed for the way you actually operate:" [level=2] [ref=e171]
+        - generic [ref=e173]:
+          - generic [ref=e174]:
+            - paragraph [ref=e175]: Seamlessly tap into our Private Credit line for card, Bill Pay, or Growth Capital expenditures
+            - generic [ref=e177]: ⁺Coming soon
+          - paragraph [ref=e179]: Manage all of your bills and invoices in one place with Flex’s automated, AI-powered AP & AR platform.
+          - generic [ref=e180]:
+            - paragraph [ref=e181]: Separate and optimize your personal and business money — without the friction.⁺
+            - generic [ref=e183]: ⁺Coming soon
+        - img "Flex dashboard"
+      - generic [ref=e185]:
+        - generic [ref=e189]:
+          - generic [ref=e191]:
+            - img [ref=e193]
+            - generic [ref=e195]: Your Entire Financial Stack, Connected.
+          - generic [ref=e197]:
+            - heading "The Flex Financial Suite." [level=2] [ref=e198]:
+              - text: The Flex
+              - generic [ref=e199]:
+                - emphasis [ref=e200]: Financial
+                - text: Suite.
+            - paragraph [ref=e203]: Start with a card. End with an automated finance platform. Flex is more than just a business credit card — it’s a fully integrated financial ecosystem designed to help business owners scale, optimize cash flow, and automate financial operations.
+        - generic [ref=e209]:
+          - text: 
+          - navigation " Choose a Product" [ref=e210]:
+            - generic [ref=e211]:
+              - link "Show slide 1 of 5" [ref=e212] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e213]: Business Banking
+              - link "Show slide 2 of 5" [ref=e214] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e215]: Business Credit Card
+              - link "Show slide 3 of 5" [ref=e216] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e217]: Employee Expense Management
+              - link "Show slide 4 of 5" [ref=e218] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e219]: Global Payments
+              - link "Show slide 5 of 5" [ref=e220] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e221]: AP Automation
+        - region "carousel" [ref=e226]:
+          - generic [ref=e227]:
+            - group "1 of 5" [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - generic [ref=e232]:
+                    - img [ref=e234]
+                    - generic [ref=e236]: Business Banking
+                  - generic [ref=e238]: Powerful, Fast, Free Banking.
+                  - paragraph [ref=e240]:
+                    - text: Fast, secure banking. Handle all of your payments, transfers, and purchases in one easy-to-use platform.
+                    - text: ‍
+                  - list [ref=e242]:
+                    - listitem [ref=e243]:
+                      - generic [ref=e244]: Earn 1% cash back on debit card purchases.*
+                    - listitem [ref=e245]:
+                      - generic [ref=e246]: Enjoy free domestic ACH and wire transfers. No fees, whatsoever.
+                    - listitem [ref=e247]:
+                      - generic [ref=e248]: Make idle cash work for you with up to 2.47% APY.** 42x higher than the national average.
+                    - listitem [ref=e249]:
+                      - generic [ref=e250]: Up to 20 subaccounts to streamline financial management.
+                    - listitem [ref=e251]:
+                      - generic [ref=e252]: FDIC Insurance available up to $3M for funds on deposit through Thread Bank, Member FDIC.¹
+                  - link "opens in a new window" [ref=e255] [cursor=pointer]:
+                    - /url: /business-banking
+                    - generic [ref=e256]: Explore Banking
+                - generic [ref=e258]:
+                  - generic:
+                    - generic:
+                      - img "Business Banking - Flex"
+                  - generic [ref=e259]:
+                    - generic [ref=e260]:
+                      - img "white dots flex"
+                    - generic [ref=e261]:
+                      - img "white dots flex"
+            - group [ref=e262]:
+              - generic [ref=e272]:
+                - generic [ref=e274]:
+                  - img [ref=e276]
+                  - generic [ref=e278]: Business Credit Card
+                - generic [ref=e280]: One Card to Rule Them All.
+                - paragraph [ref=e282]: Flexible payment terms with generous limits. ‍
+                - list [ref=e284]:
+                  - listitem [ref=e285]:
+                    - generic [ref=e286]: Flex between interest-free float and exclusive rewards.
+                  - listitem [ref=e287]:
+                    - generic [ref=e288]: Earn up to 1.75% cashback on every eligible purchase.
+                  - listitem [ref=e289]:
+                    - generic [ref=e290]: 0% for 60 days, on every eligible purchase.
+                  - listitem [ref=e291]:
+                    - generic [ref=e292]: Credit limit explicitly tailored to your business.
+                - link [ref=e295] [cursor=pointer]:
+                  - /url: /credit
+                  - generic [ref=e296]: Explore Credit
+            - group [ref=e297]:
+              - generic [ref=e304]:
+                - generic [ref=e306]:
+                  - img [ref=e308]
+                  - generic [ref=e310]: Employee Expense Management
+                - generic [ref=e313]: Empower Your Team, Stay in Control — with Expenses on AI.
+                - paragraph [ref=e315]: Automate approvals, track spending, and set dynamic controls. ‍
+                - list [ref=e317]:
+                  - listitem [ref=e318]:
+                    - generic [ref=e319]: Smart expense policies that enforce compliance effortlessly.
+                  - listitem [ref=e320]:
+                    - generic [ref=e321]: Unlimited physical and virtual cards for employees, with custom limits.
+                  - listitem [ref=e322]:
+                    - generic [ref=e323]: Real-time tracking for total visibility into company spending.
+                  - listitem [ref=e324]:
+                    - generic [ref=e325]: Seamless integrations with QuickBooks, Xero, and NetSuite.
+                - link [ref=e328] [cursor=pointer]:
+                  - /url: /employee-expense-management
+                  - generic [ref=e329]: Explore Expense Management
+            - group [ref=e330]:
+              - generic [ref=e337]:
+                - generic [ref=e339]:
+                  - img [ref=e341]
+                  - generic [ref=e343]: Global Payments
+                - generic [ref=e345]:
+                  - generic [ref=e346]: Pay Fast. Pay Low Fees. Pay Globally to 180+ Countries.
+                  - paragraph [ref=e348]: Send and receive global payments with speed, ease, and transparency. ‍
+                - list [ref=e349]:
+                  - listitem [ref=e350]:
+                    - generic [ref=e351]: $0 wire transfer fees for payments in local currencies.
+                  - listitem [ref=e352]:
+                    - generic [ref=e353]: Pay vendors with any credit card, even where cards aren’t accepted.⁺
+                  - listitem [ref=e354]:
+                    - generic [ref=e355]: Transact in up to 32 local currencies.
+                  - listitem [ref=e356]:
+                    - generic [ref=e357]: 1% FX rate on every transaction. Save more with enterprise discounts.
+                - link [ref=e360] [cursor=pointer]:
+                  - /url: /global-payments
+                  - generic [ref=e361]: Explore Global Payments
+                - generic [ref=e363]: ⁺Coming soon. Contact Flex for volume discount pricing.
+            - group [ref=e364]:
+              - generic [ref=e371]:
+                - generic [ref=e373]:
+                  - img [ref=e375]
+                  - generic [ref=e377]: AP Automation
+                - generic [ref=e379]: All Your Bills. Automated With AI.
+                - paragraph [ref=e381]: Reduce manual work, pay faster, and automate AP – for free. ‍
+                - list [ref=e382]:
+                  - listitem [ref=e383]:
+                    - generic [ref=e384]: Streamline payments with Bill Pay’s automated AI technology.
+                  - listitem [ref=e385]:
+                    - generic [ref=e386]: Pay your way by ACH, card, or Bill Pay credit.
+                  - listitem [ref=e387]:
+                    - generic [ref=e388]: Pay vendors with credit, even those outside traditional card networks.⁺
+                  - listitem [ref=e389]:
+                    - generic [ref=e390]: Seamlessly sync with QuickBooks, Xero, and NetSuite.
+                - link [ref=e393] [cursor=pointer]:
+                  - /url: /ap-automation
+                  - generic [ref=e394]: Explore AP Automation
+          - generic [ref=e397]:
+            - button "Show slide 1 of 5" [pressed] [ref=e398] [cursor=pointer]
+            - button "Show slide 2 of 5" [ref=e399] [cursor=pointer]
+            - button "Show slide 3 of 5" [ref=e400] [cursor=pointer]
+            - button "Show slide 4 of 5" [ref=e401] [cursor=pointer]
+            - button "Show slide 5 of 5" [ref=e402] [cursor=pointer]
+      - generic [ref=e406]:
+        - generic [ref=e408]:
+          - heading "24/7 Global Support." [level=2] [ref=e409]
+          - paragraph [ref=e411]: Get the support you deserve from a team that understands growing businesses. Enjoy rapid response times and hands-on service, guaranteed.
+        - generic [ref=e413]:
+          - region [ref=e414]:
+            - generic [ref=e415]:
+              - group [ref=e416]:
+                - generic [ref=e419]:
+                  - generic [ref=e420]: New York
+                  - generic [ref=e421]: 04:46 AM
+              - group [ref=e422]:
+                - generic [ref=e425]:
+                  - generic [ref=e426]: Miami
+                  - generic [ref=e427]: 04:46 AM
+              - group [ref=e428]:
+                - generic [ref=e431]:
+                  - generic [ref=e432]: San Francisco
+                  - generic [ref=e433]: 01:46 AM
+              - group [ref=e434]:
+                - generic [ref=e437]:
+                  - generic [ref=e438]: Los Angeles
+                  - generic [ref=e439]: 01:46 AM
+              - group [ref=e440]:
+                - generic [ref=e443]:
+                  - generic [ref=e444]: Boston
+                  - generic [ref=e445]: 04:46 AM
+              - group [ref=e446]:
+                - generic [ref=e449]:
+                  - generic [ref=e450]: Washington D.C.
+                  - generic [ref=e451]: 04:46 AM
+              - group [ref=e452]:
+                - generic [ref=e455]:
+                  - generic [ref=e456]: Atlanta
+                  - generic [ref=e457]: 04:46 AM
+              - group [ref=e458]:
+                - generic [ref=e461]:
+                  - generic [ref=e462]: Dallas
+                  - generic [ref=e463]: 03:46 AM
+              - group [ref=e464]:
+                - generic [ref=e467]:
+                  - generic [ref=e468]: New Delhi
+                  - generic [ref=e469]: 02:16 PM
+              - group [ref=e470]:
+                - generic [ref=e473]:
+                  - generic [ref=e474]: Medellín
+                  - generic [ref=e475]: 03:46 AM
+              - group [ref=e476]:
+                - generic [ref=e479]:
+                  - generic [ref=e480]: Philadelphia
+                  - generic [ref=e481]: 04:46 AM
+              - group "12 of 12" [ref=e482]:
+                - generic [ref=e485]:
+                  - generic [ref=e486]: London
+                  - generic [ref=e487]: 09:46 AM
+              - group "1 of 12" [ref=e488]:
+                - generic [ref=e491]:
+                  - generic [ref=e492]: New York
+                  - generic [ref=e493]: 04:46 AM
+              - group "2 of 12" [ref=e494]:
+                - generic [ref=e497]:
+                  - generic [ref=e498]: Miami
+                  - generic [ref=e499]: 04:46 AM
+              - group [ref=e500]:
+                - generic [ref=e503]:
+                  - generic [ref=e504]: San Francisco
+                  - generic [ref=e505]: 01:46 AM
+              - group [ref=e506]:
+                - generic [ref=e509]:
+                  - generic [ref=e510]: Los Angeles
+                  - generic [ref=e511]: 01:46 AM
+              - group [ref=e512]:
+                - generic [ref=e515]:
+                  - generic [ref=e516]: Boston
+                  - generic [ref=e517]: 04:46 AM
+              - group [ref=e518]:
+                - generic [ref=e521]:
+                  - generic [ref=e522]: Washington D.C.
+                  - generic [ref=e523]: 04:46 AM
+              - group [ref=e524]:
+                - generic [ref=e527]:
+                  - generic [ref=e528]: Atlanta
+                  - generic [ref=e529]: 04:46 AM
+              - group [ref=e530]:
+                - generic [ref=e533]:
+                  - generic [ref=e534]: Dallas
+                  - generic [ref=e535]: 03:46 AM
+              - group [ref=e536]:
+                - generic [ref=e539]:
+                  - generic [ref=e540]: New Delhi
+                  - generic [ref=e541]: 02:16 PM
+              - group [ref=e542]:
+                - generic [ref=e545]:
+                  - generic [ref=e546]: Medellín
+                  - generic [ref=e547]: 03:46 AM
+              - group [ref=e548]:
+                - generic [ref=e551]:
+                  - generic [ref=e552]: Philadelphia
+                  - generic [ref=e553]: 04:46 AM
+              - group [ref=e554]:
+                - generic [ref=e557]:
+                  - generic [ref=e558]: London
+                  - generic [ref=e559]: 09:46 AM
+              - group [ref=e560]:
+                - generic [ref=e563]:
+                  - generic [ref=e564]: New York
+                  - generic [ref=e565]: 04:46 AM
+              - group [ref=e566]:
+                - generic [ref=e569]:
+                  - generic [ref=e570]: Miami
+                  - generic [ref=e571]: 04:46 AM
+              - group [ref=e572]:
+                - generic [ref=e575]:
+                  - generic [ref=e576]: San Francisco
+                  - generic [ref=e577]: 01:46 AM
+              - group [ref=e578]:
+                - generic [ref=e581]:
+                  - generic [ref=e582]: Los Angeles
+                  - generic [ref=e583]: 01:46 AM
+              - group [ref=e584]:
+                - generic [ref=e587]:
+                  - generic [ref=e588]: Boston
+                  - generic [ref=e589]: 04:46 AM
+              - group [ref=e590]:
+                - generic [ref=e593]:
+                  - generic [ref=e594]: Washington D.C.
+                  - generic [ref=e595]: 04:46 AM
+              - group [ref=e596]:
+                - generic [ref=e599]:
+                  - generic [ref=e600]: Atlanta
+                  - generic [ref=e601]: 04:46 AM
+              - group [ref=e602]:
+                - generic [ref=e605]:
+                  - generic [ref=e606]: Dallas
+                  - generic [ref=e607]: 03:46 AM
+              - group [ref=e608]:
+                - generic [ref=e611]:
+                  - generic [ref=e612]: New Delhi
+                  - generic [ref=e613]: 02:16 PM
+              - group [ref=e614]:
+                - generic [ref=e617]:
+                  - generic [ref=e618]: Medellín
+                  - generic [ref=e619]: 03:46 AM
+              - group [ref=e620]:
+                - generic [ref=e623]:
+                  - generic [ref=e624]: Philadelphia
+                  - generic [ref=e625]: 04:46 AM
+              - group [ref=e626]:
+                - generic [ref=e629]:
+                  - generic [ref=e630]: London
+                  - generic [ref=e631]: 09:46 AM
+          - region [ref=e633]:
+            - generic [ref=e634]:
+              - group [ref=e635]:
+                - generic [ref=e638]:
+                  - generic [ref=e639]: Seattle
+                  - generic [ref=e640]: 01:46 AM
+              - group [ref=e641]:
+                - generic [ref=e644]:
+                  - generic [ref=e645]: Toronto
+                  - generic [ref=e646]: 04:46 AM
+              - group [ref=e647]:
+                - generic [ref=e650]:
+                  - generic [ref=e651]: Vancouver
+                  - generic [ref=e652]: 01:46 AM
+              - group [ref=e653]:
+                - generic [ref=e656]:
+                  - generic [ref=e657]: México City
+                  - generic [ref=e658]: 02:46 AM
+              - group [ref=e659]:
+                - generic [ref=e662]:
+                  - generic [ref=e663]: São Paulo
+                  - generic [ref=e664]: 05:46 AM
+              - group [ref=e665]:
+                - generic [ref=e668]:
+                  - generic [ref=e669]: Buenos Aires
+                  - generic [ref=e670]: 05:46 AM
+              - group [ref=e671]:
+                - generic [ref=e674]:
+                  - generic [ref=e675]: Dubai
+                  - generic [ref=e676]: 12:46 PM
+              - group [ref=e677]:
+                - generic [ref=e680]:
+                  - generic [ref=e681]: Aspen
+                  - generic [ref=e682]: 02:46 AM
+              - group [ref=e683]:
+                - generic [ref=e686]:
+                  - generic [ref=e687]: Manila
+                  - generic [ref=e688]: 04:46 PM
+              - group [ref=e689]:
+                - generic [ref=e692]:
+                  - generic [ref=e693]: Phoenix
+                  - generic [ref=e694]: 01:46 AM
+              - group [ref=e695]:
+                - generic [ref=e698]:
+                  - generic [ref=e699]: Austin
+                  - generic [ref=e700]: 03:46 AM
+              - group "12 of 12" [ref=e701]:
+                - generic [ref=e704]:
+                  - generic [ref=e705]: San Diego
+                  - generic [ref=e706]: 01:46 AM
+              - group "1 of 12" [ref=e707]:
+                - generic [ref=e710]:
+                  - generic [ref=e711]: Seattle
+                  - generic [ref=e712]: 01:46 AM
+              - group "2 of 12" [ref=e713]:
+                - generic [ref=e716]:
+                  - generic [ref=e717]: Toronto
+                  - generic [ref=e718]: 04:46 AM
+              - group [ref=e719]:
+                - generic [ref=e722]:
+                  - generic [ref=e723]: Vancouver
+                  - generic [ref=e724]: 01:46 AM
+              - group [ref=e725]:
+                - generic [ref=e728]:
+                  - generic [ref=e729]: México City
+                  - generic [ref=e730]: 02:46 AM
+              - group [ref=e731]:
+                - generic [ref=e734]:
+                  - generic [ref=e735]: São Paulo
+                  - generic [ref=e736]: 05:46 AM
+              - group [ref=e737]:
+                - generic [ref=e740]:
+                  - generic [ref=e741]: Buenos Aires
+                  - generic [ref=e742]: 05:46 AM
+              - group [ref=e743]:
+                - generic [ref=e746]:
+                  - generic [ref=e747]: Dubai
+                  - generic [ref=e748]: 12:46 PM
+              - group [ref=e749]:
+                - generic [ref=e752]:
+                  - generic [ref=e753]: Aspen
+                  - generic [ref=e754]: 02:46 AM
+              - group [ref=e755]:
+                - generic [ref=e758]:
+                  - generic [ref=e759]: Manila
+                  - generic [ref=e760]: 04:46 PM
+              - group [ref=e761]:
+                - generic [ref=e764]:
+                  - generic [ref=e765]: Phoenix
+                  - generic [ref=e766]: 01:46 AM
+              - group [ref=e767]:
+                - generic [ref=e770]:
+                  - generic [ref=e771]: Austin
+                  - generic [ref=e772]: 03:46 AM
+              - group [ref=e773]:
+                - generic [ref=e776]:
+                  - generic [ref=e777]: San Diego
+                  - generic [ref=e778]: 01:46 AM
+              - group [ref=e779]:
+                - generic [ref=e782]:
+                  - generic [ref=e783]: Seattle
+                  - generic [ref=e784]: 01:46 AM
+              - group [ref=e785]:
+                - generic [ref=e788]:
+                  - generic [ref=e789]: Toronto
+                  - generic [ref=e790]: 04:46 AM
+              - group [ref=e791]:
+                - generic [ref=e794]:
+                  - generic [ref=e795]: Vancouver
+                  - generic [ref=e796]: 01:46 AM
+              - group [ref=e797]:
+                - generic [ref=e800]:
+                  - generic [ref=e801]: México City
+                  - generic [ref=e802]: 02:46 AM
+              - group [ref=e803]:
+                - generic [ref=e806]:
+                  - generic [ref=e807]: São Paulo
+                  - generic [ref=e808]: 05:46 AM
+              - group [ref=e809]:
+                - generic [ref=e812]:
+                  - generic [ref=e813]: Buenos Aires
+                  - generic [ref=e814]: 05:46 AM
+              - group [ref=e815]:
+                - generic [ref=e818]:
+                  - generic [ref=e819]: Dubai
+                  - generic [ref=e820]: 12:46 PM
+              - group [ref=e821]:
+                - generic [ref=e824]:
+                  - generic [ref=e825]: Aspen
+                  - generic [ref=e826]: 02:46 AM
+              - group [ref=e827]:
+                - generic [ref=e830]:
+                  - generic [ref=e831]: Manila
+                  - generic [ref=e832]: 04:46 PM
+              - group [ref=e833]:
+                - generic [ref=e836]:
+                  - generic [ref=e837]: Phoenix
+                  - generic [ref=e838]: 01:46 AM
+              - group [ref=e839]:
+                - generic [ref=e842]:
+                  - generic [ref=e843]: Austin
+                  - generic [ref=e844]: 03:46 AM
+              - group [ref=e845]:
+                - generic [ref=e848]:
+                  - generic [ref=e849]: San Diego
+                  - generic [ref=e850]: 01:46 AM
+      - generic [ref=e855]:
+        - generic [ref=e857]:
+          - generic [ref=e859]:
+            - img [ref=e861]
+            - generic [ref=e863]: Flex Case Study
+          - heading "75% of customers highlighted improved cash flow as a primary reason for choosing Flex." [level=2] [ref=e866]
+          - link "Read Customer Stories" [ref=e870] [cursor=pointer]:
+            - /url: /customers
+            - generic [ref=e871]: Read Customer Stories
+            - img [ref=e873]
+        - generic [ref=e876]:
+          - img "Flex logo" [ref=e877]
+          - generic [ref=e879]:
+            - img "Flex Case Study - Flex"
+          - generic [ref=e882]: Taken from a customer survey in January 2025
+      - generic [ref=e887]:
+        - generic [ref=e891]:
+          - generic [ref=e892]:
+            - generic [ref=e893]:
+              - img "Yacht" [ref=e895]
+              - generic [ref=e896]:
+                - img "Ben - CEO, Innovquant" [ref=e897]
+                - generic [ref=e899]: CEO, Innovquant
+              - img "dpose" [ref=e901]
+            - generic [ref=e902]:
+              - img "Yacht" [ref=e904]
+              - generic [ref=e905]:
+                - img "Ben - CEO, Innovquant" [ref=e906]
+                - generic [ref=e908]: CEO, Innovquant
+              - img "dpose" [ref=e910]
+          - generic [ref=e911]:
+            - generic [ref=e912]:
+              - generic [ref=e913]:
+                - img "Karl Spekor, President, Mod Partners" [ref=e914]
+                - generic [ref=e916]:
+                  - text: Managing Partner,
+                  - text: Dhuna Ventures
+              - generic [ref=e917]:
+                - img "Joey Levy, CEO betr" [ref=e918]
+                - generic [ref=e920]: CEO, Betr
+              - img "Jet in Mountains" [ref=e922]
+            - generic [ref=e923]:
+              - generic [ref=e924]:
+                - img "Karl Spekor, President, Mod Partners" [ref=e925]
+                - generic [ref=e927]:
+                  - text: Managing Partner,
+                  - text: Dhuna Ventures
+              - generic [ref=e928]:
+                - img "Joey Levy, CEO betr" [ref=e929]
+                - generic [ref=e931]: CEO, Betr
+              - img "Jet in Mountains" [ref=e933]
+        - region "carousel" [ref=e936]:
+          - group "1 of 4" [ref=e938]:
+            - generic [ref=e939]:
+              - heading "What Owners Are Saying About Flex:" [level=2] [ref=e940]: "What Owners Are Saying About Flex:"
+              - paragraph [ref=e942]: “We chose Flex for its flexible payment options, generous credit limits, and valuable cashback rewards. Its easy expense tracking and reliable customer service set it apart, making it the perfect fit for managing cash flow and enhancing financial efficiency.”
+              - img "Karl Spektor sign"
+              - generic [ref=e945]:
+                - generic [ref=e946]:
+                  - strong [ref=e947]: Karl Spekor,
+                  - text: President, Mod Partners
+                - img "MOD logo"
+          - text:  
+          - generic [ref=e950]:
+            - button "Show slide 1 of 4" [pressed] [ref=e951] [cursor=pointer]
+            - button "Show slide 2 of 4" [ref=e952] [cursor=pointer]
+            - button "Show slide 3 of 4" [ref=e953] [cursor=pointer]
+            - button "Show slide 4 of 4" [ref=e954] [cursor=pointer]
+      - generic [ref=e961]:
+        - heading "Simplify Financial Management. Scale Without Limits." [level=2] [ref=e962]:
+          - text: Simplify Financial Management.
+          - text: Scale Without Limits.
+        - link "opens in a new window" [ref=e965] [cursor=pointer]:
+          - /url: https://home.flex.one/register/get-started
+          - generic [ref=e966]: Get Started
+    - contentinfo [ref=e967]:
+      - generic [ref=e970]:
+        - generic [ref=e971]:
+          - link "Flex logo":
+            - /url: /
+            - img "Flex logo"
+          - generic [ref=e972]:
+            - generic [ref=e973]:
+              - link "opens in new window" [ref=e974] [cursor=pointer]:
+                - /url: https://www.youtube.com/@FlexSuperApp
+                - text: YouTube
+              - link "opens in new window" [ref=e976] [cursor=pointer]:
+                - /url: https://www.instagram.com/flexsuperapp
+                - text: Instagram
+              - link "opens in new window" [ref=e978] [cursor=pointer]:
+                - /url: https://www.facebook.com/flexsuperapp/
+                - text: Facebook
+              - link "opens in new window" [ref=e980] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/flex-super-app
+                - text: LinkedIn
+              - link "Contact" [ref=e981] [cursor=pointer]:
+                - /url: /contact
+            - generic [ref=e982]:
+              - link "opens in new window" [ref=e983] [cursor=pointer]:
+                - /url: https://jobs.lever.co/Flex/
+                - text: Careers
+              - link "Legal" [ref=e985] [cursor=pointer]:
+                - /url: /legal
+              - link "opens in new window" [ref=e987] [cursor=pointer]:
+                - /url: /privacy
+                - text: Privacy Policy
+              - link "opens in new window" [ref=e989] [cursor=pointer]:
+                - /url: /terms-of-service
+                - text: Terms of Service
+              - link "opens in new window" [ref=e991] [cursor=pointer]:
+                - /url: https://support.flex.one/hc/en-us
+                - text: Support
+        - generic [ref=e994]:
+          - paragraph [ref=e995]: Flexbase Technologies, Inc. (Flex) is a financial technology company and is not an FDIC-insured bank. Banking services provided by Thread Bank, Member FDIC. FDIC deposit insurance covers the failure of an insured bank. Certain conditions must be satisfied for pass-through deposit insurance coverage to apply. The Flex Visa debit card is issued by Thread Bank, Member FDIC, pursuant to a license from Visa U.S.A. Inc. and may be used anywhere Visa cards are accepted.
+          - paragraph [ref=e996]: ‍
+          - paragraph [ref=e997]: The Flex Business Credit Card is issued by Lead Bank, pursuant to a license from Visa U.S.A. Inc. and is only available to eligible commercial entities. Fees and terms and conditions apply. Applicants are subject to eligibility requirements.
+          - paragraph [ref=e998]: "*Terms and conditions apply to the cash back rewards program. Cash back earned will be credited to your account the first day of each month. ATM transactions. the purchase of money orders or cash equivalents, and account funding made with your debit card are not eligible for cash back. Please refer to the Rewards Terms and Conditions for more details. No minimum balance requirement."
+          - paragraph [ref=e999]: ‍
+          - paragraph [ref=e1000]: "**Annual Percentage Yield (APY) of up to 2.47% for Tier 3 accounts and up to 1.37% APY for Tier 2 accounts is accurate as of 10/06/2025. These are variable rates based on the effective range of the Federal Funds Rate and may change after the account is opened. An average daily Account balance that is greater than $1,000,000 for at least thirty (30) days is required to be eligible to earn 2.47% APY and an average daily Account balance that is greater than $100,000 for at least thirty (30) days is required to be eligible to earn 1.37% APY."
+          - paragraph [ref=e1001]: ‍
+          - paragraph [ref=e1002]:
+            - text: ¹Your deposits qualify for up to $3,000,000 in FDIC insurance coverage when Thread Bank places them at program banks in its deposit sweep program. Your deposits at each program bank become eligible for FDIC insurance up to $250,000, inclusive of any other deposits you may already hold at the bank in the same ownership capacity. You can access the terms and conditions of the sweep program at
+            - link "Thread Bank, Sweep Disclosure" [ref=e1003] [cursor=pointer]:
+              - /url: https://thread.bank/sweep-disclosure/
+            - text: and a list of program banks at
+            - link "Thread Bank, Program Banks" [ref=e1004] [cursor=pointer]:
+              - /url: https://thread.bank/program-banks/
+            - text: . Please contact
+            - link "customerservice@thread.bank" [ref=e1005] [cursor=pointer]:
+              - /url: mailto:customerservice@thread.bank
+            - text: with questions regarding the sweep program. Pass-through insurance coverage is subject to conditions.
+          - paragraph [ref=e1006]:
+            - text: For United States, Payment services for Flex (Non-MIFID related products) are provided by Visa Global Services Inc. (VGSI), a licensed money transmitter (NMLS ID 181032) in the states listed
+            - link "here" [ref=e1007] [cursor=pointer]:
+              - /url: https://usa.visa.com/legal/visa-global-services-licenses.html
+            - text: ". VGSI is licensed as a money transmitter by the New York Department of Financial Services. Mailing address: 900 Metro Center Blvd, Mailstop 1Z, Foster City, CA 94404. VGSI is also a registered Money Services Business (“MSB”) with FinCEN and a registered Foreign MSB with FINTRAC. For live customer support contact VGSI at (888) 733-0041."
+          - paragraph [ref=e1008]: When funds are posted to your account, in line with regulatory requirements, the regulated payment institutions who we work with safeguard your funds. This means that the funds shown in your payment account or e-wallet are held at reputable banks or covered by an insurance policy, and most importantly, are protected for you in the event of our partner payment institutions’, or our, insolvency. Our partners stop safeguarding your funds when the money has been paid out of your account to your beneficiary’s account.
+          - paragraph [ref=e1009]: ‍
+          - paragraph [ref=e1010]:
+            - text: If you require a breakdown of the exact amounts of funds you have safeguarded at each of our payments partners at a particular point in time, please do not hesitate to contact us.
+            - text: ⁺Coming soon.
+          - paragraph [ref=e1011]: ‍
+          - paragraph [ref=e1012]: ©2026 Flexbase Technologies, Inc., all rights reserved. Flex products may not be available to all customers. See the Flex Terms of Service for details. Terms are subject to change.
+  - generic [ref=e1013]:
+    - list [ref=e1015]:
+      - listitem [ref=e1016]:
+        - link "Flex is recognized as one of Fast Company’s 2026 Most Innovative Companies Read more →" [ref=e1017] [cursor=pointer]:
+          - /url: https://www.fastcompany.com/91497212/finance-personal-finance-most-innovative-companies-2026
+          - generic [ref=e1019]: Flex is recognized as one of Fast Company’s 2026 Most Innovative Companies Read more
+          - generic [ref=e1020]: →
+    - banner [ref=e1021]:
+      - generic [ref=e1023]:
+        - navigation [ref=e1024]:
+          - generic [ref=e1025]:
+            - link "Home" [ref=e1026] [cursor=pointer]:
+              - /url: /
+            - button "Products" [ref=e1028] [cursor=pointer]:
+              - generic [ref=e1029]: Products
+            - link "Customers" [ref=e1030] [cursor=pointer]:
+              - /url: /customers
+            - link "Pricing" [ref=e1031] [cursor=pointer]:
+              - /url: /pricing
+            - button "Resources" [ref=e1033] [cursor=pointer]:
+              - generic [ref=e1034]: Resources
+            - link "About" [ref=e1035] [cursor=pointer]:
+              - /url: /company
+            - generic [ref=e1036]:
+              - link "Log In" [ref=e1037] [cursor=pointer]:
+                - /url: https://home.flex.one/login
+              - link "Get Started" [ref=e1038] [cursor=pointer]:
+                - /url: https://home.flex.one/register/get-started
+        - link "home" [ref=e1039] [cursor=pointer]:
+          - /url: /
+          - img "Flex logo" [ref=e1040]

@@ -4,44 +4,45 @@ import { Link } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Home screen. Uses NativeWind className syntax with brand tokens
- * (court green, cream) to prove the Tailwind 3.4 + NativeWind v4 wiring.
+ * Home screen. Uses NativeWind className syntax with the flex.one-inspired
+ * palette (ADR-0010): dark forest base, cream type, sharp corners, court
+ * green for hover/CTA accent. Mirrors web aesthetic.
  */
 export default function HomeScreen() {
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView className="flex-1 bg-cream">
-      <View className="flex-1 px-6 justify-center gap-4">
-        <Text className="text-xs tracking-[2px] text-court-primary">
+    <SafeAreaView className="flex-1 bg-ink-deep">
+      <View className="flex-1 px-6 justify-center gap-5">
+        <Text className="text-[10px] tracking-[3px] text-cream/60 uppercase">
           {t('brand.wordmark')}
         </Text>
-        <Text className="text-4xl font-semibold text-charcoal">
+        <Text className="text-5xl font-serif text-cream leading-none">
           {t('home.hello')}
         </Text>
-        <Text className="text-base text-charcoal/70 leading-6">
+        <Text className="text-base text-cream/70 leading-6">
           {t('home.subtitle')}
         </Text>
 
-        <View className="gap-2 mt-6">
+        <View className="gap-3 mt-8">
           <Link href="/(auth)/sign-in" asChild>
-            <Pressable className="bg-court-primary rounded-xl p-4 items-center">
-              <Text className="text-cream font-semibold">{t('auth.signInCta')}</Text>
+            <Pressable className="border border-cream p-4 items-center">
+              <Text className="text-cream">{t('auth.signInCta')}</Text>
             </Pressable>
           </Link>
           <Link href="/match/demo-id" asChild>
-            <Pressable className="border border-court-primary/30 rounded-xl p-4 items-center">
-              <Text className="text-court-primary">Open demo match</Text>
+            <Pressable className="border border-cream/40 p-4 items-center">
+              <Text className="text-cream/80">Open demo match</Text>
             </Pressable>
           </Link>
           <Link href="/club/lahore-padel" asChild>
-            <Pressable className="border border-court-primary/30 rounded-xl p-4 items-center">
-              <Text className="text-court-primary">Open demo club</Text>
+            <Pressable className="border border-cream/40 p-4 items-center">
+              <Text className="text-cream/80">Open demo club</Text>
             </Pressable>
           </Link>
           <Link href="/edition" asChild>
-            <Pressable className="border border-court-primary/30 rounded-xl p-4 items-center">
-              <Text className="text-court-primary">{t('edition.title')}</Text>
+            <Pressable className="border border-brass p-4 items-center">
+              <Text className="text-brass">{t('edition.title')}</Text>
             </Pressable>
           </Link>
         </View>

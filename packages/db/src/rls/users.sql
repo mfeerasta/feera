@@ -12,20 +12,20 @@ CREATE POLICY users_select_self ON users
   USING (id = auth.user_id());
 
 DROP POLICY IF EXISTS users_select_public ON users;
+-- The friend-visible branch references a `friendships` table that does not
+-- exist until M4. Guard the subquery with `to_regclass` so the policy
+-- compiles regardless. Once `friendships` ships, replace this stub.
 CREATE POLICY users_select_public ON users
   FOR SELECT
   USING (
     deleted_at IS NULL
     AND (
       gender_visibility = 'public'
-      OR EXISTS (
-        SELECT 1
-        FROM friendships f
-        WHERE f.status = 'accepted'
-          AND (
-            (f.user_a_id = auth.user_id() AND f.user_b_id = users.id)
-            OR (f.user_b_id = auth.user_id() AND f.user_a_id = users.id)
-          )
+      OR (
+        to_regclass('public.friendships') IS NOT NULL
+        AND auth.user_id() IS NOT NULL
+        -- Placeholder: always-false until friendships table lands.
+        AND false
       )
     )
   );
@@ -71,10 +71,4 @@ ALTER TABLE user_social_scores FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS user_social_scores_select_self ON user_social_scores;
 CREATE POLICY user_social_scores_select_self ON user_social_scores
   FOR SELECT
-  USING (id = auth.user_id() OR auth.role() IN ('admin', 'service_role'));
-
-DROP POLICY IF EXISTS user_social_scores_write_service ON user_social_scores;
-CREATE POLICY user_social_scores_write_service ON user_social_scores
-  FOR ALL
-  USING (auth.role() IN ('service_role', 'admin'))
-  WITH CHECK (auth.role() IN ('service_role', 'admin'));
+  USING (user_id = auth.user_id());

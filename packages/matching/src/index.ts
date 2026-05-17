@@ -1,1 +1,2 @@
-export * from './glicko.js';
+export * from './glicko';
+export * from './partner-finder';

@@ -1,0 +1,62 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "feera" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e6]:
+          - link "Sign in" [ref=e7] [cursor=pointer]:
+            - /url: /sign-in
+    - generic [ref=e9]:
+      - heading "Padel, properly." [level=1] [ref=e10]
+      - paragraph [ref=e11]: Booking, matchmaking, rankings, tournaments. One quiet platform for every player and every club.
+      - generic [ref=e12]:
+        - link "Find a court" [ref=e13] [cursor=pointer]:
+          - /url: /sign-in
+        - link "For clubs" [ref=e14] [cursor=pointer]:
+          - /url: /sign-in
+    - generic [ref=e16]:
+      - generic [ref=e17]: Lahore
+      - generic [ref=e18]: Karachi
+      - generic [ref=e19]: Dubai
+    - generic [ref=e21]:
+      - article [ref=e22]:
+        - heading "Book courts" [level=2] [ref=e24]
+        - paragraph [ref=e25]: See live availability across clubs in your city. Pay once, split with friends after.
+        - link "Learn more" [ref=e26] [cursor=pointer]:
+          - /url: /sign-in
+      - article [ref=e27]:
+        - heading "Find players" [level=2] [ref=e29]
+        - paragraph [ref=e30]: Match by level, location, and time. Glicko-2 keeps the ladder honest.
+        - link "Learn more" [ref=e31] [cursor=pointer]:
+          - /url: /sign-in
+      - article [ref=e32]:
+        - heading "Play tournaments" [level=2] [ref=e34]
+        - paragraph [ref=e35]: Club leagues, city opens, and federation events. One bracket, one ranking.
+        - link "Learn more" [ref=e36] [cursor=pointer]:
+          - /url: /sign-in
+    - generic [ref=e38]:
+      - paragraph [ref=e39]: By invitation
+      - heading "Feera Edition." [level=2] [ref=e40]
+      - paragraph [ref=e41]: A members tier for flagship clubs, annual invitationals, and the quieter rituals of the game.
+      - link "Apply for invitation" [ref=e42] [cursor=pointer]:
+        - /url: /edition
+    - contentinfo [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - link "feera" [ref=e46] [cursor=pointer]:
+            - /url: /
+          - paragraph [ref=e47]: Feera ©2026
+        - generic [ref=e48]:
+          - link "About" [ref=e49] [cursor=pointer]:
+            - /url: /
+          - link "Clubs" [ref=e50] [cursor=pointer]:
+            - /url: /
+          - link "Careers" [ref=e51] [cursor=pointer]:
+            - /url: /
+          - link "Privacy" [ref=e52] [cursor=pointer]:
+            - /url: /
+          - link "Terms" [ref=e53] [cursor=pointer]:
+            - /url: /
+        - generic [ref=e54]: EN
+  - alert [ref=e55]

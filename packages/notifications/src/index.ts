@@ -6,6 +6,8 @@ export { TwilioSmsChannel } from './channels/twilio-sms.js';
 export { TwilioWhatsappChannel } from './channels/twilio-whatsapp.js';
 export { ResendEmailChannel } from './channels/resend-email.js';
 export { OneSignalWebChannel } from './channels/onesignal-web.js';
+export { SoketiChannel, soketi, activeRealtimeTransport } from './channels/soketi.js';
+export type { SoketiEvent, SoketiTransport } from './channels/soketi.js';
 
 export { bookingConfirmed } from './templates/booking-confirmed.js';
 export { bookingCancelled } from './templates/booking-cancelled.js';

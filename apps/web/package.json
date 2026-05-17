@@ -12,15 +12,22 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@feera/auth": "workspace:*",
     "@feera/db": "workspace:*",
     "@feera/matching": "workspace:*",
+    "@feera/payments": "workspace:*",
     "@feera/types": "workspace:*",
     "@feera/ui": "workspace:*",
+    "@stripe/react-stripe-js": "^3.0.0",
+    "@stripe/stripe-js": "^4.10.0",
+    "better-auth": "^1.6.11",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.38.3",
     "next": "^16.0.0",
+    "postgres": "^3.4.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "stripe": "^18.3.0",
     "tailwind-merge": "^2.6.0",
     "zod": "^3.24.1"
   },

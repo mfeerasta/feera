@@ -78,6 +78,9 @@ async function main() {
     'payments.sql',
     'edition.sql',
     'audit.sql',
+    'tournaments.sql',
+    'coaching.sql',
+    'federations.sql',
   ];
   for (const f of rlsOrder) {
     try {
