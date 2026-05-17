@@ -1,0 +1,39 @@
+# Multi-stage build for apps/web (Next 16 standalone).
+
+FROM node:22-alpine AS base
+RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
+WORKDIR /app
+
+# --- deps stage: install workspace deps with the lockfile ---
+FROM base AS deps
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+COPY apps/web/package.json ./apps/web/
+COPY packages ./packages
+RUN pnpm install --frozen-lockfile
+
+# --- builder: copy source, build standalone output ---
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN pnpm --filter @feera/web build
+
+# --- runner: tiny image, runs Next standalone server ---
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+RUN addgroup --system --gid 1001 nodejs \
+ && adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder /app/apps/web/public ./apps/web/public
+
+USER nextjs
+EXPOSE 3000
+CMD ["node", "apps/web/server.js"]

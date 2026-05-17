@@ -25,10 +25,13 @@ This is **Feera + Feera Edition**. A multi-decade venture, not a prototype. Code
 - Next.js 16 (App Router). `proxy.ts` not `middleware.ts`. Async `params`/`searchParams`/`cookies()`/`headers()`.
 - Default to Node runtime (Fluid Compute). Edge only when justified.
 - Server Components by default. `'use client'` only where interactivity required.
-- Drizzle ORM + Supabase Postgres. RLS on every table, tested.
+- Drizzle ORM + Neon Postgres. RLS on every table, enforced via JWT claims from better-auth, tested.
 - Glicko-2 (not vanilla ELO). Display rating 0.0-7.0 = `clamp((internal - 800) / 200, 0, 7)`.
-- Vercel for `apps/web` + `apps/admin`. EAS for `apps/mobile`. Hetzner CPX21 Falkenstein for workers/hermes.
-- Supabase region: **eu-central-1 (Frankfurt)** for GDPR posture. Mumbai + UAE read replicas in later phases.
+- Hosting: **Hetzner CPX21 Falkenstein DE `46.225.157.75`** (Docker Compose + Caddy). EAS for `apps/mobile`. No Vercel.
+- Neon region: **`aws-eu-central-1` Frankfurt** for GDPR posture and < 5ms latency to the Hetzner box. Per-PR branches via Neon for preview DBs.
+- Auth: better-auth + Twilio Verify (SMS + WhatsApp) + Resend magic links + Google/Apple OAuth.
+- Realtime: Soketi container (Pusher protocol) at `realtime.feera.ai`.
+- Storage: Hetzner Object Storage (FSN1), Cloudflare CDN at `cdn.feera.ai`.
 - Payments default routing: PK+PKR → Raast > JazzCash > Easypaisa > Stripe. UAE+AED → Stripe (Apple Pay). Others → Stripe.
 - Notifications default channel: PK users → WhatsApp. Gulf users → push + email fallback.
 
@@ -39,7 +42,7 @@ This is **Feera + Feera Edition**. A multi-decade venture, not a prototype. Code
 
 ## Privacy posture
 
-- PII encryption at rest via Supabase Vault.
+- PII encryption at rest via Postgres `pgcrypto` columns (phone, email, payment details). Symmetric key in env, rotated per quarter.
 - No PII in Sentry payloads (data scrubber configured).
 - Women's privacy panel surfaces visibility controls in onboarding + always accessible.
 - GDPR data export + delete from day one (`/api/v1/me/export`, `/api/v1/me/delete`).

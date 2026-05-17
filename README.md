@@ -14,15 +14,16 @@ Two-tier brand:
 | Web | Next.js 16 (App Router), TypeScript strict, Tailwind v4, next-intl |
 | Mobile | Expo SDK 52, expo-router, NativeWind, i18next |
 | Admin | Next.js 16 (access-controlled at admin.feera.ai) |
-| DB | Supabase Postgres (eu-central-1) + Drizzle ORM + RLS |
-| Auth | Supabase Auth (phone OTP via Twilio Verify, WhatsApp OTP, email magic, Google/Apple) |
+| DB | Neon Postgres (`aws-eu-central-1` Frankfurt, target) + Drizzle ORM + RLS |
+| Auth | better-auth + Twilio Verify (phone + WhatsApp OTP) + Resend magic links + Google/Apple OAuth |
 | Payments | Stripe + JazzCash + Easypaisa + Raast (Phase 1 live); Checkout.com + Mada + Tabby (stubs) |
 | Notifications | Expo Push + Twilio WhatsApp + Twilio SMS + Resend + OneSignal |
-| Realtime | Supabase Realtime |
+| Realtime | Soketi (self-hosted, Pusher protocol) |
+| Storage | Hetzner Object Storage (FSN1) + Cloudflare CDN at `cdn.feera.ai` |
 | Maps | Mapbox (primary), Google Maps fallback |
-| Observability | Sentry + PostHog (self-hosted) + Metabase |
+| Observability | Sentry + self-hosted PostHog + Metabase |
 | Rating engine | Glicko-2 (custom impl in `packages/matching`) |
-| Hosting | Vercel (web/admin), EAS (mobile), Hetzner CPX21 Falkenstein (workers + hermes + posthog + metabase) |
+| Hosting | **Hetzner CPX21 Falkenstein DE `46.225.157.75`** — Docker Compose + Caddy edge. EAS for mobile builds. |
 
 ## Repository layout
 

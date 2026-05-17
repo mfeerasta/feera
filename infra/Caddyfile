@@ -1,0 +1,48 @@
+# Feera production Caddyfile. TLS via Let's Encrypt (Caddy default).
+# Email used for ACME registration. Update once we have a real ops alias.
+
+{
+    email ops@feera.ai
+    servers {
+        protocols h1 h2 h3
+    }
+}
+
+(common) {
+    encode zstd gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(self), camera=(), microphone=()"
+        -Server
+    }
+}
+
+feera.ai, www.feera.ai {
+    import common
+    reverse_proxy web:3000 {
+        health_uri /api/health
+        health_interval 30s
+        health_timeout 5s
+    }
+}
+
+admin.feera.ai {
+    import common
+    reverse_proxy admin:3001
+}
+
+realtime.feera.ai {
+    import common
+    reverse_proxy soketi:6001
+}
+
+cdn.feera.ai {
+    import common
+    reverse_proxy https://feera-public.fsn1.your-objectstorage.com {
+        header_up Host {upstream_hostport}
+        header_down -Server
+        header_down Cache-Control "public, max-age=31536000, immutable"
+    }
+}

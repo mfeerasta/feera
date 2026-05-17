@@ -1,0 +1,81 @@
+# Production Docker Compose for the Hetzner Falkenstein DE box.
+# Pulls pre-built images from GHCR. CI builds + pushes per merge to main.
+#
+# Bring up:    docker compose --env-file .env.production -f docker-compose.yml up -d
+# Roll back:   IMAGE_TAG=<prev-sha> docker compose -f docker-compose.yml up -d
+# Logs:        docker compose logs -f web
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - admin
+      - soketi
+    networks:
+      - feera
+
+  web:
+    image: ghcr.io/feerasta-ai/feera-web:${IMAGE_TAG:-latest}
+    restart: always
+    env_file:
+      - .env.production
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - feera
+
+  admin:
+    image: ghcr.io/feerasta-ai/feera-admin:${IMAGE_TAG:-latest}
+    restart: always
+    env_file:
+      - .env.production
+    expose:
+      - "3001"
+    networks:
+      - feera
+
+  workers:
+    image: ghcr.io/feerasta-ai/feera-workers:${IMAGE_TAG:-latest}
+    restart: always
+    env_file:
+      - .env.production
+    networks:
+      - feera
+
+  soketi:
+    image: quay.io/soketi/soketi:1.6-16-alpine
+    restart: always
+    environment:
+      SOKETI_DEFAULT_APP_ID: ${SOKETI_APP_ID}
+      SOKETI_DEFAULT_APP_KEY: ${SOKETI_KEY}
+      SOKETI_DEFAULT_APP_SECRET: ${SOKETI_SECRET}
+      SOKETI_DEBUG: 0
+      SOKETI_METRICS_ENABLED: 1
+    expose:
+      - "6001"
+      - "9601"
+    networks:
+      - feera
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  feera:
+    driver: bridge

@@ -1,5 +1,10 @@
 # CHECKPOINT-1 — Foundation
 
+> **Amendment 2026-05-17 (same day):** M chose Hetzner hosting + Neon DB.
+> Supabase removed from stack. New ADRs 0005-0009 added. See "Stack pivot" section below.
+
+
+
 Date: 2026-05-17
 Branch: `m1/foundation` (pending push; awaiting GitHub repo creation, see "Inputs needed")
 Status: scaffold complete, deps installed at root, Glicko-2 + 19 tests green. Apps + db not yet installed.
@@ -73,19 +78,46 @@ Status: scaffold complete, deps installed at root, Glicko-2 + 19 tests green. Ap
 - Drizzle schema not yet migrated. Tables defined in TS but no SQL emitted; `drizzle-kit generate` runs in M2 after Supabase project exists.
 - No icon/splash assets in `apps/mobile/assets/` (referenced by `app.json`). Will produce placeholders in M2 first session.
 
+## Stack pivot (2026-05-17)
+
+| Layer | Was (original spec) | Now (post-pivot) | ADR |
+|---|---|---|---|
+| DB | Supabase Postgres | **Neon Postgres** (Frankfurt target) | 0005 |
+| Auth | Supabase Auth | **better-auth + Twilio Verify** | 0006 |
+| Realtime | Supabase Realtime | **Soketi (Pusher protocol)** | 0007 |
+| Storage | Supabase Storage + Vault | **Hetzner Object Storage + Cloudflare CDN** | 0008 |
+| Hosting (web/admin) | Vercel | **Hetzner CPX21 + Docker Compose + Caddy** | 0009 |
+| Hosting (mobile) | EAS | EAS (unchanged) | — |
+| PII at rest | Supabase Vault | **Postgres `pgcrypto`** (key rotated quarterly) | 0009 |
+
+Files updated:
+
+- `.env.example` swapped: `NEON_*` + `S3_*` + `SOKETI_*` + `DEPLOY_*` in place of `NEXT_PUBLIC_SUPABASE_*` + `SUPABASE_*`.
+- `packages/db/src/client.ts` and `packages/db/drizzle.config.ts` now read `DATABASE_URL[_POOLED]`.
+- `apps/web/next.config.ts` → `output: 'standalone'` for Docker.
+- `apps/web/src/app/api/health/route.ts` added — Caddy + deploy script hit this.
+- `infra/` directory added: `docker-compose.yml`, `Caddyfile`, `Dockerfile.web`, `deploy.sh`, `README.md`.
+
+Inputs reduced — Supabase + Vercel questions dropped, replaced with:
+
+- Neon: recreate `feera-prod` in `aws-eu-central-1`? Existing Singapore project stays as sandbox.
+- GitHub repo for GHCR image hosting (`ghcr.io/feerasta-ai/feera-web` etc.).
+- Cloudflare API token to wire `feera.ai` DNS + `cdn.feera.ai` proxy.
+- Confirm reuse of `46.225.157.75` (current load: Polymath, cards, sentinel, hermes). If contention shows up, provision a dedicated CPX31.
+
 ## Inputs needed from M before M2 starts
 
 These are the irreversible-or-near-irreversible decisions the spec told us to stop on:
 
-1. **GitHub repo**: name (`feera`?), org (`feerasta-ai`?), private. Will create branch + push + open PR.
-2. **Vercel project name** for `apps/web`. (Spec uses `feera.ai` as the prod domain; Vercel project slug needs a separate confirm.) Note: Tabl projects live under team `meers-projects-b2bb8481`; will reuse that team unless told otherwise.
-3. **Supabase project name + region confirmation**. Defaulting to `feera-prod` in `eu-central-1` (Frankfurt) per spec. OK?
-4. **Doppler workspace + project name** for secret management. Or are we using Vercel env vars only for M1-M3 and adopting Doppler later?
-5. **Twilio account**: existing one (the `+1` numbers used by Tabl/Hermes) or new dedicated Feera account? Verify service SID needed for phone OTP.
-6. **Stripe account**: confirm `meerfeerasta-1841` / existing Tabl Stripe is the right home, or open a separate Feera one.
-7. **EAS project**: confirm Apple developer + Google Play console accounts to use. Bundle id is provisionally `ai.feera.app`.
-8. **Hetzner box for workers/hermes**: reuse Falkenstein DE `46.225.157.75` (Guard-Patrol, also runs Polymath), or provision a dedicated Feera box?
-9. **PPLP rules document** mentioned in spec — once received, `docs/pplp-rules.md` gets added and the M5 tournament engine extends accordingly.
+1. **GitHub repo**: name (`feera`?), org (`feerasta-ai`?), private. Branch + push + first PR.
+2. **Neon project**: create `feera-prod` in `aws-eu-central-1` (Frankfurt) now? Existing Singapore `floral-resonance-47691082` stays as the sandbox.
+3. **Cloudflare**: API token with `Zone:DNS:Edit` for `feera.ai` so we can add `feera.ai`, `www`, `admin`, `realtime`, `cdn` records.
+4. **Doppler**: workspace + project for secret management, or `.env` on the Hetzner box for now?
+5. **Twilio**: existing account (Tabl/Hermes) or new dedicated Feera one? Need Verify service SID.
+6. **Stripe**: confirm `meerfeerasta-1841` / existing Tabl Stripe, or open Feera-only one.
+7. **EAS / Apple Dev / Play Console**: bundle id provisionally `ai.feera.app`; confirm accounts.
+8. **Hetzner box**: reuse `46.225.157.75` (Guard-Patrol, also Polymath + cards + hermes + sentinel) or provision dedicated CPX31? Default = reuse.
+9. **PPLP rules doc** — once received, `docs/pplp-rules.md` + M5 tournament engine extends.
 
 ## How to verify M1 locally
 

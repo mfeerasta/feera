@@ -1,11 +1,11 @@
 import type { Config } from 'drizzle-kit';
 
-const dbUrl = process.env.SUPABASE_DB_URL;
+const dbUrl = process.env.DATABASE_URL;
 
 if (!dbUrl) {
   // drizzle-kit only needs this at command time, not at import time.
   // eslint-disable-next-line no-console
-  console.warn('SUPABASE_DB_URL not set. drizzle-kit commands will fail until you set it.');
+  console.warn('DATABASE_URL not set. drizzle-kit commands will fail until you set it.');
 }
 
 export default {
