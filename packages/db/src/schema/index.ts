@@ -24,6 +24,7 @@ export * from './common';
 export * from './users';
 export * from './clubs';
 export * from './bookings';
+export * from './booking-join-requests';
 export * from './matches';
 export * from './tournaments';
 export * from './coaching';

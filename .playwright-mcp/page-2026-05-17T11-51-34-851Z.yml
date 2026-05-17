@@ -1,0 +1,107 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "feera" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e6]:
+          - link "Clubs" [ref=e7] [cursor=pointer]:
+            - /url: /play/clubs
+          - link "Open matches" [ref=e8] [cursor=pointer]:
+            - /url: /play/open
+          - link "My bookings" [ref=e9] [cursor=pointer]:
+            - /url: /play/bookings
+          - link "Sign in" [ref=e10] [cursor=pointer]:
+            - /url: /sign-in
+    - main [ref=e11]:
+      - generic [ref=e13]:
+        - paragraph [ref=e14]: Browse
+        - heading "Clubs near you." [level=1] [ref=e15]
+        - paragraph [ref=e16]: Filter by city, country, and what each venue offers. Tap any club to see courts and live availability.
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: Country
+            - combobox "Country" [ref=e22]:
+              - option "Any" [selected]
+              - option "Pakistan"
+              - option "UAE"
+              - option "Saudi Arabia"
+              - option "Portugal"
+              - option "Spain"
+          - generic [ref=e23]:
+            - generic [ref=e24]: City
+            - textbox "City" [ref=e25]:
+              - /placeholder: Lahore
+          - button "Apply" [ref=e27]
+          - group "Amenities" [ref=e28]:
+            - generic [ref=e29]: Amenities
+            - generic [ref=e30]:
+              - generic [ref=e31] [cursor=pointer]:
+                - checkbox "Indoor" [ref=e32]
+                - text: Indoor
+              - generic [ref=e33] [cursor=pointer]:
+                - checkbox "Outdoor" [ref=e34]
+                - text: Outdoor
+              - generic [ref=e35] [cursor=pointer]:
+                - checkbox "Climate" [ref=e36]
+                - text: Climate
+              - generic [ref=e37] [cursor=pointer]:
+                - checkbox "Panoramic" [ref=e38]
+                - text: Panoramic
+              - generic [ref=e39] [cursor=pointer]:
+                - checkbox "Women only hrs" [ref=e40]
+                - text: Women only hrs
+              - generic [ref=e41] [cursor=pointer]:
+                - checkbox "Showers" [ref=e42]
+                - text: Showers
+              - generic [ref=e43] [cursor=pointer]:
+                - checkbox "Parking" [ref=e44]
+                - text: Parking
+              - generic [ref=e45] [cursor=pointer]:
+                - checkbox "Food" [ref=e46]
+                - text: Food
+        - generic [ref=e47]:
+          - article [ref=e48]:
+            - generic [ref=e49]:
+              - paragraph [ref=e50]: PK · Lahore
+              - heading "Lahore Padel Club" [level=2] [ref=e51]
+            - list [ref=e52]:
+              - listitem [ref=e53]: Indoor
+              - listitem [ref=e54]: Outdoor
+              - listitem [ref=e55]: Showers
+              - listitem [ref=e56]: Parking
+            - link "View courts" [ref=e57] [cursor=pointer]:
+              - /url: /play/clubs/lahore-padel-club
+          - article [ref=e58]:
+            - generic [ref=e59]:
+              - paragraph [ref=e60]: PK · Karachi
+              - heading "Karachi Padel Centre" [level=2] [ref=e61]
+            - list [ref=e62]:
+              - listitem [ref=e63]: Outdoor
+              - listitem [ref=e64]: Showers
+              - listitem [ref=e65]: Parking
+            - link "View courts" [ref=e66] [cursor=pointer]:
+              - /url: /play/clubs/karachi-padel-centre
+          - article [ref=e67]:
+            - generic [ref=e68]:
+              - paragraph [ref=e69]: PK · Islamabad
+              - heading "Islamabad Padel House" [level=2] [ref=e70]
+            - list [ref=e71]:
+              - listitem [ref=e72]: Indoor
+              - listitem [ref=e73]: Showers
+              - listitem [ref=e74]: Parking
+            - link "View courts" [ref=e75] [cursor=pointer]:
+              - /url: /play/clubs/islamabad-padel-house
+          - article [ref=e76]:
+            - generic [ref=e77]:
+              - paragraph [ref=e78]: AE · Dubai
+              - heading "Dubai Padel Plaza" [level=2] [ref=e79]
+            - list [ref=e80]:
+              - listitem [ref=e81]: Indoor
+              - listitem [ref=e82]: Outdoor
+              - listitem [ref=e83]: Showers
+              - listitem [ref=e84]: Parking
+            - link "View courts" [ref=e85] [cursor=pointer]:
+              - /url: /play/clubs/dubai-padel-plaza
+  - alert [ref=e86]

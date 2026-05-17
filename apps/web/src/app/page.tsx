@@ -40,13 +40,13 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/sign-in"
+              href="/play"
               className="inline-flex items-center justify-center border border-cream px-6 py-3 text-sm text-cream transition-colors duration-150 hover:border-court hover:text-court"
             >
               Find a court
             </Link>
             <Link
-              href="/sign-in"
+              href="/clubs/onboard"
               className="inline-flex items-center justify-center border border-cream/40 px-6 py-3 text-sm text-cream/80 transition-colors duration-150 hover:border-court hover:text-court"
             >
               For clubs

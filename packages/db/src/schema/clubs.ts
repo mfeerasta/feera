@@ -12,6 +12,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import {
+  clubApprovalStatusEnum,
   createdAtColumn,
   deletedAtColumn,
   idColumn,
@@ -37,6 +38,7 @@ export const clubs = pgTable(
     amenities: jsonb('amenities').notNull().default(sql`'{}'::jsonb`),
     openingHours: jsonb('opening_hours').notNull().default(sql`'{}'::jsonb`),
     isActive: boolean('is_active').notNull().default(true),
+    approvalStatus: clubApprovalStatusEnum('approval_status').notNull().default('pending'),
     hasWomenOnlyHours: boolean('has_women_only_hours').notNull().default(false),
     womenOnlySchedule: jsonb('women_only_schedule'),
     hasIndoor: boolean('has_indoor').notNull().default(false),
@@ -58,6 +60,7 @@ export const clubs = pgTable(
     uniqueIndex('clubs_slug_uq').on(t.slug),
     index('clubs_geo_idx').on(t.lat, t.lng),
     index('clubs_country_city_idx').on(t.countryCode, t.city),
+    index('clubs_approval_status_idx').on(t.approvalStatus),
   ],
 );
 

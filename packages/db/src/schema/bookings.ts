@@ -40,6 +40,7 @@ export const bookings = pgTable(
     requiredLevelMax: doublePrecision('required_level_max'),
     genderPreference: genderPreferenceEnum('gender_preference').notNull().default('open'),
     maxParticipants: integer('max_participants').notNull().default(4),
+    seatsBooked: integer('seats_booked').notNull().default(1),
     isEditionPriority: boolean('is_edition_priority').notNull().default(false),
     notes: text('notes'),
     createdAt: createdAtColumn(),

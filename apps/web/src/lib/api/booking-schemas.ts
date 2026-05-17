@@ -19,13 +19,27 @@ export const bookingCreateSchema = z
       .enum(['open', 'men_only', 'women_only', 'mixed'])
       .default('open'),
     maxParticipants: z.number().int().min(2).max(8).default(4),
+    seatsBooked: z.number().int().min(1).max(8).optional(),
     notes: z.string().max(2000).optional(),
     participantUserIds: z.array(z.string().uuid()).max(8).optional(),
   })
   .refine(
     (v) => v.endAt || v.durationMinutes || true,
     'Provide endAt, durationMinutes, or rely on default 90 minutes.',
+  )
+  .refine(
+    (v) => v.seatsBooked == null || v.seatsBooked <= v.maxParticipants,
+    'seatsBooked cannot exceed maxParticipants.',
   );
+
+export const joinRequestCreateSchema = z.object({
+  seatsRequested: z.number().int().min(1).max(4).default(1),
+  message: z.string().max(500).optional(),
+});
+
+export const joinRequestActionSchema = z.object({
+  action: z.enum(['approve', 'decline']),
+});
 
 export const bookingUpdateSchema = z.object({
   notes: z.string().max(2000).nullable().optional(),

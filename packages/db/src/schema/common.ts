@@ -195,6 +195,12 @@ export const editionClubStatusEnum = pgEnum('edition_club_status', [
   'terminated',
 ]);
 
+export const clubApprovalStatusEnum = pgEnum('club_approval_status', [
+  'pending',
+  'approved',
+  'rejected',
+]);
+
 export const auditActorTypeEnum = pgEnum('audit_actor_type', [
   'user',
   'club_staff',

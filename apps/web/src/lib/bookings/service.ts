@@ -82,6 +82,21 @@ export async function createBooking(
     isEditionMember,
   });
 
+  // Slot-level semantics: organizer always occupies at least 1 seat. If the
+  // organizer brought N friends (participantUserIds), seatsBooked defaults to
+  // 1 + N (capped at maxParticipants). Caller may override via input.seatsBooked.
+  // When seatsBooked < maxParticipants, mark the booking as an open match so
+  // remaining seats are discoverable by strangers.
+  const invitedCount = input.participantUserIds
+    ? new Set(input.participantUserIds.filter((id) => id !== organizerUserId)).size
+    : 0;
+  const inferredSeats = Math.min(1 + invitedCount, input.maxParticipants);
+  const seatsBooked = Math.min(
+    Math.max(input.seatsBooked ?? inferredSeats, 1),
+    input.maxParticipants,
+  );
+  const isOpenMatch = input.isOpenMatch || seatsBooked < input.maxParticipants;
+
   const [booking] = await tx
     .insert(bookings)
     .values({
@@ -91,11 +106,12 @@ export async function createBooking(
       endAt,
       totalAmount: pricing.totalAmount,
       currency: pricing.currency,
-      isOpenMatch: input.isOpenMatch,
+      isOpenMatch,
       requiredLevelMin: input.requiredLevelMin,
       requiredLevelMax: input.requiredLevelMax,
       genderPreference: input.genderPreference,
       maxParticipants: input.maxParticipants,
+      seatsBooked,
       isEditionPriority: isEditionMember,
       notes: input.notes,
     })
