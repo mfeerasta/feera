@@ -1,12 +1,15 @@
 import type { NextConfig } from 'next';
+import path from 'node:path';
 
 const config: NextConfig = {
   reactStrictMode: true,
-  // Required for Docker deploy on Hetzner.
   output: 'standalone',
-  experimental: {
-    typedRoutes: true,
+  // Pin workspace root so standalone bundle doesn't nest under absolute paths.
+  outputFileTracingRoot: path.join(__dirname, '../../'),
+  turbopack: {
+    root: path.join(__dirname, '../../'),
   },
+  typedRoutes: true,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
