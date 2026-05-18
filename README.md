@@ -21,7 +21,7 @@ Two-tier brand:
 | Payments | Stripe + JazzCash + Easypaisa + Raast (Phase 1 live); Checkout.com + Mada + Tabby (stubs) |
 | Notifications | Expo Push + Twilio WhatsApp + Twilio SMS + Resend + OneSignal |
 | Realtime | Soketi (self-hosted, Pusher protocol) |
-| Storage | Hetzner Object Storage (FSN1) + Cloudflare CDN at `cdn.feera.ai` |
+| Storage | **Cloudflare R2** (zero egress) at `cdn.feera.ai`. Hetzner Object Storage retained as regional fallback. |
 | Maps | Mapbox (primary), Google Maps fallback |
 | Observability | Sentry + self-hosted PostHog + Metabase |
 | Rating engine | Glicko-2 (custom impl in `packages/matching`) |
