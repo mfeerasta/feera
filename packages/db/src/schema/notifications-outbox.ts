@@ -44,6 +44,8 @@ export const notificationOutboxTemplateEnum = pgEnum('notification_outbox_templa
   'edition_application_update',
   'coaching_session_reviewed',
   'coaching_verification_approved',
+  'friend_request_received',
+  'friend_request_accepted',
 ]);
 
 export const notificationOutboxUrgencyEnum = pgEnum('notification_outbox_urgency', [

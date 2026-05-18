@@ -19,6 +19,7 @@ const navItems: readonly NavItem[] = [
   { href: '/admin/matches/discover', labelKey: 'admin.navMatches' },
   { href: '/admin/chats', labelKey: 'admin.navChats' },
   { href: '/admin/coaches', labelKey: 'admin.navCoaches' },
+  { href: '/admin/observability', labelKey: 'admin.navObservability' },
 ];
 
 async function pendingClubsCount(): Promise<number> {

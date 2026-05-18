@@ -43,7 +43,12 @@ export async function POST(req: NextRequest) {
     );
     if (result.kind === 'self_request') return badRequest('Cannot friend yourself.');
     if (result.kind === 'addressee_missing') return badRequest('Addressee user does not exist.');
-    return created({ data: result.row, already: result.kind === 'exists' });
+    if (result.kind === 'blocked') return badRequest('Cannot send a request to this user.');
+    return created({
+      data: result.row,
+      already: result.kind === 'exists',
+      autoAccepted: result.kind === 'auto_accepted',
+    });
   } catch (err) {
     return serverError('friends:POST', err);
   }

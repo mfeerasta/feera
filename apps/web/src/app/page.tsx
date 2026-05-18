@@ -29,6 +29,7 @@ export default async function HomePage() {
     { key: 'nav.careers', href: '/' },
     { key: 'nav.privacy', href: '/privacy' },
     { key: 'nav.terms', href: '/terms' },
+    { key: 'nav.apiDocs', href: '/api/docs' },
   ];
 
   return (

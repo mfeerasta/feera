@@ -16,7 +16,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const patchSchema = z.object({
-  action: z.enum(['accept', 'decline', 'block', 'unblock']),
+  action: z.enum(['accept', 'decline', 'block', 'unblock', 'cancel']),
 });
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -33,6 +33,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     );
     if (result.kind === 'not_found') return notFound('Friendship not found.');
     if (result.kind === 'forbidden') return forbidden('Not allowed.');
+    if (result.kind === 'invalid') return badRequest('Action not valid for current status.');
     return ok({ data: result.row });
   } catch (err) {
     return serverError('friends:[id]:PATCH', err);

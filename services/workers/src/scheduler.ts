@@ -1,5 +1,6 @@
 import { Cron } from 'croner';
 import { sentry } from '@feera/analytics/sentry';
+import { db, workerHeartbeats } from '@feera/db';
 import { log } from './lib/log.js';
 import { accountPurge } from './jobs/account-purge.js';
 import { backupCheck } from './jobs/backup-check.js';
@@ -46,6 +47,18 @@ export async function runJobOnce(
     });
     if (result.status === 'failed') {
       sentry.captureMessage(`worker job failed: ${job.name}`, 'error');
+    }
+    // Best-effort heartbeat insert. Never let a logging failure surface as a
+    // job failure.
+    try {
+      await db.insert(workerHeartbeats).values({
+        jobName: job.name,
+        durationMs: Math.max(0, Math.round(result.durationMs ?? 0)),
+        status: result.status,
+        metrics: result.metrics as unknown as object,
+      });
+    } catch (hbErr) {
+      ctx.log.warn('heartbeat insert failed', { error: hbErr instanceof Error ? hbErr.message : String(hbErr) });
     }
   } catch (err) {
     ctx.log.error('job threw', err);
