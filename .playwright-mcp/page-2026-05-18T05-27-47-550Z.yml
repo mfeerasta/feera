@@ -1,0 +1,247 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "feera" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e6]:
+          - link "Clubs" [ref=e7] [cursor=pointer]:
+            - /url: /play/clubs
+          - link "Open matches" [ref=e8] [cursor=pointer]:
+            - /url: /play/open
+          - link "Coaches" [ref=e9] [cursor=pointer]:
+            - /url: /play/coaches
+          - link "My bookings" [ref=e10] [cursor=pointer]:
+            - /url: /play/bookings
+          - link "Profile" [ref=e11] [cursor=pointer]:
+            - /url: /me
+          - link "Sign in" [ref=e12] [cursor=pointer]:
+            - /url: /sign-in
+          - button "Language" [ref=e14]:
+            - generic [ref=e15]: English
+          - 'button "Theme: light (click to switch to dark)" [ref=e16]':
+            - img [ref=e17]
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - paragraph [ref=e23]: Leaderboard
+        - heading "Top players. PK." [level=1] [ref=e24]
+        - paragraph [ref=e25]: Ranked by Glicko-2 display rating. Provisional players are flagged. Reliability reflects on-time arrival across recent bookings.
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: Country
+            - combobox "Country" [ref=e31]:
+              - option "Pakistan" [selected]
+              - option "UAE"
+              - option "Saudi Arabia"
+              - option "Portugal"
+          - generic [ref=e32]:
+            - generic [ref=e33]: City
+            - textbox "City" [ref=e34]:
+              - /placeholder: All
+          - generic [ref=e35]:
+            - generic [ref=e36]: Pool
+            - combobox "Pool" [ref=e37]:
+              - option "Open" [selected]
+              - option "Women only"
+          - button "Apply" [ref=e39]
+        - table [ref=e41]:
+          - rowgroup [ref=e42]:
+            - row "# Player City Rating Reliability Matches" [ref=e43]:
+              - columnheader "#" [ref=e44]
+              - columnheader "Player" [ref=e45]
+              - columnheader "City" [ref=e46]
+              - columnheader "Rating" [ref=e47]
+              - columnheader "Reliability" [ref=e48]
+              - columnheader "Matches" [ref=e49]
+          - rowgroup [ref=e50]:
+            - row "prov Adnan Khattak Islamabad · PK 6.0 69% 2" [ref=e51]:
+              - cell "prov" [ref=e52]
+              - cell "Adnan Khattak" [ref=e53]:
+                - link "Adnan Khattak" [ref=e54] [cursor=pointer]:
+                  - /url: /play/players/1b6e09e0-c3ab-42ca-9cbf-829c814aea27
+              - cell "Islamabad · PK" [ref=e55]
+              - cell "6.0" [ref=e56]
+              - cell "69%" [ref=e57]
+              - cell "2" [ref=e58]
+            - row "2 Bilal Ahmed Lahore · PK 5.4 82% 5" [ref=e59]:
+              - cell "2" [ref=e60]
+              - cell "Bilal Ahmed" [ref=e61]:
+                - link "Bilal Ahmed" [ref=e62] [cursor=pointer]:
+                  - /url: /play/players/7f4e13c0-7349-4487-81f1-ad3ce4d1e3a4
+              - cell "Lahore · PK" [ref=e63]
+              - cell "5.4" [ref=e64]
+              - cell "82%" [ref=e65]
+              - cell "5" [ref=e66]
+            - row "prov Ali Hussain Karachi · PK 5.3 66% 1" [ref=e67]:
+              - cell "prov" [ref=e68]
+              - cell "Ali Hussain" [ref=e69]:
+                - link "Ali Hussain" [ref=e70] [cursor=pointer]:
+                  - /url: /play/players/2e5ceac0-1ba8-4a77-98c3-44368cd09746
+              - cell "Karachi · PK" [ref=e71]
+              - cell "5.3" [ref=e72]
+              - cell "66%" [ref=e73]
+              - cell "1" [ref=e74]
+            - row "4 Hina Qureshi Karachi · PK 5.3 86% 5" [ref=e75]:
+              - cell "4" [ref=e76]
+              - cell "Hina Qureshi" [ref=e77]:
+                - link "Hina Qureshi" [ref=e78] [cursor=pointer]:
+                  - /url: /play/players/1e0ca4b4-6153-4339-b550-cbda5c8ad123
+              - cell "Karachi · PK" [ref=e79]
+              - cell "5.3" [ref=e80]
+              - cell "86%" [ref=e81]
+              - cell "5" [ref=e82]
+            - row "prov Fatima Sheikh Lahore · PK 5.1 83% 2" [ref=e83]:
+              - cell "prov" [ref=e84]
+              - cell "Fatima Sheikh" [ref=e85]:
+                - link "Fatima Sheikh" [ref=e86] [cursor=pointer]:
+                  - /url: /play/players/1e2b8946-6fff-411a-867b-011cde0e779a
+              - cell "Lahore · PK" [ref=e87]
+              - cell "5.1" [ref=e88]
+              - cell "83%" [ref=e89]
+              - cell "2" [ref=e90]
+            - row "prov Imran Memon Karachi · PK 4.9 75% 1" [ref=e91]:
+              - cell "prov" [ref=e92]
+              - cell "Imran Memon" [ref=e93]:
+                - link "Imran Memon" [ref=e94] [cursor=pointer]:
+                  - /url: /play/players/d375afe1-b5ff-4493-a46c-06db8a8f7529
+              - cell "Karachi · PK" [ref=e95]
+              - cell "4.9" [ref=e96]
+              - cell "75%" [ref=e97]
+              - cell "1" [ref=e98]
+            - row "prov Farah Niazi Islamabad · PK 4.6 76% 2" [ref=e99]:
+              - cell "prov" [ref=e100]
+              - cell "Farah Niazi" [ref=e101]:
+                - link "Farah Niazi" [ref=e102] [cursor=pointer]:
+                  - /url: /play/players/7ff5c0bb-b45a-4c4a-af74-2a27848c5f37
+              - cell "Islamabad · PK" [ref=e103]
+              - cell "4.6" [ref=e104]
+              - cell "76%" [ref=e105]
+              - cell "2" [ref=e106]
+            - row "8 Aisha Mahmood Lahore · PK 4.6 83% 5" [ref=e107]:
+              - cell "8" [ref=e108]
+              - cell "Aisha Mahmood" [ref=e109]:
+                - link "Aisha Mahmood" [ref=e110] [cursor=pointer]:
+                  - /url: /play/players/747e5e7e-dd9a-419e-a349-79511d0de2d8
+              - cell "Lahore · PK" [ref=e111]
+              - cell "4.6" [ref=e112]
+              - cell "83%" [ref=e113]
+              - cell "5" [ref=e114]
+            - row "9 Jawad Rashid Islamabad · PK 4.4 81% 6" [ref=e115]:
+              - cell "9" [ref=e116]
+              - cell "Jawad Rashid" [ref=e117]:
+                - link "Jawad Rashid" [ref=e118] [cursor=pointer]:
+                  - /url: /play/players/2e482a4a-2961-4af7-acf3-9dd394529e76
+              - cell "Islamabad · PK" [ref=e119]
+              - cell "4.4" [ref=e120]
+              - cell "81%" [ref=e121]
+              - cell "6" [ref=e122]
+            - row "prov Taimur Bashir Islamabad · PK 4.1 77% 3" [ref=e123]:
+              - cell "prov" [ref=e124]
+              - cell "Taimur Bashir" [ref=e125]:
+                - link "Taimur Bashir" [ref=e126] [cursor=pointer]:
+                  - /url: /play/players/beea28d7-a7e0-4b70-aaef-701e13aa1089
+              - cell "Islamabad · PK" [ref=e127]
+              - cell "4.1" [ref=e128]
+              - cell "77%" [ref=e129]
+              - cell "3" [ref=e130]
+            - row "prov Zara Patel Karachi · PK 4.1 82% 1" [ref=e131]:
+              - cell "prov" [ref=e132]
+              - cell "Zara Patel" [ref=e133]:
+                - link "Zara Patel" [ref=e134] [cursor=pointer]:
+                  - /url: /play/players/ac685997-4782-4b49-b2f6-385b9ba24694
+              - cell "Karachi · PK" [ref=e135]
+              - cell "4.1" [ref=e136]
+              - cell "82%" [ref=e137]
+              - cell "1" [ref=e138]
+            - row "prov Kiran Lodhi Karachi · PK 4.1 78% 3" [ref=e139]:
+              - cell "prov" [ref=e140]
+              - cell "Kiran Lodhi" [ref=e141]:
+                - link "Kiran Lodhi" [ref=e142] [cursor=pointer]:
+                  - /url: /play/players/6438546a-b228-4ac3-8aa0-020d2427d553
+              - cell "Karachi · PK" [ref=e143]
+              - cell "4.1" [ref=e144]
+              - cell "78%" [ref=e145]
+              - cell "3" [ref=e146]
+            - row "13 Maria Khan Lahore · PK 4.1 81% 5" [ref=e147]:
+              - cell "13" [ref=e148]
+              - cell "Maria Khan" [ref=e149]:
+                - link "Maria Khan" [ref=e150] [cursor=pointer]:
+                  - /url: /play/players/9bf4a7ad-6736-4336-af5c-8e9a733cf059
+              - cell "Lahore · PK" [ref=e151]
+              - cell "4.1" [ref=e152]
+              - cell "81%" [ref=e153]
+              - cell "5" [ref=e154]
+            - row "prov Sana Mirza Islamabad · PK 3.9 77% 1" [ref=e155]:
+              - cell "prov" [ref=e156]
+              - cell "Sana Mirza" [ref=e157]:
+                - link "Sana Mirza" [ref=e158] [cursor=pointer]:
+                  - /url: /play/players/903e8fb2-e62c-4a8d-878a-0eb59782a701
+              - cell "Islamabad · PK" [ref=e159]
+              - cell "3.9" [ref=e160]
+              - cell "77%" [ref=e161]
+              - cell "1" [ref=e162]
+            - row "prov Salman Iqbal Karachi · PK 3.9 71% 3" [ref=e163]:
+              - cell "prov" [ref=e164]
+              - cell "Salman Iqbal" [ref=e165]:
+                - link "Salman Iqbal" [ref=e166] [cursor=pointer]:
+                  - /url: /play/players/b822f535-6fc8-4f5c-87f7-a2d5213ee984
+              - cell "Karachi · PK" [ref=e167]
+              - cell "3.9" [ref=e168]
+              - cell "71%" [ref=e169]
+              - cell "3" [ref=e170]
+            - row "prov Hassan Raza Lahore · PK 3.8 83% 4" [ref=e171]:
+              - cell "prov" [ref=e172]
+              - cell "Hassan Raza" [ref=e173]:
+                - link "Hassan Raza" [ref=e174] [cursor=pointer]:
+                  - /url: /play/players/57be3d0d-9aba-481a-a376-17b9dbbed858
+              - cell "Lahore · PK" [ref=e175]
+              - cell "3.8" [ref=e176]
+              - cell "83%" [ref=e177]
+              - cell "4" [ref=e178]
+            - row "prov Omer Tariq Lahore · PK 3.6 83% 1" [ref=e179]:
+              - cell "prov" [ref=e180]
+              - cell "Omer Tariq" [ref=e181]:
+                - link "Omer Tariq" [ref=e182] [cursor=pointer]:
+                  - /url: /play/players/88c52131-b051-4bcb-8d86-236964106dee
+              - cell "Lahore · PK" [ref=e183]
+              - cell "3.6" [ref=e184]
+              - cell "83%" [ref=e185]
+              - cell "1" [ref=e186]
+            - row "prov Waqas Anwar Islamabad · PK 3.5 82% 4" [ref=e187]:
+              - cell "prov" [ref=e188]
+              - cell "Waqas Anwar" [ref=e189]:
+                - link "Waqas Anwar" [ref=e190] [cursor=pointer]:
+                  - /url: /play/players/b5b9df1c-be84-4061-8918-6359aaddefbb
+              - cell "Islamabad · PK" [ref=e191]
+              - cell "3.5" [ref=e192]
+              - cell "82%" [ref=e193]
+              - cell "4" [ref=e194]
+            - row "prov Maham Yousaf Islamabad · PK 3.1 73% 2" [ref=e195]:
+              - cell "prov" [ref=e196]
+              - cell "Maham Yousaf" [ref=e197]:
+                - link "Maham Yousaf" [ref=e198] [cursor=pointer]:
+                  - /url: /play/players/d55a310b-fa5d-44a8-88b9-61d776404f18
+              - cell "Islamabad · PK" [ref=e199]
+              - cell "3.1" [ref=e200]
+              - cell "73%" [ref=e201]
+              - cell "2" [ref=e202]
+            - row "prov Rida Saeed Lahore · PK 3.1 81% 2" [ref=e203]:
+              - cell "prov" [ref=e204]
+              - cell "Rida Saeed" [ref=e205]:
+                - link "Rida Saeed" [ref=e206] [cursor=pointer]:
+                  - /url: /play/players/d361de93-ceb2-4e06-baeb-a03de4f0be52
+              - cell "Lahore · PK" [ref=e207]
+              - cell "3.1" [ref=e208]
+              - cell "81%" [ref=e209]
+              - cell "2" [ref=e210]
+            - row "prov Danish Vohra Karachi · PK 2.4 70% 2" [ref=e211]:
+              - cell "prov" [ref=e212]
+              - cell "Danish Vohra" [ref=e213]:
+                - link "Danish Vohra" [ref=e214] [cursor=pointer]:
+                  - /url: /play/players/ce2b58fe-6326-4315-831a-d2346656a741
+              - cell "Karachi · PK" [ref=e215]
+              - cell "2.4" [ref=e216]
+              - cell "70%" [ref=e217]
+              - cell "2" [ref=e218]
+  - alert [ref=e219]
