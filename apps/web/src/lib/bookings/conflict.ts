@@ -31,6 +31,28 @@ export async function hasCourtConflict(
       LIMIT 1
     `,
   );
-  // postgres-js returns an array-like rows result
-  return (rows as unknown as { length: number }).length > 0;
+  if ((rows as unknown as { length: number }).length > 0) return true;
+
+  // Also reject if the window overlaps any maintenance / closure row.
+  const closureRows = await tx.execute<{ hit: number }>(
+    sql`
+      SELECT 1 AS hit FROM court_closures
+      WHERE court_id = ${args.courtId}
+        AND start_at < ${endIso}::timestamptz
+        AND end_at > ${startIso}::timestamptz
+      LIMIT 1
+    `,
+  );
+  return (closureRows as unknown as { length: number }).length > 0;
+}
+
+/**
+ * Pure helper for tests: window overlap predicate. Two half-open intervals
+ * [aStart, aEnd) and [bStart, bEnd) overlap iff aStart < bEnd AND aEnd > bStart.
+ */
+export function windowsOverlap(
+  a: { startAt: Date; endAt: Date },
+  b: { startAt: Date; endAt: Date },
+): boolean {
+  return a.startAt.getTime() < b.endAt.getTime() && a.endAt.getTime() > b.startAt.getTime();
 }

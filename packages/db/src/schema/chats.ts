@@ -30,6 +30,12 @@ export const chats = pgTable(
     title: text('title'),
     contextTable: text('context_table'),
     contextId: uuid('context_id'),
+    /**
+     * Free-form deterministic key for non-uuid context lookups. For DM chats
+     * we set this to `${minUserId}:${maxUserId}` so two users always resolve
+     * to the same row via the partial unique index `chats_dm_context_key_uq`.
+     */
+    contextKey: text('context_key'),
     createdByUserId: uuid('created_by_user_id').references(() => users.id, {
       onDelete: 'set null',
     }),

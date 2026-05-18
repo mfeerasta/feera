@@ -42,6 +42,7 @@ export const users = pgTable(
     bio: text('bio'),
     isVerifiedCoach: boolean('is_verified_coach').notNull().default(false),
     federationPlayerIds: jsonb('federation_player_ids').notNull().default(sql`'{}'::jsonb`),
+    skillQuizAnswers: jsonb('skill_quiz_answers').notNull().default(sql`'{}'::jsonb`),
     preferredPaymentMethod: text('preferred_payment_method'),
     editionMemberStatus: editionStatusEnum('edition_member_status').notNull().default('none'),
     editionMemberSince: timestamp('edition_member_since', { withTimezone: true }),

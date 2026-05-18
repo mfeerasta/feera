@@ -34,6 +34,7 @@ export const editionStatusEnum = pgEnum('edition_status', [
 export const bookingStatusEnum = pgEnum('booking_status', [
   'pending',
   'confirmed',
+  'in_progress',
   'cancelled',
   'completed',
   'no_show',

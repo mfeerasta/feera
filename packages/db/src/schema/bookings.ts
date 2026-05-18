@@ -64,6 +64,7 @@ export const bookingParticipants = pgTable('booking_participants', {
   paidAmount: doublePrecision('paid_amount'),
   paymentStatus: bookingPaymentStatusEnum('payment_status').notNull().default('pending'),
   paidToOrganizerAt: timestamp('paid_to_organizer_at', { withTimezone: true }),
+  checkedInAt: timestamp('checked_in_at', { withTimezone: true }),
   createdAt: createdAtColumn(),
   updatedAt: updatedAtColumn(),
 });

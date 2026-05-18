@@ -11,7 +11,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { clubs } from './clubs';
+import { clubs, courts } from './clubs';
 import {
   createdAtColumn,
   deletedAtColumn,
@@ -54,6 +54,8 @@ export const tournaments = pgTable(
     entryFee: doublePrecision('entry_fee').notNull().default(0),
     currency: text('currency').notNull(),
     prizePool: jsonb('prize_pool').notNull().default(sql`'{}'::jsonb`),
+    prizePoolCurrency: text('prize_pool_currency'),
+    prizePoolDistribution: jsonb('prize_pool_distribution').notNull().default(sql`'{}'::jsonb`),
     rulesUrl: text('rules_url'),
     isEditionOnly: boolean('is_edition_only').notNull().default(false),
     isRanked: boolean('is_ranked').notNull().default(true),
@@ -88,6 +90,7 @@ export const tournamentRegistrations = pgTable(
     seed: integer('seed'),
     status: tournamentRegistrationStatusEnum('status').notNull().default('pending'),
     paymentId: uuid('payment_id'),
+    checkedInAt: timestamp('checked_in_at', { withTimezone: true }),
     registeredAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -131,7 +134,7 @@ export const tournamentMatches = pgTable(
       .notNull()
       .references(() => tournaments.id, { onDelete: 'cascade' }),
     roundId: uuid('round_id').references(() => tournamentRounds.id, { onDelete: 'set null' }),
-    courtId: uuid('court_id'),
+    courtId: uuid('court_id').references(() => courts.id, { onDelete: 'set null' }),
     scheduledAt: timestamp('scheduled_at', { withTimezone: true }),
     teamARegistrationId: uuid('team_a_registration_id').references(
       () => tournamentRegistrations.id,

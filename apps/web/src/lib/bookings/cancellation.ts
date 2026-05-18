@@ -20,7 +20,7 @@ export type RefundFraction = 0 | 0.5 | 1;
 
 export interface CancellationBookingInput {
   startAt: Date;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show';
+  status: 'pending' | 'confirmed' | 'in_progress' | 'cancelled' | 'completed' | 'no_show';
 }
 
 export interface CancellationOutcome {

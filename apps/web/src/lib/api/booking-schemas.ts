@@ -55,7 +55,7 @@ export const bookingUpdateSchema = z.object({
 export const bookingListQuerySchema = z.object({
   organizerUserId: z.string().uuid().optional(),
   courtId: z.string().uuid().optional(),
-  status: z.enum(['pending', 'confirmed', 'cancelled', 'completed', 'no_show']).optional(),
+  status: z.enum(['pending', 'confirmed', 'in_progress', 'cancelled', 'completed', 'no_show']).optional(),
   from: isoDateTime.optional(),
   to: isoDateTime.optional(),
   limit: z.coerce.number().int().positive().max(200).default(50),

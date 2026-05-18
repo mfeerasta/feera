@@ -171,7 +171,7 @@ export async function createBooking(
 export interface BookingListFilters {
   organizerUserId?: string;
   courtId?: string;
-  status?: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show';
+  status?: 'pending' | 'confirmed' | 'in_progress' | 'cancelled' | 'completed' | 'no_show';
   from?: Date;
   to?: Date;
   limit: number;
