@@ -34,7 +34,8 @@ export type NotificationTemplateName =
   | 'coaching_verification_approved'
   | 'friend_request_received'
   | 'friend_request_accepted'
-  | 'booking_invite_received';
+  | 'booking_invite_received'
+  | 'achievement_awarded';
 
 export type NotificationRecipient = Readonly<{
   userId: Uuid;

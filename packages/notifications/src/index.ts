@@ -27,6 +27,7 @@ export { coachingVerificationApproved } from './templates/coaching-verification-
 export { friendRequestReceived } from './templates/friend-request-received';
 export { friendRequestAccepted } from './templates/friend-request-accepted';
 export { bookingInviteReceived } from './templates/booking-invite-received';
+export { achievementAwarded } from './templates/achievement-awarded';
 
 import type { NotificationTemplate, NotificationTemplateName } from './types';
 import { bookingConfirmed as _bookingConfirmed } from './templates/booking-confirmed';
@@ -47,6 +48,7 @@ import { coachingVerificationApproved as _coachingVerificationApproved } from '.
 import { friendRequestReceived as _friendRequestReceived } from './templates/friend-request-received';
 import { friendRequestAccepted as _friendRequestAccepted } from './templates/friend-request-accepted';
 import { bookingInviteReceived as _bookingInviteReceived } from './templates/booking-invite-received';
+import { achievementAwarded as _achievementAwarded } from './templates/achievement-awarded';
 
 export const templateRegistry: Record<NotificationTemplateName, NotificationTemplate<string>> = {
   booking_confirmed: _bookingConfirmed,
@@ -67,4 +69,5 @@ export const templateRegistry: Record<NotificationTemplateName, NotificationTemp
   friend_request_received: _friendRequestReceived,
   friend_request_accepted: _friendRequestAccepted,
   booking_invite_received: _bookingInviteReceived,
+  achievement_awarded: _achievementAwarded,
 };

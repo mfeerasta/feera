@@ -3,6 +3,7 @@ import { sentry } from '@feera/analytics/sentry';
 import { db, workerHeartbeats } from '@feera/db';
 import { log } from './lib/log.js';
 import { accountPurge } from './jobs/account-purge.js';
+import { awardAchievements } from './jobs/award-achievements.js';
 import { backupCheck } from './jobs/backup-check.js';
 import { costWatcher } from './jobs/cost-watcher.js';
 import { notificationFanout } from './jobs/notification-fanout.js';
@@ -17,6 +18,7 @@ export const allJobs: readonly Job[] = [
   backupCheck,
   costWatcher,
   accountPurge,
+  awardAchievements,
 ];
 
 function newRunId(jobName: string): string {

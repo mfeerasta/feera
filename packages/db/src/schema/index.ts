@@ -44,3 +44,4 @@ export * from './worker-heartbeats';
 export * from './court-closures';
 export * from './club-member-notes';
 export * from './booking-invites';
+export * from './achievements';

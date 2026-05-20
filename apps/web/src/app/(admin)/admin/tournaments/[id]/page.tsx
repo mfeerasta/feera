@@ -76,6 +76,11 @@ export default async function AdminTournamentDetail({ params, searchParams }: Pa
               Live view
             </Button>
           </Link>
+          <a href={`/api/v1/tournaments/${t.id}/bracket.pdf`}>
+            <Button variant="ghost" size="sm">
+              Bracket PDF
+            </Button>
+          </a>
           {canStart ? (
             <form action={`/api/v1/tournaments/${t.id}/start`} method="post">
               <Button type="submit" variant="inverted" size="sm">

@@ -91,6 +91,12 @@ export default async function TournamentDetailPage({ params }: PageProps) {
           >
             Live
           </Link>
+          <a
+            href={`/api/v1/tournaments/${t.id}/bracket.pdf`}
+            className="border border-ink-deep/40 px-6 py-3 text-sm text-ink-deep/80 hover:bg-ink-deep/5"
+          >
+            Bracket PDF
+          </a>
         </div>
       </header>
 

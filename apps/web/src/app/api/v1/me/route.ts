@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { userRatings, users } from '@feera/db';
+import { fromDisplayRating } from '@feera/matching';
 import {
   badRequest,
   fromZodError,
@@ -15,6 +16,20 @@ import { getSession, withRequestContext } from '@/lib/api/request-context';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const answerKey = z.enum(['a', 'b', 'c']);
+const skillQuizSchema = z
+  .object({
+    tennisYears: answerKey.optional(),
+    padelMonths: answerKey.optional(),
+    backWall: answerKey.optional(),
+    attendance: answerKey.optional(),
+    serve: answerKey.optional(),
+    lob: answerKey.optional(),
+    bandejaVibora: answerKey.optional(),
+    tournaments: answerKey.optional(),
+  })
+  .strict();
+
 const updateSchema = z.object({
   displayName: z.string().min(1).max(160).optional(),
   locale: z.enum(['en', 'ur', 'ar', 'es', 'fr', 'it', 'pt']).optional(),
@@ -23,6 +38,8 @@ const updateSchema = z.object({
   genderVisibility: z.enum(['public', 'friends', 'private']).optional(),
   womenOnlyPoolOptIn: z.boolean().optional(),
   bio: z.string().max(2000).nullable().optional(),
+  skillQuizAnswers: skillQuizSchema.optional(),
+  startingRating: z.number().min(0).max(7).optional(),
 });
 
 export async function GET() {
@@ -84,10 +101,17 @@ export async function PATCH(req: NextRequest) {
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) return fromZodError(parsed.error);
 
+    const { skillQuizAnswers, startingRating, ...rest } = parsed.data;
+
     const updated = await withRequestContext(session, async (tx) => {
+      const updates: Record<string, unknown> = { ...rest };
+      if (skillQuizAnswers !== undefined) {
+        updates.skillQuizAnswers = skillQuizAnswers;
+      }
+
       const [row] = await tx
         .update(users)
-        .set(parsed.data)
+        .set(updates)
         .where(eq(users.id, session.userId))
         .returning({
           id: users.id,
@@ -97,6 +121,37 @@ export async function PATCH(req: NextRequest) {
           genderVisibility: users.genderVisibility,
           bio: users.bio,
         });
+
+      // Only apply the quiz-derived starting rating when the player has zero
+      // verified matches. Real Glicko output must never be clobbered.
+      if (row && typeof startingRating === 'number') {
+        const [existing] = await tx
+          .select({
+            matchCount: userRatings.matchCount,
+          })
+          .from(userRatings)
+          .where(eq(userRatings.userId, session.userId))
+          .limit(1);
+
+        if (!existing) {
+          await tx.insert(userRatings).values({
+            userId: session.userId,
+            ratingInternal: fromDisplayRating(startingRating),
+            ratingDisplay: startingRating,
+            isProvisional: true,
+          });
+        } else if (existing.matchCount === 0) {
+          await tx
+            .update(userRatings)
+            .set({
+              ratingInternal: fromDisplayRating(startingRating),
+              ratingDisplay: startingRating,
+              isProvisional: true,
+            })
+            .where(eq(userRatings.userId, session.userId));
+        }
+      }
+
       return row;
     });
 
