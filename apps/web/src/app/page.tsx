@@ -26,7 +26,7 @@ export default async function HomePage() {
   const footerLinks: { key: string; href: string }[] = [
     { key: 'nav.about', href: '/' },
     { key: 'nav.clubs', href: '/clubs' },
-    { key: 'nav.careers', href: '/' },
+    { key: 'nav.courts', href: '/courts' },
     { key: 'nav.privacy', href: '/privacy' },
     { key: 'nav.terms', href: '/terms' },
     { key: 'nav.apiDocs', href: '/api/docs' },
