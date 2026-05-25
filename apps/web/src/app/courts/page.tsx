@@ -5,9 +5,9 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { QuoteForm } from './quote-form';
 
 export const metadata: Metadata = {
-  title: 'Feera Courts — Padel Court Consultancy for North America',
+  title: 'Feera Courts — Padel Infrastructure for the Great Lakes',
   description:
-    'End-to-end padel court design, sourcing, and installation consultancy for clubs across Canada and the United States. From site assessment to first serve.',
+    'Consulting, development, and capital for padel clubs in Michigan, Ontario, and the Midwest. Feasibility studies, owner representation, and co-investment backed by demand data from the Feera app.',
 };
 
 const COURT_TYPES = [
@@ -144,6 +144,30 @@ const MONTHLY_OPS = [
   { item: 'Marketing', cost: '$1,000 - $3,000' },
 ];
 
+const PORTFOLIO = [
+  {
+    name: 'Project Alpha',
+    location: 'Windsor, ON',
+    courts: 4,
+    stage: 'In Feasibility',
+    slug: 'project-alpha',
+  },
+  {
+    name: 'Project Beta',
+    location: 'Troy, MI',
+    courts: 6,
+    stage: 'Site Selection',
+    slug: 'project-beta',
+  },
+  {
+    name: 'Project Gamma',
+    location: 'Ann Arbor, MI',
+    courts: 4,
+    stage: 'Early Discussions',
+    slug: 'project-gamma',
+  },
+];
+
 export default function CourtsPage() {
   return (
     <div
@@ -172,6 +196,30 @@ export default function CourtsPage() {
             >
               Clubs
             </Link>
+            <Link
+              href="/courts/about"
+              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
+            >
+              About
+            </Link>
+            <Link
+              href="/courts/methodology"
+              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
+            >
+              Methodology
+            </Link>
+            <Link
+              href="/courts/partners"
+              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
+            >
+              Partners
+            </Link>
+            <Link
+              href="/courts/work"
+              className="feera-motion text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-accent)]"
+            >
+              Our Work
+            </Link>
             <ThemeToggle />
           </nav>
         </div>
@@ -194,28 +242,34 @@ export default function CourtsPage() {
           <p className="text-xs uppercase tracking-[0.3em] text-court">
             Feera Courts
           </p>
-          <h1 className="mt-6 max-w-[20ch] font-serif text-6xl font-normal leading-none tracking-[-0.02em] md:text-7xl">
-            Build your padel club. From blueprint to first serve.
+          <h1 className="mt-6 max-w-[24ch] font-serif text-6xl font-normal leading-none tracking-[-0.02em] md:text-7xl">
+            We build the padel infrastructure of the Great Lakes.
           </h1>
           <p className="mt-8 max-w-xl text-lg leading-relaxed text-[color:var(--color-fg-muted)]">
-            End-to-end padel court consultancy for North America. We handle
-            supplier sourcing, court configuration, facility design, permitting
-            guidance, and installation coordination across Canada and the United
-            States.
+            Feera Courts is the consulting, development, and capital arm of
+            Feera. We help operators and investors plan, build, and finance padel
+            clubs in Michigan, Ontario, and across the Midwest. Backed by demand
+            data from the Feera app.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
+            <a
+              href="#quote"
+              className="feera-motion inline-flex items-center justify-center border border-court bg-court px-6 py-3 text-sm text-cream hover:bg-court/90"
+            >
+              Request a feasibility study
+            </a>
+            <Link
+              href="/courts/work"
+              className="feera-motion inline-flex items-center justify-center border border-[color:var(--color-fg)] px-6 py-3 text-sm text-[color:var(--color-fg)] hover:border-court hover:text-court"
+            >
+              View our work
+            </Link>
             <Link
               href="/courts/configure"
-              className="feera-motion inline-flex items-center justify-center border border-court bg-court px-6 py-3 text-sm text-cream hover:bg-court/90"
+              className="feera-motion inline-flex items-center justify-center border border-[color:var(--color-fg)]/30 px-6 py-3 text-sm text-[color:var(--color-fg-muted)] hover:border-court hover:text-court"
             >
               Open court configurator
             </Link>
-            <a
-              href="#quote"
-              className="feera-motion inline-flex items-center justify-center border border-[color:var(--color-fg)] px-6 py-3 text-sm text-[color:var(--color-fg)] hover:border-court hover:text-court"
-            >
-              Get a free consultation
-            </a>
           </div>
         </div>
       </section>
@@ -224,10 +278,10 @@ export default function CourtsPage() {
       <section className="border-y border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 divide-y divide-[color:var(--color-border)] px-6 md:grid-cols-4 md:divide-x md:divide-y-0">
           {[
-            'FIP-compliant specs',
-            'Vetted global suppliers',
-            'Canada + USA coverage',
-            'Feera booking included',
+            'Windsor-Detroit corridor',
+            'Demand data from the Feera app',
+            '3 revenue streams',
+            '$35K feasibility studies',
           ].map((item) => (
             <div
               key={item}
@@ -239,48 +293,83 @@ export default function CourtsPage() {
         </div>
       </section>
 
-      {/* What we do */}
+      {/* The market */}
       <section
         data-theme="light"
         className="bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
       >
         <div className="mx-auto max-w-[1280px] px-6 py-[107px]">
           <p className="text-xs uppercase tracking-[0.3em] text-[color:var(--color-fg-muted)]">
+            The market
+          </p>
+          <h2 className="mt-4 max-w-[24ch] font-serif text-5xl leading-tight tracking-tight md:text-6xl">
+            The white space is enormous.
+          </h2>
+          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+            {[
+              {
+                stat: '688',
+                label: 'padel courts in the US as of Q2 2025',
+              },
+              {
+                stat: '6,800',
+                label: 'projected by 2030',
+              },
+              {
+                stat: '1',
+                label: 'dedicated padel facility in Detroit metro today',
+              },
+            ].map((tile) => (
+              <div
+                key={tile.stat}
+                className="flex flex-col gap-3 border border-[color:var(--color-border)] p-8"
+              >
+                <p className="font-serif text-5xl text-court">{tile.stat}</p>
+                <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
+                  {tile.label}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
+            The Great Lakes region is home to 15 million people and fewer than a
+            dozen padel courts. Most racquet sport players in Michigan and Ontario
+            have never stepped on a padel court. The demand signal is clear in
+            our app data: search volume for padel in Metro Detroit has grown 4x
+            since 2023, but supply has barely moved. This is the definition of a
+            build-ready market.
+          </p>
+          <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)]">
+            Sources: Misitrano State of Padel US 2025, FIP World Padel Report
+            2025
+          </p>
+        </div>
+      </section>
+
+      {/* What we do */}
+      <section className="border-y border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
+        <div className="mx-auto max-w-[1280px] px-6 py-[107px]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[color:var(--color-fg-muted)]">
             What we do
           </p>
           <h2 className="mt-4 max-w-[24ch] font-serif text-5xl leading-tight tracking-tight md:text-6xl">
-            Everything between the idea and the opening day.
+            Three revenue streams. One team.
           </h2>
           <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3">
             {[
               {
-                title: 'Site assessment',
-                body: 'Zoning analysis, orientation study, foundation engineering, and permit roadmapping for your specific municipality.',
+                title: 'Feasibility and Strategy',
+                body: 'Site selection, demand modeling, 5-year financial models, vendor RFPs. Engagements start at $35K.',
                 image: '/images/courts/service-site-assessment.png',
               },
               {
-                title: 'Court configuration',
-                body: 'Choose court type, glass spec, turf, lighting, and layout. We model 2-court to 8-court facilities with shared walls and spectator flow.',
-                image: '/images/courts/service-court-config.png',
-              },
-              {
-                title: 'Supplier sourcing',
-                body: 'We work with vetted manufacturers in Spain, Italy, and China. Factory QC, shipping logistics, customs, and landed-cost optimization.',
+                title: 'Build and Source',
+                body: "Owner's representative through opening. Great Lakes dealership for premium European courts. 4-5% of project capex.",
                 image: '/images/courts/service-supplier-sourcing.png',
               },
               {
-                title: 'Facility design',
-                body: 'Clubhouse, locker rooms, pro shop, bar, viewing gallery, parking. Full amenity planning with cost modeling.',
-                image: '/images/courts/service-facility-design.png',
-              },
-              {
-                title: 'Technology stack',
-                body: 'Feera booking platform, access control, camera systems, scoreboards, Wi-Fi, and digital signage. Turnkey tech.',
-                image: '/images/courts/service-technology.png',
-              },
-              {
-                title: 'Financial modeling',
-                body: 'Revenue projections, operating cost breakdown, ROI timeline, membership pricing strategy, and sponsorship revenue planning.',
+                title: 'Co-Invest',
+                body: 'Selective minority equity in operator projects we have helped underwrite. 5-15% stakes. Skin in the game.',
                 image: '/images/courts/service-financial.png',
               },
             ].map((service) => (
@@ -306,6 +395,31 @@ export default function CourtsPage() {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Why us (data moat) */}
+      <section
+        data-theme="dark"
+        className="bg-[color:var(--color-bg-fold)] text-[color:var(--color-fg)]"
+      >
+        <div className="mx-auto max-w-[1280px] px-6 py-[107px]">
+          <p className="text-xs uppercase tracking-[0.3em] text-court">
+            Why us
+          </p>
+          <h2 className="mt-4 max-w-[20ch] font-serif text-5xl leading-tight tracking-tight md:text-6xl">
+            We see demand before anyone else.
+          </h2>
+          <p className="mt-8 max-w-2xl text-base leading-relaxed text-[color:var(--color-fg-muted)]">
+            Feera is the padel social app. Every booking, every match, every
+            player heatmap flows through our platform. When we tell you a 6-court
+            club at the corner of Big Beaver and Coolidge in Troy can hit 60%
+            peak utilization in 18 months, we are not modeling assumptions. We are
+            reading data.
+          </p>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-[color:var(--color-fg-muted)]">
+            No other padel consultant in North America can say that.
+          </p>
         </div>
       </section>
 
@@ -572,7 +686,7 @@ export default function CourtsPage() {
       >
         <div className="mx-auto max-w-[1280px] px-6 py-[107px]">
           <p className="text-xs uppercase tracking-[0.3em] text-court">
-            Built for North America
+            Built for the Great Lakes
           </p>
           <h2 className="mt-4 font-serif text-5xl leading-tight tracking-tight md:text-6xl">
             From Miami heat to Toronto snow.
@@ -681,7 +795,7 @@ export default function CourtsPage() {
         </div>
       </section>
 
-      {/* Service tiers */}
+      {/* Service tiers / Pricing */}
       <section className="border-y border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
         <div className="mx-auto max-w-[1280px] px-6 py-[107px]">
           <p className="text-xs uppercase tracking-[0.3em] text-[color:var(--color-fg-muted)]">
@@ -696,74 +810,123 @@ export default function CourtsPage() {
                 Tier 1
               </p>
               <h3 className="font-serif text-3xl tracking-tight">
-                Consultation
+                Feasibility Study
               </h3>
               <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-                60-minute deep dive into your project. Site assessment
-                checklist, court type recommendation, supplier shortlist, and
-                ballpark budget.
+                Market sizing, demographic model, 3 site options scored, 12-month
+                build cost estimate, 5-year P&amp;L base case.
               </p>
               <div className="mt-auto">
-                <p className="font-serif text-2xl text-court">Free</p>
+                <p className="font-serif text-2xl text-court">$35K flat</p>
                 <p className="mt-1 text-xs text-[color:var(--color-fg-muted)]">
-                  No commitment. Introductory call.
+                  4-6 weeks.
                 </p>
               </div>
               <p className="text-xs text-[color:var(--color-fg-muted)]">
-                Deliverables: site checklist, court type brief, supplier
-                shortlist, ballpark cost range.
+                Deliverables: market sizing report, demographic model, site
+                scoring matrix, build cost estimate, 5-year P&amp;L projection.
               </p>
             </article>
             <article className="flex flex-col gap-6 border border-court p-8">
               <p className="text-[10px] uppercase tracking-[0.25em] text-court">
-                Tier 2 — most popular
+                Tier 2
               </p>
               <h3 className="font-serif text-3xl tracking-tight">
-                Full advisory
+                Pre-Investment Package
               </h3>
               <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-                Complete feasibility study, facility design, supplier RFQ
-                management, financial modeling, and permit guidance. We stay
-                with you through procurement.
+                Everything in Feasibility, plus sensitivity model, vendor RFP,
+                lease negotiation support, opening-day playbook.
               </p>
               <div className="mt-auto">
                 <p className="font-serif text-2xl text-court">
-                  5% of project cost
+                  $75K - $150K
                 </p>
                 <p className="mt-1 text-xs text-[color:var(--color-fg-muted)]">
-                  Minimum $15,000. Capped at $75,000.
+                  8-12 weeks.
                 </p>
               </div>
               <p className="text-xs text-[color:var(--color-fg-muted)]">
-                Deliverables: feasibility study PDF, pro forma financials, 2D
-                layout, supplier comparison matrix, RFQ coordination, permit
-                roadmap.
+                Deliverables: all Feasibility items plus sensitivity analysis,
+                vendor RFP package, lease term sheets, opening-day playbook.
               </p>
             </article>
             <article className="flex flex-col gap-6 border border-[color:var(--color-border)] p-8">
               <p className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
                 Tier 3
               </p>
-              <h3 className="font-serif text-3xl tracking-tight">Turnkey</h3>
+              <h3 className="font-serif text-3xl tracking-tight">
+                Owner&#39;s Representative
+              </h3>
               <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-                Everything in Full Advisory plus installation oversight, QA
-                inspection, technology deployment, and operational setup. We
-                hand you the keys.
+                Full project management from site selection through opening.
+                Installation oversight, QA inspection, technology deployment,
+                staff training, and launch coordination.
               </p>
               <div className="mt-auto">
                 <p className="font-serif text-2xl text-court">
-                  8% of project cost
+                  4-5% of project capex
                 </p>
                 <p className="mt-1 text-xs text-[color:var(--color-fg-muted)]">
-                  Minimum $30,000. Includes on-site presence.
+                  Duration matches project timeline.
                 </p>
               </div>
               <p className="text-xs text-[color:var(--color-fg-muted)]">
-                Deliverables: all Tier 2 items plus factory QC report,
+                Deliverables: all prior tier items plus factory QC reports,
                 installation supervision, Feera platform setup, staff training,
                 launch marketing plan.
               </p>
             </article>
+          </div>
+          <p className="mt-12 max-w-2xl text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
+            We also co-invest selectively, taking 5-15% minority equity in
+            projects we underwrite. This aligns our interests with yours and
+            signals our conviction in the opportunity.
+          </p>
+        </div>
+      </section>
+
+      {/* Portfolio */}
+      <section
+        data-theme="light"
+        className="bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
+      >
+        <div className="mx-auto max-w-[1280px] px-6 py-[107px]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[color:var(--color-fg-muted)]">
+            Portfolio
+          </p>
+          <h2 className="mt-4 font-serif text-5xl leading-tight tracking-tight md:text-6xl">
+            Active projects.
+          </h2>
+          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+            {PORTFOLIO.map((project) => (
+              <Link
+                key={project.slug}
+                href={`/courts/work/${project.slug}`}
+                className="feera-motion group flex flex-col gap-4 border border-[color:var(--color-border)] p-8 hover:border-court"
+              >
+                <p className="text-[10px] uppercase tracking-[0.25em] text-court">
+                  {project.stage}
+                </p>
+                <h3 className="font-serif text-3xl tracking-tight">
+                  {project.name}
+                </h3>
+                <div className="mt-auto flex items-baseline justify-between border-t border-[color:var(--color-border)] pt-6">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)]">
+                      Location
+                    </p>
+                    <p className="mt-1 text-sm">{project.location}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)]">
+                      Courts
+                    </p>
+                    <p className="mt-1 text-sm">{project.courts}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -891,6 +1054,22 @@ export default function CourtsPage() {
           <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-2">
             {[
               {
+                q: 'How is Feera Courts different from other padel consultants?',
+                a: 'We are the only padel consultancy backed by a consumer app with live demand data. Our feasibility studies are grounded in actual player behavior, not survey estimates. We also co-invest in projects we underwrite, which means our incentives are aligned with yours.',
+              },
+              {
+                q: 'Will you sign an NDA?',
+                a: 'Yes. We sign mutual NDAs before any substantive project discussion. We understand that site locations, financial projections, and partnership details are commercially sensitive.',
+              },
+              {
+                q: 'How does the Feera app data inform feasibility studies?',
+                a: 'The Feera app tracks player registrations, booking patterns, match frequency, and geographic density across every market we operate in. We use this data to model utilization rates, peak hours, and membership conversion for specific locations. It replaces the guesswork that other consultants rely on.',
+              },
+              {
+                q: "What is your stance on pickleball and hybrid facilities?",
+                a: 'We are padel-first. Hybrid padel/pickleball facilities introduce structural compromises (different court dimensions, different surfaces, different player demographics). If you want to add pickleball courts alongside padel courts, we can advise on layout, but we do not recommend convertible or dual-use courts.',
+              },
+              {
                 q: 'How long does the entire process take?',
                 a: 'Typical outdoor project: 14-17 weeks from consultation to opening. Indoor conversions add 2-4 weeks. New steel buildings add 4-8 weeks. Canadian projects may have longer permit timelines depending on municipality.',
               },
@@ -904,7 +1083,7 @@ export default function CourtsPage() {
               },
               {
                 q: 'Do you handle ongoing maintenance?',
-                a: 'Our Turnkey tier includes operational setup and maintenance planning. Turf lasts 4-7 years, glass is indefinite (replace individual panels if cracked), and LED lighting lasts 5-10 years. Annual maintenance budget: $2,000-$6,000 per court.',
+                a: "Our Owner's Representative tier includes operational setup and maintenance planning. Turf lasts 4-7 years, glass is indefinite (replace individual panels if cracked), and LED lighting lasts 5-10 years. Annual maintenance budget: $2,000-$6,000 per court.",
               },
               {
                 q: 'Why is Windsor cheaper for EU courts?',
@@ -916,7 +1095,7 @@ export default function CourtsPage() {
               },
               {
                 q: 'Do you compete with Zmash in Detroit?',
-                a: 'Zmash is a club operator. We are a consultancy. We help you build your own club. That said, we track the competitive landscape and factor existing facilities into our feasibility studies.',
+                a: 'Zmash is a club operator. We are a consultancy and development firm. We help you build your own club. That said, we track the competitive landscape and factor existing facilities into our feasibility studies.',
               },
               {
                 q: 'What is the minimum viable investment?',
@@ -952,17 +1131,16 @@ export default function CourtsPage() {
                 Tell us about your project.
               </h2>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-[color:var(--color-fg-muted)]">
-                Free initial consultation. We will assess your site, recommend
-                court configurations, model costs, and connect you with the
-                right suppliers for your market and budget.
+                Request a feasibility study or tell us where you are in your
+                project. We will assess the opportunity and respond within 48
+                hours.
               </p>
               <div className="mt-12 flex flex-col gap-6">
                 {[
-                  '1. Free 30-minute consultation call',
-                  '2. Site assessment and feasibility report',
-                  '3. Custom facility design and cost model',
-                  '4. Supplier introductions and RFQ coordination',
-                  '5. Installation oversight and quality assurance',
+                  '1. Submit your project details',
+                  '2. We review and schedule a call within 48 hours',
+                  '3. Feasibility study scoping and proposal',
+                  '4. Engagement kicks off on signed SOW',
                 ].map((step) => (
                   <p
                     key={step}
@@ -989,7 +1167,8 @@ export default function CourtsPage() {
               feera
             </Link>
             <p className="text-xs text-[color:var(--color-fg-muted)]">
-              Feera Courts is a division of Feera.
+              Feera Courts is the consulting, development, and capital arm of
+              Feera.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-x-12 gap-y-3 text-xs uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)] md:grid-cols-4">
