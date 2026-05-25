@@ -714,7 +714,13 @@
     "rejectClubBody": "سيُبلَّغ المالك بسببك.",
     "rejectReason": "السبب",
     "rejectReasonPlaceholder": "ملاحظة قصيرة لمالك النادي.",
-    "navObservability": "المراقبة"
+    "navObservability": "المراقبة",
+    "navCourts": "الملاعب",
+    "navCourtsLeads": "العملاء المحتملون",
+    "navCourtsPipeline": "خط الأنابيب",
+    "navCourtsHardware": "الأجهزة",
+    "navCourtsPortfolio": "المحفظة",
+    "navCourtsFinancials": "الماليات"
   },
   "observability": {
     "title": "المراقبة",

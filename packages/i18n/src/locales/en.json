@@ -714,7 +714,13 @@
     "rejectClubBody": "The owner will be notified with your reason.",
     "rejectReason": "Reason",
     "rejectReasonPlaceholder": "Short note for the club owner.",
-    "navObservability": "Observability"
+    "navObservability": "Observability",
+    "navCourts": "Courts",
+    "navCourtsLeads": "Leads",
+    "navCourtsPipeline": "Pipeline",
+    "navCourtsHardware": "Hardware",
+    "navCourtsPortfolio": "Portfolio",
+    "navCourtsFinancials": "Financials"
   },
   "observability": {
     "title": "Observability",

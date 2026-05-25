@@ -714,7 +714,13 @@
     "rejectClubBody": "مالک کو آپ کی وجہ کے ساتھ اطلاع دی جائے گی۔",
     "rejectReason": "وجہ",
     "rejectReasonPlaceholder": "کلب مالک کے لیے مختصر نوٹ۔",
-    "navObservability": "آبزرویبلٹی"
+    "navObservability": "آبزرویبلٹی",
+    "navCourts": "کورٹس",
+    "navCourtsLeads": "لیڈز",
+    "navCourtsPipeline": "پائپ لائن",
+    "navCourtsHardware": "ہارڈویئر",
+    "navCourtsPortfolio": "پورٹ فولیو",
+    "navCourtsFinancials": "مالیات"
   },
   "observability": {
     "title": "آبزرویبلٹی",
