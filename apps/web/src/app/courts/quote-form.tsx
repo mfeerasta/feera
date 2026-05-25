@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackCourtsEvent } from '@/lib/courts/analytics';
 
 const PROJECT_STAGES = [
   'Idea',
@@ -33,6 +34,10 @@ export function QuoteForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+      });
+      trackCourtsEvent('courts_lead_form_submitted', {
+        capex_range: String(payload.capexRange ?? ''),
+        project_stage: String(payload.projectStage ?? ''),
       });
       setSubmitted(true);
     } catch {

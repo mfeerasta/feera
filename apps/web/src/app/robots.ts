@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/', '/play/bookings/'],
+        disallow: ['/admin/', '/admin/courts/', '/api/', '/play/bookings/'],
       },
     ],
     sitemap: 'https://www.feera.ai/sitemap.xml',
