@@ -5,9 +5,17 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { QuoteForm } from './quote-form';
 
 export const metadata: Metadata = {
-  title: 'Feera Courts — Padel Infrastructure for the Great Lakes',
+  title: 'Feera Courts — Padel Court Consultancy',
   description:
     'Consulting, development, and capital for padel clubs in Michigan, Ontario, and the Midwest. Feasibility studies, owner representation, and co-investment backed by demand data from the Feera app.',
+  openGraph: {
+    title: 'Feera Courts — Padel Court Consultancy',
+    description:
+      'Consulting, development, and capital for padel clubs in Michigan, Ontario, and the Midwest. Feasibility studies, owner representation, and co-investment backed by demand data from the Feera app.',
+    url: 'https://www.feera.ai/courts',
+    siteName: 'Feera',
+    type: 'website',
+  },
 };
 
 const COURT_TYPES = [
@@ -1171,7 +1179,7 @@ export default function CourtsPage() {
               Feera.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-12 gap-y-3 text-xs uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)] md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-12 gap-y-3 text-xs uppercase tracking-[0.2em] text-[color:var(--color-fg-muted)] md:grid-cols-4 lg:grid-cols-5">
             <Link
               href="/"
               className="feera-motion hover:text-[color:var(--color-accent)]"
@@ -1183,6 +1191,36 @@ export default function CourtsPage() {
               className="feera-motion hover:text-[color:var(--color-accent)]"
             >
               Clubs
+            </Link>
+            <Link
+              href="/courts"
+              className="feera-motion hover:text-[color:var(--color-accent)]"
+            >
+              Courts
+            </Link>
+            <Link
+              href="/courts/methodology"
+              className="feera-motion hover:text-[color:var(--color-accent)]"
+            >
+              Methodology
+            </Link>
+            <Link
+              href="/courts/about"
+              className="feera-motion hover:text-[color:var(--color-accent)]"
+            >
+              About
+            </Link>
+            <Link
+              href="/courts/partners"
+              className="feera-motion hover:text-[color:var(--color-accent)]"
+            >
+              Partners
+            </Link>
+            <Link
+              href="/courts/work"
+              className="feera-motion hover:text-[color:var(--color-accent)]"
+            >
+              Our Work
             </Link>
             <Link
               href="/privacy"

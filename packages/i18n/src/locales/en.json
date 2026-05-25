@@ -721,7 +721,8 @@
     "navCourtsHardware": "Hardware",
     "navCourtsPortfolio": "Portfolio",
     "navCourtsProjects": "Projects",
-    "navCourtsFinancials": "Financials"
+    "navCourtsFinancials": "Financials",
+    "navCourtsDocs": "Docs"
   },
   "observability": {
     "title": "Observability",

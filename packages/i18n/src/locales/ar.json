@@ -721,7 +721,8 @@
     "navCourtsHardware": "الأجهزة",
     "navCourtsPortfolio": "المحفظة",
     "navCourtsProjects": "المشاريع",
-    "navCourtsFinancials": "الماليات"
+    "navCourtsFinancials": "الماليات",
+    "navCourtsDocs": "المستندات"
   },
   "observability": {
     "title": "المراقبة",

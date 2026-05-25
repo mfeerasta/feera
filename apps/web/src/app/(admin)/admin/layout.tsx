@@ -28,6 +28,7 @@ const navItems: readonly NavItem[] = [
   { href: '/admin/courts/hardware', labelKey: 'admin.navCourtsHardware' },
   { href: '/admin/courts/portfolio', labelKey: 'admin.navCourtsPortfolio' },
   { href: '/admin/courts/financials', labelKey: 'admin.navCourtsFinancials' },
+  { href: '/admin/courts/docs', labelKey: 'admin.navCourtsDocs' },
 ];
 
 async function pendingClubsCount(): Promise<number> {

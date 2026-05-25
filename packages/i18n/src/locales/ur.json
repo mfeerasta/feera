@@ -721,7 +721,8 @@
     "navCourtsHardware": "ہارڈویئر",
     "navCourtsPortfolio": "پورٹ فولیو",
     "navCourtsProjects": "پراجیکٹس",
-    "navCourtsFinancials": "مالیات"
+    "navCourtsFinancials": "مالیات",
+    "navCourtsDocs": "دستاویزات"
   },
   "observability": {
     "title": "آبزرویبلٹی",
