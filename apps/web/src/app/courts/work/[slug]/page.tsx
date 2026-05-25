@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { PrintButton } from './print-button';
 
 const PROJECTS: Record<
   string,
@@ -136,6 +137,29 @@ export default async function CaseStudyPage({
       className="min-h-screen bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
       style={{ viewTransitionName: 'feera-root' }}
     >
+      {/* Print styles */}
+      {/* eslint-disable-next-line react/no-unknown-property */}
+      <style>{`
+        @media print {
+          header, footer, .print-hide {
+            display: none !important;
+          }
+          section[data-theme="dark"] {
+            background: #fff !important;
+            color: #1a1a1a !important;
+          }
+          section[data-theme="dark"] * {
+            color: #1a1a1a !important;
+          }
+          .feera-motion {
+            transition: none !important;
+          }
+          @page {
+            margin: 0.75in;
+          }
+        }
+      `}</style>
+
       {/* Nav */}
       <header className="border-b border-[color:var(--color-border)]">
         <div className="mx-auto flex max-w-[1280px] items-center justify-between px-6 py-5">
@@ -233,7 +257,7 @@ export default async function CaseStudyPage({
       {/* Placeholder note */}
       <section
         data-theme="dark"
-        className="bg-[color:var(--color-bg-fold)] text-[color:var(--color-fg)]"
+        className="print-hide bg-[color:var(--color-bg-fold)] text-[color:var(--color-fg)]"
       >
         <div className="mx-auto max-w-[1280px] px-6 py-16">
           <div className="border border-[color:var(--color-border)] p-8">
@@ -250,7 +274,7 @@ export default async function CaseStudyPage({
       </section>
 
       {/* CTA */}
-      <section className="border-y border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
+      <section className="print-hide border-y border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
         <div className="mx-auto max-w-[1280px] px-6 py-[107px] text-center">
           <h2 className="mx-auto max-w-[20ch] font-serif text-5xl leading-tight tracking-tight md:text-6xl">
             Interested in a similar project?
@@ -262,6 +286,7 @@ export default async function CaseStudyPage({
             >
               Get a free consultation
             </Link>
+            <PrintButton />
             <Link
               href="/courts/work"
               className="feera-motion inline-flex items-center justify-center border border-[color:var(--color-fg)] px-6 py-3 text-sm text-[color:var(--color-fg)] hover:border-court hover:text-court"

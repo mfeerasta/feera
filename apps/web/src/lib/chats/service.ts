@@ -8,6 +8,11 @@ import {
 import type { db as Db } from '@feera/db';
 import { toDbChatType, type ApiChatType, type ChatMessageCreateInput } from '@/lib/api/chat-schemas';
 
+export type ChatMemberSummary = {
+  userId: string;
+  displayName: string | null;
+};
+
 export type ChatListItem = {
   id: string;
   type: string;
@@ -15,6 +20,7 @@ export type ChatListItem = {
   lastMessageAt: Date | null;
   unreadCount: number;
   lastMessagePreview: string | null;
+  members: ChatMemberSummary[];
 };
 
 export async function listUserChats(
@@ -88,6 +94,29 @@ export async function listUserChats(
     unreadCounts.set(r.id, cnt[0]?.c ?? 0);
   }
 
+  // Fetch members with display names for each chat.
+  const memberRows = await tx
+    .select({
+      chatId: chatMembers.chatId,
+      userId: chatMembers.userId,
+      displayName: users.displayName,
+    })
+    .from(chatMembers)
+    .innerJoin(users, eq(users.id, chatMembers.userId))
+    .where(
+      and(
+        inArray(chatMembers.chatId, chatIds),
+        isNull(chatMembers.leftAt),
+      ),
+    );
+
+  const membersByChatId = new Map<string, ChatMemberSummary[]>();
+  for (const m of memberRows) {
+    const arr = membersByChatId.get(m.chatId) ?? [];
+    arr.push({ userId: m.userId, displayName: m.displayName });
+    membersByChatId.set(m.chatId, arr);
+  }
+
   return rows.map((r) => ({
     id: r.id,
     type: r.type,
@@ -95,6 +124,7 @@ export async function listUserChats(
     lastMessageAt: r.lastMessageAt,
     unreadCount: unreadCounts.get(r.id) ?? 0,
     lastMessagePreview: previewByChat.get(r.id)?.body ?? null,
+    members: membersByChatId.get(r.id) ?? [],
   }));
 }
 
