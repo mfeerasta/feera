@@ -24,6 +24,7 @@ const navItems: readonly NavItem[] = [
   { href: '/admin/courts', labelKey: 'admin.navCourts' },
   { href: '/admin/courts/leads', labelKey: 'admin.navCourtsLeads' },
   { href: '/admin/courts/pipeline', labelKey: 'admin.navCourtsPipeline' },
+  { href: '/admin/courts/projects', labelKey: 'admin.navCourtsProjects' },
   { href: '/admin/courts/hardware', labelKey: 'admin.navCourtsHardware' },
   { href: '/admin/courts/portfolio', labelKey: 'admin.navCourtsPortfolio' },
   { href: '/admin/courts/financials', labelKey: 'admin.navCourtsFinancials' },

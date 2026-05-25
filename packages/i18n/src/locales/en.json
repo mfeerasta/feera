@@ -720,6 +720,7 @@
     "navCourtsPipeline": "Pipeline",
     "navCourtsHardware": "Hardware",
     "navCourtsPortfolio": "Portfolio",
+    "navCourtsProjects": "Projects",
     "navCourtsFinancials": "Financials"
   },
   "observability": {
