@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { QuoteForm } from './quote-form';
@@ -17,6 +18,7 @@ const COURT_TYPES = [
     priceRange: '$45,000 - $80,000',
     glass: '12mm tempered',
     bestFor: 'Competition venues, premium clubs',
+    image: '/images/courts/court-panoramic.png',
   },
   {
     name: 'Semi-Panoramic',
@@ -25,6 +27,7 @@ const COURT_TYPES = [
     priceRange: '$38,000 - $65,000',
     glass: '12mm tempered',
     bestFor: 'Commercial clubs, mid-tier facilities',
+    image: '/images/courts/court-semi-panoramic.png',
   },
   {
     name: 'Standard Classic',
@@ -33,11 +36,13 @@ const COURT_TYPES = [
     priceRange: '$30,000 - $50,000',
     glass: '10mm tempered',
     bestFor: 'Private clubs, budget builds, exposed sites',
+    image: '/images/courts/court-standard.png',
   },
   {
     name: 'Indoor Enclosed',
     description:
       'Full court within a steel building or air dome. Essential for Canadian winters. Minimum 8m clear height for commercial play.',
+    image: '/images/courts/court-indoor.png',
     priceRange: '$60,000 - $100,000+',
     glass: '10-12mm tempered',
     bestFor: 'Cold climates, year-round operation',
@@ -175,9 +180,17 @@ export default function CourtsPage() {
       {/* Hero */}
       <section
         data-theme="dark"
-        className="bg-[color:var(--color-bg-fold)] text-[color:var(--color-fg)]"
+        className="relative bg-[color:var(--color-bg-fold)] text-[color:var(--color-fg)]"
       >
-        <div className="mx-auto flex min-h-[80vh] max-w-[1280px] flex-col items-start justify-center px-6 py-[107px]">
+        <Image
+          src="/images/courts/hero-court.png"
+          alt=""
+          fill
+          className="object-cover opacity-30"
+          priority
+          sizes="100vw"
+        />
+        <div className="relative mx-auto flex min-h-[80vh] max-w-[1280px] flex-col items-start justify-center px-6 py-[107px]">
           <p className="text-xs uppercase tracking-[0.3em] text-court">
             Feera Courts
           </p>
@@ -243,36 +256,47 @@ export default function CourtsPage() {
               {
                 title: 'Site assessment',
                 body: 'Zoning analysis, orientation study, foundation engineering, and permit roadmapping for your specific municipality.',
+                image: '/images/courts/service-site-assessment.png',
               },
               {
                 title: 'Court configuration',
                 body: 'Choose court type, glass spec, turf, lighting, and layout. We model 2-court to 8-court facilities with shared walls and spectator flow.',
+                image: '/images/courts/service-court-config.png',
               },
               {
                 title: 'Supplier sourcing',
                 body: 'We work with vetted manufacturers in Spain, Italy, and China. Factory QC, shipping logistics, customs, and landed-cost optimization.',
+                image: '/images/courts/service-supplier-sourcing.png',
               },
               {
                 title: 'Facility design',
                 body: 'Clubhouse, locker rooms, pro shop, bar, viewing gallery, parking. Full amenity planning with cost modeling.',
+                image: '/images/courts/service-facility-design.png',
               },
               {
                 title: 'Technology stack',
                 body: 'Feera booking platform, access control, camera systems, scoreboards, Wi-Fi, and digital signage. Turnkey tech.',
+                image: '/images/courts/service-technology.png',
               },
               {
                 title: 'Financial modeling',
                 body: 'Revenue projections, operating cost breakdown, ROI timeline, membership pricing strategy, and sponsorship revenue planning.',
+                image: '/images/courts/service-financial.png',
               },
             ].map((service) => (
               <article
                 key={service.title}
                 className="feera-motion group flex flex-col gap-4"
               >
-                <div
-                  aria-hidden
-                  className="feera-motion aspect-[4/3] w-full border border-[color:var(--color-border)] group-hover:border-court"
-                />
+                <div className="feera-motion relative aspect-[4/3] w-full overflow-hidden border border-[color:var(--color-border)] group-hover:border-court">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
                 <h3 className="font-serif text-2xl tracking-tight">
                   {service.title}
                 </h3>
@@ -307,8 +331,18 @@ export default function CourtsPage() {
             {COURT_TYPES.map((court) => (
               <article
                 key={court.name}
-                className="feera-motion flex flex-col gap-4 border border-[color:var(--color-border)] p-8 hover:border-court"
+                className="feera-motion flex flex-col gap-4 border border-[color:var(--color-border)] hover:border-court overflow-hidden"
               >
+                <div className="relative aspect-[16/9] w-full">
+                  <Image
+                    src={court.image}
+                    alt={court.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 p-8 pt-4">
                 <h3 className="font-serif text-3xl tracking-tight">
                   {court.name}
                 </h3>
@@ -336,6 +370,7 @@ export default function CourtsPage() {
                     </p>
                     <p className="mt-1 text-sm">{court.bestFor}</p>
                   </div>
+                </div>
                 </div>
               </article>
             ))}
@@ -547,26 +582,40 @@ export default function CourtsPage() {
               {
                 title: 'Canadian winters',
                 body: 'Air-entrained concrete foundations rated for freeze-thaw cycles. Air domes or pre-engineered steel buildings with insulation and radiant heating. Hot-dip galvanized steel resists road salt corrosion.',
+                image: '/images/courts/climate-winter.png',
               },
               {
                 title: 'Hurricane zones',
                 body: 'Wind-rated structures to 140-160 mph for Florida, Gulf Coast, and Southeast. 12-14mm reinforced glass. 4mm steel profiles on structural elements.',
+                image: '/images/courts/climate-hurricane.png',
               },
               {
                 title: 'Permits and codes',
                 body: 'We navigate municipal zoning, building permits ($500-$3,000/court), ANSI/ASTM glass standards, ADA accessibility requirements, AODA compliance in Ontario, and noise bylaws.',
+                image: '/images/courts/climate-permits.png',
               },
             ].map((item) => (
               <article
                 key={item.title}
-                className="feera-motion flex flex-col gap-4 border border-[color:var(--color-border)] p-8 hover:border-court"
+                className="feera-motion flex flex-col gap-0 border border-[color:var(--color-border)] hover:border-court overflow-hidden"
               >
+                <div className="relative aspect-[16/9] w-full">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 p-8">
                 <h3 className="font-serif text-2xl tracking-tight">
                   {item.title}
                 </h3>
                 <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
                   {item.body}
                 </p>
+                </div>
               </article>
             ))}
           </div>
@@ -588,36 +637,46 @@ export default function CourtsPage() {
             certification, steel galvanization, and warranty enforcement.
           </p>
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="border border-[color:var(--color-border)] p-8">
-              <h3 className="text-xs uppercase tracking-[0.25em] text-court">
-                European premium
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-                MejorSet (Spain, official FIP supplier), Manzasport, Portico
-                Sport, Italian Padel (Forgiafer), Mondo. Tier-one quality with
-                10-year structural warranties. $38K-$80K per court installed.
-              </p>
-            </div>
-            <div className="border border-[color:var(--color-border)] p-8">
-              <h3 className="text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
-                North American
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-                Absolute Padel (Pennsylvania, only NA manufacturer), PadelBox
-                (MejorSet distributor, 15+ states), All Racquet Sports.
-                Eliminates import risk and ocean freight. $20K-$65K per court.
-              </p>
-            </div>
-            <div className="border border-[color:var(--color-border)] p-8">
-              <h3 className="text-xs uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]">
-                Factory-direct (Asia)
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-                Shandong Century Star, NJQFAN, Shengshi Sports Tech. 20-25%
-                savings with third-party QC inspection. 12mm tempered glass,
-                CE certified. Best for 4+ court orders. $18K-$30K landed.
-              </p>
-            </div>
+            {[
+              {
+                label: 'European premium',
+                labelClass: 'text-court',
+                body: 'MejorSet (Spain, official FIP supplier), Manzasport, Portico Sport, Italian Padel (Forgiafer), Mondo. Tier-one quality with 10-year structural warranties. $38K-$80K per court installed.',
+                image: '/images/courts/supplier-european.png',
+              },
+              {
+                label: 'North American',
+                labelClass: 'text-[color:var(--color-fg-muted)]',
+                body: 'Absolute Padel (Pennsylvania, only NA manufacturer), PadelBox (MejorSet distributor, 15+ states), All Racquet Sports. Eliminates import risk and ocean freight. $20K-$65K per court.',
+                image: '/images/courts/supplier-north-american.png',
+              },
+              {
+                label: 'Factory-direct (Asia)',
+                labelClass: 'text-[color:var(--color-fg-muted)]',
+                body: 'Shandong Century Star, NJQFAN, Shengshi Sports Tech. 20-25% savings with third-party QC inspection. 12mm tempered glass, CE certified. Best for 4+ court orders. $18K-$30K landed.',
+                image: '/images/courts/supplier-factory-direct.png',
+              },
+            ].map((supplier) => (
+              <div key={supplier.label} className="border border-[color:var(--color-border)] overflow-hidden">
+                <div className="relative aspect-[16/9] w-full">
+                  <Image
+                    src={supplier.image}
+                    alt={supplier.label}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="p-8">
+                  <h3 className={`text-xs uppercase tracking-[0.25em] ${supplier.labelClass}`}>
+                    {supplier.label}
+                  </h3>
+                  <p className="mt-4 text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
+                    {supplier.body}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
