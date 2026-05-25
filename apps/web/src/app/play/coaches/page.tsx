@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { playFetch } from '@/lib/play/api-client';
 import { EmptyState } from '@/components/play/empty-state';
@@ -199,10 +200,15 @@ export default async function PlayCoachesPage({ searchParams }: PageProps) {
                   className="flex flex-col gap-4 border border-ink-deep/15 bg-paper p-6"
                 >
                   <div className="flex items-start gap-4">
-                    <div
-                      aria-hidden
-                      className="h-16 w-16 shrink-0 border border-ink-deep/15 bg-cream"
-                    />
+                    <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-ink-deep/15 bg-cream">
+                      <Image
+                        src="/images/coaches/default-coach-avatar.png"
+                        alt={c.displayName}
+                        fill
+                        className="object-cover"
+                        sizes="64px"
+                      />
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-[10px] uppercase tracking-[0.25em] text-ink-deep/50">
                         {c.countryCode}

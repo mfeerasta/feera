@@ -1,7 +1,14 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LocaleSwitcher } from '@/components/locale-switcher';
 import { getT } from '@/lib/i18n/t';
+
+const FEATURE_IMAGES = [
+  '/images/home/feature-book.png',
+  '/images/home/feature-find.png',
+  '/images/home/feature-play.png',
+];
 
 /**
  * Marketing landing. flex.one-inspired (ADR-0010): dark forest base, large
@@ -111,15 +118,20 @@ export default async function HomePage() {
         className="bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
       >
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-12 px-6 py-[107px] md:grid-cols-3">
-          {features.map((feature) => (
+          {features.map((feature, idx) => (
             <article
               key={feature.title}
               className="feera-motion group flex flex-col gap-4"
             >
-              <div
-                aria-hidden
-                className="feera-motion aspect-[4/3] w-full border border-[color:var(--color-border)] group-hover:border-[color:var(--color-accent)]"
-              />
+              <div className="feera-motion relative aspect-[4/3] w-full overflow-hidden border border-[color:var(--color-border)] group-hover:border-[color:var(--color-accent)]">
+                <Image
+                  src={FEATURE_IMAGES[idx] ?? ''}
+                  alt={feature.title}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
               <h2 className="font-serif text-3xl leading-tight tracking-tight">
                 {feature.title}
               </h2>

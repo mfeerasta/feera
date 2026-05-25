@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { and, asc, eq, isNull } from 'drizzle-orm';
 import { clubs } from '@feera/db';
@@ -145,10 +146,15 @@ export default async function PublicClubsDirectoryPage() {
                         href={`/clubs/${club.slug}`}
                         className="group flex flex-col gap-4 border border-ink-deep/15 bg-paper p-6 transition-colors duration-150 hover:border-court"
                       >
-                        <div
-                          aria-hidden
-                          className="aspect-[4/3] w-full border border-ink-deep/10 bg-cream"
-                        />
+                        <div className="relative aspect-[4/3] w-full overflow-hidden border border-ink-deep/10 bg-cream">
+                          <Image
+                            src="/images/clubs/default-club-thumb.png"
+                            alt={club.name}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        </div>
                         <h3 className="font-serif text-2xl tracking-tight text-ink-deep group-hover:text-court">
                           {club.name}
                         </h3>
