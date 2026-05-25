@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { and, eq, isNull, sql as dsql } from 'drizzle-orm';
@@ -161,10 +162,15 @@ export default async function PublicClubDetailPage({ params }: PageProps) {
       <section className="bg-cream">
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-12 px-6 py-[80px] md:grid-cols-3">
           <div className="md:col-span-2">
-            <div
-              aria-hidden
-              className="aspect-[16/9] w-full border border-ink-deep/15 bg-paper"
-            />
+            <div className="relative aspect-[16/9] w-full overflow-hidden border border-ink-deep/15 bg-paper">
+              <Image
+                src="/images/clubs/default-club-hero.png"
+                alt="Club facility"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 66vw"
+              />
+            </div>
             <p className="mt-6 text-sm text-ink-deep/60">
               {courtCount} active court{courtCount === 1 ? '' : 's'}.
               {club.address ? ` ${club.address}.` : ''}

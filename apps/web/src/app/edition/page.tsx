@@ -1,7 +1,14 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LocaleSwitcher } from '@/components/locale-switcher';
 import { getT } from '@/lib/i18n/t';
+
+const PILLAR_IMAGES = [
+  '/images/edition/pillar-clubs.png',
+  '/images/edition/pillar-invitational.png',
+  '/images/edition/pillar-rituals.png',
+];
 
 /**
  * Feera Edition microsite. M2 stub fully fleshed in M7 with Editorial CMS
@@ -127,15 +134,21 @@ export default async function EditionPage() {
             {t('edition.pillar1Title')}
           </p>
           <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3">
-            {clubs.map((club) => (
+            {clubs.map((club, idx) => (
               <article
                 key={club.city}
-                className="border border-brass/20 p-8 transition-colors hover:border-brass"
+                className="border border-brass/20 overflow-hidden transition-colors hover:border-brass"
               >
-                <div
-                  aria-hidden
-                  className="aspect-[4/3] w-full border border-brass/15"
-                />
+                <div className="relative aspect-[4/3] w-full">
+                  <Image
+                    src={PILLAR_IMAGES[idx] ?? ''}
+                    alt={club.city}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="p-8">
                 <p className="mt-6 text-xs uppercase tracking-[0.3em] text-brass/80">
                   {club.country}
                 </p>
@@ -145,6 +158,7 @@ export default async function EditionPage() {
                 <p className="mt-4 text-xs uppercase tracking-[0.2em] text-cream/50">
                   {club.year}
                 </p>
+                </div>
               </article>
             ))}
           </div>
