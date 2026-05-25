@@ -2,35 +2,19 @@
 
 import { useState } from 'react';
 
-const COURT_COUNTS = ['2', '4', '6', '8', '10+'];
-const COURT_TYPES = ['Full Panoramic', 'Semi-Panoramic', 'Standard Classic', 'Not sure yet'];
-const ENVIRONMENTS = ['Outdoor', 'Indoor', 'Covered outdoor', 'Not sure yet'];
-const LOCATIONS = [
-  'Ontario, Canada',
-  'British Columbia, Canada',
-  'Alberta, Canada',
-  'Quebec, Canada',
-  'Other Canada',
-  'Florida, USA',
-  'California, USA',
-  'Texas, USA',
-  'New York, USA',
-  'Other USA',
+const PROJECT_STAGES = [
+  'Idea',
+  'Site under consideration',
+  'Under construction',
+  'Open and operating',
 ];
-const BUDGETS = [
-  'Under $250K',
-  '$250K - $500K',
+
+const CAPEX_RANGES = [
+  'Under $500K',
   '$500K - $1M',
   '$1M - $2M',
   '$2M+',
-  'Need guidance',
-];
-const TIMELINES = [
-  'Within 3 months',
-  '3-6 months',
-  '6-12 months',
-  '12+ months',
-  'Exploring options',
+  'Unknown',
 ];
 
 export function QuoteForm() {
@@ -63,8 +47,7 @@ export function QuoteForm() {
       <div className="flex flex-col items-center justify-center gap-6 border border-court p-12 text-center">
         <p className="font-serif text-3xl text-court">Received.</p>
         <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-          We will review your project details and reach out within 48 hours to
-          schedule your free consultation.
+          We will review your project details and reach out within 48 hours.
         </p>
       </div>
     );
@@ -124,21 +107,53 @@ export function QuoteForm() {
 
       <div className="flex flex-col gap-2">
         <label
-          htmlFor="location"
+          htmlFor="company"
           className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
         >
-          Location
+          Company / project name
+        </label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="targetCity"
+          className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
+        >
+          Target city
+        </label>
+        <input
+          id="targetCity"
+          name="targetCity"
+          type="text"
+          required
+          placeholder="e.g. Troy MI, Windsor ON"
+          className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court placeholder:text-[color:var(--color-fg-muted)]/40"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="projectStage"
+          className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
+        >
+          Project stage
         </label>
         <select
-          id="location"
-          name="location"
+          id="projectStage"
+          name="projectStage"
           required
           className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
         >
-          <option value="">Select location</option>
-          {LOCATIONS.map((loc) => (
-            <option key={loc} value={loc}>
-              {loc}
+          <option value="">Select stage</option>
+          {PROJECT_STAGES.map((s) => (
+            <option key={s} value={s}>
+              {s}
             </option>
           ))}
         </select>
@@ -146,84 +161,20 @@ export function QuoteForm() {
 
       <div className="flex flex-col gap-2">
         <label
-          htmlFor="courts"
+          htmlFor="capexRange"
           className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
         >
-          Number of courts
+          Capex range
         </label>
         <select
-          id="courts"
-          name="courts"
-          required
-          className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
-        >
-          <option value="">Select count</option>
-          {COURT_COUNTS.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="courtType"
-          className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
-        >
-          Court type
-        </label>
-        <select
-          id="courtType"
-          name="courtType"
-          className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
-        >
-          <option value="">Select type</option>
-          {COURT_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="environment"
-          className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
-        >
-          Indoor or outdoor
-        </label>
-        <select
-          id="environment"
-          name="environment"
-          className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
-        >
-          <option value="">Select environment</option>
-          {ENVIRONMENTS.map((env) => (
-            <option key={env} value={env}>
-              {env}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="budget"
-          className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
-        >
-          Budget range
-        </label>
-        <select
-          id="budget"
-          name="budget"
+          id="capexRange"
+          name="capexRange"
           className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
         >
           <option value="">Select range</option>
-          {BUDGETS.map((b) => (
-            <option key={b} value={b}>
-              {b}
+          {CAPEX_RANGES.map((r) => (
+            <option key={r} value={r}>
+              {r}
             </option>
           ))}
         </select>
@@ -231,38 +182,17 @@ export function QuoteForm() {
 
       <div className="flex flex-col gap-2">
         <label
-          htmlFor="timeline"
+          htmlFor="message"
           className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
         >
-          Timeline
-        </label>
-        <select
-          id="timeline"
-          name="timeline"
-          className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
-        >
-          <option value="">Select timeline</option>
-          {TIMELINES.map((tl) => (
-            <option key={tl} value={tl}>
-              {tl}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="notes"
-          className="text-[10px] uppercase tracking-[0.25em] text-[color:var(--color-fg-muted)]"
-        >
-          Additional details (optional)
+          Message (optional)
         </label>
         <textarea
-          id="notes"
-          name="notes"
+          id="message"
+          name="message"
           rows={4}
           className="border border-[color:var(--color-border)] bg-transparent px-4 py-3 text-sm text-[color:var(--color-fg)] outline-none focus:border-court"
-          placeholder="Tell us about your site, goals, existing facility, or any specific requirements."
+          placeholder="Tell us about your project, site, goals, or any specific requirements."
         />
       </div>
 
@@ -271,7 +201,7 @@ export function QuoteForm() {
         disabled={sending}
         className="feera-motion mt-2 border border-court bg-court px-6 py-3 text-sm text-cream hover:bg-court/90 disabled:opacity-50"
       >
-        {sending ? 'Sending...' : 'Request free consultation'}
+        {sending ? 'Sending...' : 'Request a feasibility study'}
       </button>
 
       <p className="text-[10px] text-[color:var(--color-fg-muted)]">

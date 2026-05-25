@@ -3,25 +3,31 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const { name, email, phone, location, courts, courtType, environment, budget, timeline, notes } =
-    body as Record<string, string>;
+  const {
+    name,
+    email,
+    phone,
+    company,
+    targetCity,
+    projectStage,
+    capexRange,
+    message,
+  } = body as Record<string, string>;
 
-  if (!name || !email || !location || !courts) {
+  if (!name || !email || !targetCity || !projectStage) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   const text = [
-    '--- New Feera Courts consultation request ---',
+    '--- New Feera Courts inquiry ---',
     `Name: ${name}`,
     `Email: ${email}`,
     phone ? `Phone: ${phone}` : null,
-    `Location: ${location}`,
-    `Courts: ${courts}`,
-    courtType ? `Court type: ${courtType}` : null,
-    environment ? `Environment: ${environment}` : null,
-    budget ? `Budget: ${budget}` : null,
-    timeline ? `Timeline: ${timeline}` : null,
-    notes ? `Notes: ${notes}` : null,
+    company ? `Company / Project: ${company}` : null,
+    `Target city: ${targetCity}`,
+    `Project stage: ${projectStage}`,
+    capexRange ? `Capex range: ${capexRange}` : null,
+    message ? `Message: ${message}` : null,
   ]
     .filter(Boolean)
     .join('\n');
@@ -39,7 +45,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           from: 'Feera Courts <courts@feera.ai>',
           to: ['meerfeerasta@gmail.com'],
-          subject: `[Feera Courts] New inquiry from ${name} — ${courts} courts in ${location}`,
+          subject: `[Feera Courts] New inquiry from ${name} — ${targetCity} (${projectStage})`,
           text,
         }),
       });
