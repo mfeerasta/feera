@@ -20,6 +20,13 @@ const navItems: readonly NavItem[] = [
   { href: '/admin/chats', labelKey: 'admin.navChats' },
   { href: '/admin/coaches', labelKey: 'admin.navCoaches' },
   { href: '/admin/observability', labelKey: 'admin.navObservability' },
+  // Courts vertical
+  { href: '/admin/courts', labelKey: 'admin.navCourts' },
+  { href: '/admin/courts/leads', labelKey: 'admin.navCourtsLeads' },
+  { href: '/admin/courts/pipeline', labelKey: 'admin.navCourtsPipeline' },
+  { href: '/admin/courts/hardware', labelKey: 'admin.navCourtsHardware' },
+  { href: '/admin/courts/portfolio', labelKey: 'admin.navCourtsPortfolio' },
+  { href: '/admin/courts/financials', labelKey: 'admin.navCourtsFinancials' },
 ];
 
 async function pendingClubsCount(): Promise<number> {
