@@ -1,12 +1,34 @@
 import type { MetadataRoute } from 'next';
 
+import { db } from '@feera/db';
+import { clubs } from '@feera/db';
+import { eq, and, isNull } from 'drizzle-orm';
+
 const baseUrl = 'https://www.feera.ai';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+async function getActiveClubSlugs(): Promise<string[]> {
+  try {
+    const rows = await db
+      .select({ slug: clubs.slug })
+      .from(clubs)
+      .where(
+        and(
+          eq(clubs.isActive, true),
+          eq(clubs.approvalStatus, 'approved'),
+          isNull(clubs.deletedAt),
+        ),
+      );
+    return rows.map((r) => r.slug);
+  } catch {
+    // DB unavailable at build time: fall back to static-only
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  // Phase 1: static routes only. M5 adds dynamic /play/clubs/[slug] entries
-  // by querying the clubs table where is_active = true AND approval_status = 'approved'.
-  return [
+
+  const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/`, lastModified: now, changeFrequency: 'weekly', priority: 1 },
     { url: `${baseUrl}/play`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
     { url: `${baseUrl}/play/clubs`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
@@ -31,4 +53,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 },
     { url: `${baseUrl}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 },
   ];
+
+  // Dynamic club pages
+  const clubSlugs = await getActiveClubSlugs();
+  const clubRoutes: MetadataRoute.Sitemap = clubSlugs.map((slug) => ({
+    url: `${baseUrl}/play/clubs/${slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...clubRoutes];
 }

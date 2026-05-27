@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { trackCourtsEvent } from '@/lib/courts/analytics';
 
 const PROJECT_STAGES = [
@@ -18,8 +19,21 @@ const CAPEX_RANGES = [
   'Unknown',
 ];
 
+function getUtmParams(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  const params = new URLSearchParams(window.location.search);
+  const utm: Record<string, string> = {};
+  const source = params.get('utm_source');
+  const medium = params.get('utm_medium');
+  const campaign = params.get('utm_campaign');
+  if (source) utm.utmSource = source;
+  if (medium) utm.utmMedium = medium;
+  if (campaign) utm.utmCampaign = campaign;
+  return utm;
+}
+
 export function QuoteForm() {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
   const [sending, setSending] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -27,7 +41,10 @@ export function QuoteForm() {
     setSending(true);
 
     const data = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(data.entries());
+    const payload = {
+      ...Object.fromEntries(data.entries()),
+      ...getUtmParams(),
+    };
 
     try {
       await fetch('/api/v1/courts/quote', {
@@ -39,23 +56,12 @@ export function QuoteForm() {
         capex_range: String(payload.capexRange ?? ''),
         project_stage: String(payload.projectStage ?? ''),
       });
-      setSubmitted(true);
+      router.push('/courts/thank-you');
     } catch {
-      setSubmitted(true);
+      router.push('/courts/thank-you');
     } finally {
       setSending(false);
     }
-  }
-
-  if (submitted) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 border border-court p-12 text-center">
-        <p className="font-serif text-3xl text-court">Received.</p>
-        <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
-          We will review your project details and reach out within 48 hours.
-        </p>
-      </div>
-    );
   }
 
   return (
